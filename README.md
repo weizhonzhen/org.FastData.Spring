@@ -10,6 +10,21 @@ in Application add Annotation
             codeFirstPackageName is code first model
             cachePackageName is cache model
 
+code first model
+package Entity;
+
+import org.FastData.Annotation.Column;
+import org.FastData.Annotation.Table;
+
+@Table(comments = "测试")
+public class TestTable {
+    @Column(isKey = true,dataType = "NVARCHAR2",length = 15,isNull = true,comments = "id")
+    public  String Id;
+    @Column(dataType = "NUMBER",isNull = true,comments = "value")
+    public  Number value;
+}
+
+
 in resources add db.json
 in db.json         
 ```csharp
