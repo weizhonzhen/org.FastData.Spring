@@ -31,9 +31,37 @@ public interface IFastRepository {
       name: xml file -> sqlMap -> id
       param: sql preparedStatement
       type: model type
+      db: database context
+     log:sql log
+     */
+    List<?> query(String name, Map<String, Object> param, Class<?> type, DataContext db,Boolean log);
+
+    /*
+    name: xml file -> sqlMap -> id
+    param: sql preparedStatement
+    type: model type
+    key: database key
+     log:sql log
+    */
+    List<?> query(String name, Map<String, Object> param, Class<?> type, String key,Boolean log);
+
+    /*
+      name: xml file -> sqlMap -> id
+      param: sql preparedStatement
+      type: model type
       xml file -> sql have db key value (db="dbkey")
+     log:sql log
      */
     List<?> query(String name, Map<String, Object> param, Class<?> type);
+
+    /*
+     name: xml file -> sqlMap -> id
+     param: sql preparedStatement
+     type: model type
+     xml file -> sql have db key value (db="dbkey")
+     log:sql log
+    */
+    List<?> query(String name, Map<String, Object> param, Class<?> type,Boolean log);
 
     /*
       name: xml file -> sqlMap -> id
@@ -43,6 +71,14 @@ public interface IFastRepository {
     List<Map<String, Object>> query(String name, Map<String, Object> param, String key);
 
     /*
+     name: xml file -> sqlMap -> id
+     param: sql preparedStatement
+     key: database key
+     log:sql log
+   */
+    List<Map<String, Object>> query(String name, Map<String, Object> param, String key,Boolean log);
+
+    /*
       name: xml file -> sqlMap -> id
       param: sql preparedStatement
       db: database context
@@ -50,11 +86,27 @@ public interface IFastRepository {
     List<Map<String, Object>> query(String name, Map<String, Object> param, DataContext db);
 
     /*
+         name: xml file -> sqlMap -> id
+         param: sql preparedStatement
+         db: database context
+     log:sql log
+       */
+    List<Map<String, Object>> query(String name, Map<String, Object> param, DataContext db,Boolean log);
+
+    /*
       name: xml file -> sqlMap -> id
       param: sql preparedStatement
       xml file -> sql have db key value (db="dbkey")
     */
     List<Map<String, Object>> query(String name, Map<String, Object> param);
+
+    /*
+      name: xml file -> sqlMap -> id
+      param: sql preparedStatement
+      xml file -> sql have db key value (db="dbkey")
+     log:sql log
+    */
+    List<Map<String, Object>> query(String name, Map<String, Object> param,Boolean log);
 
     /*
       query by page
@@ -72,9 +124,32 @@ public interface IFastRepository {
       name: xml file -> sqlMap -> id
       param: sql preparedStatement
       type: model type
+      key: database key
+     log:sql log
+    */
+    PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type, String key,Boolean log);
+
+    /*
+      query by page
+      pModel: page model
+      name: xml file -> sqlMap -> id
+      param: sql preparedStatement
+      type: model type
       db: database context
     */
     PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type, DataContext db);
+
+
+    /*
+      query by page
+      pModel: page model
+      name: xml file -> sqlMap -> id
+      param: sql preparedStatement
+      type: model type
+      db: database context
+      log:sql log
+    */
+    PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type, DataContext db,Boolean log);
 
     /*
       query by page
@@ -85,6 +160,18 @@ public interface IFastRepository {
       xml file -> sql have db key value (db="dbkey")
     */
     PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type);
+
+
+    /*
+      query by page
+      pModel: page model
+      name: xml file -> sqlMap -> id
+      param: sql preparedStatement
+      type: model type
+      xml file -> sql have db key value (db="dbkey")
+      log:sql log
+    */
+    PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type,Boolean log);
 
     /*
       query by page
@@ -100,6 +187,16 @@ public interface IFastRepository {
       pModel: page model
       name: xml file -> sqlMap -> id
       param: sql preparedStatement
+      key: database key
+      log:sql log
+    */
+    PageResult page(PageModel pModel, String name, Map<String, Object> param, String key,Boolean log);
+
+    /*
+      query by page
+      pModel: page model
+      name: xml file -> sqlMap -> id
+      param: sql preparedStatement
       db: database context
     */
     PageResult page(PageModel pModel, String name, Map<String, Object> param, DataContext db);
@@ -109,9 +206,29 @@ public interface IFastRepository {
       pModel: page model
       name: xml file -> sqlMap -> id
       param: sql preparedStatement
+      db: database context
+      log:sql log
+    */
+    PageResult page(PageModel pModel, String name, Map<String, Object> param, DataContext db,Boolean log);
+
+    /*
+      query by page
+      pModel: page model
+      name: xml file -> sqlMap -> id
+      param: sql preparedStatement
       xml file -> sql have db key value (db="dbkey")
     */
     PageResult page(PageModel pModel, String name, Map<String, Object> param);
+
+    /*
+      query by page
+      pModel: page model
+      name: xml file -> sqlMap -> id
+      param: sql preparedStatement
+      xml file -> sql have db key value (db="dbkey")
+      log:sql log
+    */
+    PageResult page(PageModel pModel, String name, Map<String, Object> param,Boolean log);
 
     /*
      insert table
