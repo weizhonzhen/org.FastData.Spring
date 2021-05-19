@@ -6,7 +6,6 @@ import org.FastData.Spring.CacheModel.DbConfig;
 import org.FastData.Spring.CacheModel.PropertyModel;
 import org.FastData.Spring.Model.*;
 import org.FastData.Spring.Config.DataDbType;
-import org.FastData.Spring.Model.*;
 import org.FastData.Spring.Util.CacheUtil;
 import org.FastData.Spring.Util.LogUtil;
 import org.FastData.Spring.Util.ReflectUtil;
