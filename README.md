@@ -29,3 +29,7 @@ in db.json
   ]
 }
 ```
+in resources add db.json in map.json
+```csharp
+"SqlMap" :{"Path": [ "map/admin/Api.xml", "map/admin/Area.xml"]}
+```
