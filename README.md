@@ -40,12 +40,7 @@ in resources add map/admin/Api.xml map/admin/Area.xml
               <select id="GetUser" log="true">
                 select a.* from base_user a
                 <dynamic prepend=" where 1=1">
-                  <isPropertyAvailable prepend=" and " property="userId">a.userId=?userId</isPropertyAvailable>
-                  <isEqual compareValue="5" prepend=" and " property="userName">a.userName=?userName</isEqual>
-                  <isNotEqual compareValue="5" prepend=" and " property="fullName">a.fullName=?fullName</isNotEqual>
-                  <isGreaterThan compareValue="5" prepend=" and " property="orgId">a.orgId=?orgId</isGreaterThan>
-                  <isLessThan compareValue="5" prepend=" and " property="userNo">a.userNo=?userNo</isLessThan>
-                  <isNullOrEmpty prepend=" and " property="roleId">a.roleId=?roleId</isNullOrEmpty>
+                  <isPropertyAvailable prepend=" and " property="userId">a.userId=?userId</isPropertyAvailable>                  
                   <isNotNullOrEmpty prepend=" and " property="isAdmin">a.isAdmin=?isAdmin</isNotNullOrEmpty>
                   <if condition="areaId>8" prepend=" and " property="areaId">a.areaId=?areaId</if>            
                   <choose property="userNo">
