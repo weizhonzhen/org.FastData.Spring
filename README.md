@@ -60,9 +60,9 @@ in resources add map/admin/Api.xml map/admin/Area.xml
                   <isNotNullOrEmpty prepend=" and " property="isAdmin">a.isAdmin=?isAdmin</isNotNullOrEmpty>
                   <if condition="areaId>8" prepend=" and " property="areaId">a.areaId=?areaId</if>            
                   <choose property="userNo">
-                     <condition prepend=" and " property="userNo>5">a.userNo=:userNo and a.userNo=5</condition>                    
-                     <condition prepend=" and " property="userNo>6">a.userNo=:userNo and a.userNo=6</condition>
-                     <other prepend=" and ">a.userNo=:userNo and a.userNo=7</other><!--by above 2.3.4-->
+                     <condition prepend=" and " property="userNo>5">a.userNo=?userNo and a.userNo=5</condition>                    
+                     <condition prepend=" and " property="userNo>6">a.userNo=?userNo and a.userNo=6</condition>
+                     <other prepend=" and ">a.userNo=?userNo and a.userNo=7</other>
                   </choose>     
                 </dynamic>
               </select>
