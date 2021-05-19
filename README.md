@@ -79,7 +79,7 @@ in resources add map/admin/Api.xml map/admin/Area.xml
     
 ```
 in Controller
-```
+``````csharp
  @Resource
    IFastRepository iFast;
 
