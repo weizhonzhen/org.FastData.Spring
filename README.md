@@ -24,7 +24,7 @@ public class TestTable {
     @Column(dataType = "NUMBER",isNull = true,comments = "value")
     public  Number value;
 }
-
+```
 
 in resources add db.json
 in db.json         
