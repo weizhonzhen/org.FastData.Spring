@@ -14,8 +14,8 @@ code first model
 package Entity;
        
 ```csharp
-import org.FastData.Annotation.Column;
-import org.FastData.Annotation.Table;
+import Column;
+import Table;
 
 @Table(comments = "测试")
 public class TestTable {
