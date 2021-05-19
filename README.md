@@ -37,7 +37,7 @@ in resources add map/admin/Api.xml map/admin/Area.xml
    ```xml
     <?xml version="1.0" encoding="utf-8" ?>
             <sqlMap>
-              <select id="GetUser" log="true">
+              <select id="GetUser" log="true" db="test">
                 select a.* from base_user a
                 <dynamic prepend=" where 1=1">
                   <isPropertyAvailable prepend=" and " property="userId">a.userId=?userId</isPropertyAvailable>                  
