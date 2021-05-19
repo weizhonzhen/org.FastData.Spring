@@ -67,12 +67,14 @@ in resources add map/admin/Api.xml map/admin/Area.xml
                 </dynamic>
               </select>
               
-              <select id="Patient.Test">
-                select * from base_user where 1=1
-                <dynamic prepend="">
-                  <isNotNullOrEmpty prepend=" and " property="userid">userid = :userid</isNotNullOrEmpty>
-                </dynamic>                
-              </select>
+              <update id="test.Update">
+                    update base_user set
+                <dynamic ltrim="," prepend =" " rtrim="">
+                    <isNotNullOrEmpty prepend=" " property="Name">,name=?Name</isNotNullOrEmpty>
+                    <isNotNullOrEmpty prepend=" " property="Age">,age=?Age</isNotNullOrEmpty>
+                    <isNotNullOrEmpty prepend=" " property="Id" required="true">where id=?id</isNotNullOrEmpty>
+                </dynamic>
+            </update>
           </sqlMap>
     
 ```
