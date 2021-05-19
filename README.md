@@ -33,3 +33,36 @@ in resources add map.json
 ```csharp
 "SqlMap" :{"Path": [ "map/admin/Api.xml", "map/admin/Area.xml"]}
 ```
+in resources add map/admin/Api.xml map/admin/Area.xml
+   ```xml
+    <?xml version="1.0" encoding="utf-8" ?>
+            <sqlMap>
+              <select id="GetUser" log="true">
+                select a.* from base_user a
+                <dynamic prepend=" where 1=1">
+                  <isPropertyAvailable prepend=" and " property="userId">a.userId=?userId</isPropertyAvailable>
+                  <isEqual compareValue="5" prepend=" and " property="userName">a.userName=?userName</isEqual>
+                  <isNotEqual compareValue="5" prepend=" and " property="fullName">a.fullName=?fullName</isNotEqual>
+                  <isGreaterThan compareValue="5" prepend=" and " property="orgId">a.orgId=?orgId</isGreaterThan>
+                  <isLessThan compareValue="5" prepend=" and " property="userNo">a.userNo=?userNo</isLessThan>
+                  <isNullOrEmpty prepend=" and " property="roleId">a.roleId=?roleId</isNullOrEmpty>
+                  <isNotNullOrEmpty prepend=" and " property="isAdmin">a.isAdmin=?isAdmin</isNotNullOrEmpty>
+                  <if condition="areaId>8" prepend=" and " property="areaId">a.areaId=?areaId</if>            
+                  <choose property="userNo">
+                     <condition prepend=" and " property="userNo>5">a.userNo=:userNo and a.userNo=5</condition>                    
+                     <condition prepend=" and " property="userNo>6">a.userNo=:userNo and a.userNo=6</condition>
+                     <other prepend=" and ">a.userNo=:userNo and a.userNo=7</other><!--by above 2.3.4-->
+                  </choose>     
+                </dynamic>
+              </select>
+              
+              <select id="Patient.Test">
+                select * from base_user where 1=1
+                <dynamic prepend="">
+                  <isNotNullOrEmpty prepend=" and " property="userid">userid = :userid</isNotNullOrEmpty>
+                </dynamic>                
+              </select>
+          </sqlMap>
+  
+  
+```
