@@ -27,5 +27,5 @@ in db.json
       "designModel": "CodeFirst"
     }
   ]
-      }
+}
 ```
