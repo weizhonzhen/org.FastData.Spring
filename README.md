@@ -69,7 +69,7 @@ in resources add map/admin/Api.xml map/admin/Area.xml
               
               <update id="test.Update">
                     update base_user set
-                <dynamic ltrim="," prepend =" " rtrim="">
+                <dynamic ltrim="," prepend =" ">
                     <isNotNullOrEmpty prepend=" " property="Name">,name=?Name</isNotNullOrEmpty>
                     <isNotNullOrEmpty prepend=" " property="Age">,age=?Age</isNotNullOrEmpty>
                     <isNotNullOrEmpty prepend=" " property="Id" required="true">where id=?id</isNotNullOrEmpty>
