@@ -1,0 +1,57 @@
+package org.FastData.Spring.Base;
+
+import com.alibaba.fastjson.JSON;
+import org.FastData.Spring.CacheModel.DbConfig;
+import org.FastData.Spring.CacheModel.MapConfig;
+import org.FastData.Spring.Util.CacheUtil;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+public final class DataConfig {
+    public static DbConfig db(String key) {
+        String cacheKey = "FastData.Config";
+        if (CacheUtil.exists(cacheKey)) {
+            List<DbConfig> list = CacheUtil.getList(cacheKey, DbConfig.class);
+            Optional<DbConfig> confgOptional = list.stream().filter(a -> a.key.equals(key)).findFirst();
+            return confgOptional.orElseGet(DbConfig::new);
+        } else {
+            Map map = JSON.parseObject(Content("db.json"), Map.class);
+            if (map == null)
+                return new DbConfig();
+            List<DbConfig> list = JSON.parseArray(map.get("dataConfig").toString(), DbConfig.class);
+            CacheUtil.setModel(cacheKey, list);
+            Optional<DbConfig> confgOptional = list.stream().filter(a -> a.key.equals(key)).findFirst();
+            return confgOptional.orElseGet(DbConfig::new);
+        }
+    }
+
+    public static MapConfig map() {
+        Map map = JSON.parseObject(Content("map.json"), Map.class);
+        if (map == null)
+            return new MapConfig();
+        MapConfig config = JSON.parseObject(map.get("SqlMap").toString(), MapConfig.class);
+        return config;
+    }
+
+    public static String Content(String fileName) {
+        String s;
+        StringBuilder sb = new StringBuilder();
+        try {
+            InputStream stream = Class.forName(Thread.currentThread().getStackTrace()[1].getClassName()).getResourceAsStream("/"+fileName);
+            if (stream != null) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                while ((s = reader.readLine()) != null) {
+                    sb.append(s);
+                }
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+}
