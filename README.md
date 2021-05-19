@@ -58,6 +58,11 @@ in resources add map/admin/Api.xml map/admin/Area.xml
                 </dynamic>                
               </select>
           </sqlMap>
-  
-  
+    
 ```
+in Controller
+```
+  in map.json
+```csharp
+ @Resource
+   IFastRepository iFast;
