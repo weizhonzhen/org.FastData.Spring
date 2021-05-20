@@ -318,7 +318,21 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
+    public WriteReturn add(Object model, String key,Boolean log) {
+        try (DataContext db = new DataContext(key)) {
+            db.config.isOutSql=db.config.isOutSql||log;
+            return db.add(model).writeReturn;
+        }
+    }
+
+    @Override
     public WriteReturn add(Object model, DataContext db) {
+        return db.add(model).writeReturn;
+    }
+
+    @Override
+    public WriteReturn add(Object model, DataContext db,Boolean log) {
+        db.config.isOutSql=db.config.isOutSql||log;
         return db.add(model).writeReturn;
     }
 
@@ -330,7 +344,21 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
+    public WriteReturn update(Object model, List<String> field, String key,Boolean log) {
+        try (DataContext db = new DataContext(key)) {
+            db.config.isOutSql=db.config.isOutSql||log;
+            return db.update(model,field).writeReturn;
+        }
+    }
+
+    @Override
     public WriteReturn update(Object model, List<String> field, DataContext db) {
+        return db.update(model,field).writeReturn;
+    }
+
+    @Override
+    public WriteReturn update(Object model, List<String> field, DataContext db,Boolean log) {
+        db.config.isOutSql=db.config.isOutSql||log;
         return db.update(model,field).writeReturn;
     }
 
@@ -342,7 +370,21 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
+    public WriteReturn update(Object model, String key,Boolean log) {
+        try (DataContext db = new DataContext(key)) {
+            db.config.isOutSql=db.config.isOutSql||log;
+            return db.update(model).writeReturn;
+        }
+    }
+
+    @Override
     public WriteReturn update(Object model, DataContext db) {
+        return db.update(model).writeReturn;
+    }
+
+    @Override
+    public WriteReturn update(Object model, DataContext db,Boolean log) {
+        db.config.isOutSql=db.config.isOutSql||log;
         return db.update(model).writeReturn;
     }
 
@@ -354,7 +396,21 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
+    public WriteReturn delete(Object model, String key,Boolean log) {
+        try (DataContext db = new DataContext(key)) {
+            db.config.isOutSql=db.config.isOutSql||log;
+            return db.delete(model).writeReturn;
+        }
+    }
+
+    @Override
     public WriteReturn delete(Object model, DataContext db) {
+        return db.delete(model).writeReturn;
+    }
+
+    @Override
+    public WriteReturn delete(Object model, DataContext db,Boolean log) {
+        db.config.isOutSql=db.config.isOutSql||log;
         return db.delete(model).writeReturn;
     }
 
@@ -366,7 +422,21 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
+    public boolean exists(Object model, String key,Boolean log) {
+        try (DataContext db = new DataContext(key)) {
+            db.config.isOutSql=db.config.isOutSql||log;
+            return db.exists(model).count>0;
+        }
+    }
+
+    @Override
     public boolean exists(Object model, DataContext db) {
+        return db.exists(model).count>0;
+    }
+
+    @Override
+    public boolean exists(Object model, DataContext db,Boolean log) {
+        db.config.isOutSql=db.config.isOutSql||log;
         return db.exists(model).count>0;
     }
 
@@ -378,7 +448,21 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
+    public Object query(Object model,Class<?> type, String key,Boolean log) {
+        try (DataContext db = new DataContext(key)) {
+            db.config.isOutSql=db.config.isOutSql||log;
+            return db.query(model,type).item;
+        }
+    }
+
+    @Override
     public Object query(Object model,Class<?> type, DataContext db) {
+        return db.query(model,type).item;
+    }
+
+    @Override
+    public Object query(Object model,Class<?> type, DataContext db,Boolean log) {
+        db.config.isOutSql=db.config.isOutSql||log;
         return db.query(model,type).item;
     }
 
@@ -390,7 +474,21 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
+    public Map<String,Object> query(Object model, String key,Boolean log) {
+        try (DataContext db = new DataContext(key)) {
+            db.config.isOutSql=db.config.isOutSql||log;
+            return db.query(model).item;
+        }
+    }
+
+    @Override
     public Map<String,Object> query(Object model, DataContext db) {
+        return db.query(model).item;
+    }
+
+    @Override
+    public Map<String,Object> query(Object model, DataContext db,Boolean log) {
+        db.config.isOutSql=db.config.isOutSql||log;
         return db.query(model).item;
     }
 
@@ -403,6 +501,21 @@ public class FastRepository implements IFastRepository {
                 return check;
             try (DataContext db = new DataContext(key)) {
                 db.config.isOutSql = db.config.isOutSql || mapLog(name);
+                return db.execute(result).writeReturn;
+            }
+        }
+        return checkName(name);
+    }
+
+    @Override
+    public WriteReturn write(String name, Map<String, Object> param, String key,Boolean log) {
+        if (CacheUtil.exists(name.toLowerCase())) {
+            MapResult result = MapXml.getMapSql(name, param);
+            WriteReturn check = checkParam(result, name);
+            if (!check.isSuccess)
+                return check;
+            try (DataContext db = new DataContext(key)) {
+                db.config.isOutSql = db.config.isOutSql || mapLog(name)||log;
                 return db.execute(result).writeReturn;
             }
         }
@@ -423,6 +536,19 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
+    public WriteReturn write(String name, Map<String, Object> param, DataContext db,Boolean log) {
+        if (CacheUtil.exists(name.toLowerCase())) {
+            MapResult result = MapXml.getMapSql(name, param);
+            WriteReturn check = checkParam(result, name);
+            if (!check.isSuccess)
+                return check;
+            db.config.isOutSql = db.config.isOutSql || mapLog(name)||log;
+            return db.execute(result).writeReturn;
+        }
+        return checkName(name);
+    }
+
+    @Override
     public WriteReturn write(String name, Map<String, Object> param) {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
@@ -431,6 +557,21 @@ public class FastRepository implements IFastRepository {
                 return check;
             try (DataContext db = new DataContext(mapDb(name))) {
                 db.config.isOutSql = db.config.isOutSql || mapLog(name);
+                return db.execute(result).writeReturn;
+            }
+        }
+        return checkName(name);
+    }
+
+    @Override
+    public WriteReturn write(String name, Map<String, Object> param,Boolean log) {
+        if (CacheUtil.exists(name.toLowerCase())) {
+            MapResult result = MapXml.getMapSql(name, param);
+            WriteReturn check = checkParam(result, name);
+            if (!check.isSuccess)
+                return check;
+            try (DataContext db = new DataContext(mapDb(name))) {
+                db.config.isOutSql = db.config.isOutSql || mapLog(name)||log;
                 return db.execute(result).writeReturn;
             }
         }

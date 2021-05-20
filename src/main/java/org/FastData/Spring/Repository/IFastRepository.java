@@ -125,7 +125,7 @@ public interface IFastRepository {
       param: sql preparedStatement
       type: model type
       key: database key
-     log:sql log
+      log:sql log
     */
     PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type, String key,Boolean log);
 
@@ -238,6 +238,14 @@ public interface IFastRepository {
     WriteReturn add(Object model, DataContext db);
 
     /*
+     insert table
+      model: database table
+      db: database context
+      log:sql log
+    */
+    WriteReturn add(Object model, DataContext db,Boolean log);
+
+    /*
     insert table
      model: database table
      key: database key
@@ -245,11 +253,27 @@ public interface IFastRepository {
     WriteReturn add(Object model, String key);
 
     /*
+    insert table
+     model: database table
+     key: database key
+     log:sql log
+    */
+    WriteReturn add(Object model, String key,Boolean log);
+
+    /*
      model: database table
      field: update table field by primary Key
      db: database context
     */
     WriteReturn update(Object model, List<String> field, DataContext db);
+
+    /*
+     model: database table
+     field: update table field by primary Key
+     db: database context
+     log:sql log
+    */
+    WriteReturn update(Object model, List<String> field, DataContext db,Boolean log);
 
     /*
      update table by primary Key
@@ -262,6 +286,15 @@ public interface IFastRepository {
     /*
      update table by primary Key
      model: database table
+     field: update field
+     key: database key
+     log:sql log
+    */
+    WriteReturn update(Object model, List<String> field, String key,Boolean log);
+
+    /*
+     update table by primary Key
+     model: database table
      key: database key
     */
     WriteReturn update(Object model,String key);
@@ -269,9 +302,25 @@ public interface IFastRepository {
     /*
      update table by primary Key
      model: database table
+     key: database key
+      log:sql log
+    */
+    WriteReturn update(Object model,String key,Boolean log);
+
+    /*
+     update table by primary Key
+     model: database table
      db: database context
     */
     WriteReturn update(Object model,DataContext db);
+
+    /*
+     update table by primary Key
+     model: database table
+     db: database context
+      log:sql log
+    */
+    WriteReturn update(Object model,DataContext db,Boolean log);
 
     /*
      delete table by primary Key
@@ -283,9 +332,25 @@ public interface IFastRepository {
     /*
      delete table by primary Key
      model: database table
+     db: database context
+      log:sql log
+    */
+    WriteReturn delete(Object model, DataContext db,Boolean log);
+
+    /*
+     delete table by primary Key
+     model: database table
      key: database key
     */
     WriteReturn delete(Object model, String key);
+
+    /*
+     delete table by primary Key
+     model: database table
+     key: database key
+      log:sql log
+    */
+    WriteReturn delete(Object model, String key,Boolean log);
 
     /*
      query exists by primary Key
@@ -297,9 +362,26 @@ public interface IFastRepository {
     /*
      query exists by primary Key
      model: database table
+     db: database context
+      log:sql log
+    */
+    boolean exists(Object model, DataContext db,Boolean log);
+
+    /*
+     query exists by primary Key
+     model: database table
      key: database key
     */
     boolean exists(Object model, String key);
+
+
+    /*
+     query exists by primary Key
+     model: database table
+     key: database key
+      log:sql log
+    */
+    boolean exists(Object model, String key,Boolean log);
 
     /*
      query model by primary Key
@@ -309,11 +391,27 @@ public interface IFastRepository {
     Object query(Object model,Class<?> type, String key);
 
     /*
+     query model by primary Key
+     model: database table
+     key: database key
+      log:sql log
+   */
+    Object query(Object model,Class<?> type, String key,Boolean log);
+
+    /*
        query model by primary Key
        model: database table
       db: database context
     */
     Object query(Object model,Class<?> type, DataContext db);
+
+    /*
+       query model by primary Key
+       model: database table
+      db: database context
+      log:sql log
+    */
+    Object query(Object model,Class<?> type, DataContext db,Boolean log);
 
     /*
       query model by primary Key
@@ -325,9 +423,25 @@ public interface IFastRepository {
     /*
       query model by primary Key
       model: database table
+         key: database key
+      log:sql log
+    */
+    Map<String,Object> query(Object model, String key,Boolean log);
+
+    /*
+      query model by primary Key
+      model: database table
       db: database context
     */
     Map<String,Object> query(Object model, DataContext db);
+
+    /*
+      query model by primary Key
+      model: database table
+      db: database context
+      log:sql log
+    */
+    Map<String,Object> query(Object model, DataContext db,Boolean log);
 
     /*
      update,delete sql
@@ -339,11 +453,29 @@ public interface IFastRepository {
 
     /*
      update,delete sql
+     name: xml file -> sqlMap -> id
+     param: sql preparedStatement
+     key: database key
+      log:sql log
+   */
+    WriteReturn write(String name,Map<String, Object> param, String key,Boolean log);
+
+    /*
+     update,delete sql
       name: xml file -> sqlMap -> id
       param: sql preparedStatement
       db: database context
     */
     WriteReturn write(String name,Map<String, Object> param, DataContext db);
+
+    /*
+     update,delete sql
+      name: xml file -> sqlMap -> id
+      param: sql preparedStatement
+      db: database context
+      log:sql log
+    */
+    WriteReturn write(String name,Map<String, Object> param, DataContext db,Boolean log);
 
     /*
       update,delete sql
@@ -352,4 +484,13 @@ public interface IFastRepository {
       xml file -> sql have db key value (db="dbkey")
     */
     WriteReturn write(String name,Map<String, Object> param);
+
+    /*
+      update,delete sql
+      name: xml file -> sqlMap -> id
+      param: sql preparedStatement
+      xml file -> sql have db key value (db="dbkey")
+      log:sql log
+    */
+    WriteReturn write(String name,Map<String, Object> param,Boolean log);
 }
