@@ -34,8 +34,8 @@ public class DataContext implements Closeable {
     */
     public <T> DataReturnImpl<T> query(MapResult map, Class<T> type) {
         DataReturnImpl<T> result = new DataReturnImpl<T>();
-        String cacheKey=type.getName();
-        List<PropertyModel> property= CacheUtil.getList(cacheKey,PropertyModel.class);
+        String cacheKey = type.getName();
+        List<PropertyModel> property = CacheUtil.getList(cacheKey, PropertyModel.class);
         try {
             ResultSet resultSet;
             if (map.param.size() != 0)
@@ -53,25 +53,25 @@ public class DataContext implements Closeable {
                 statement = conn.createStatement();
                 resultSet = statement.executeQuery(map.sql);
             }
-            ResultSetMetaData col =  resultSet.getMetaData();
-            while(resultSet.next()) {
+            ResultSetMetaData col = resultSet.getMetaData();
+            while (resultSet.next()) {
                 T model = type.newInstance();
                 for (int i = 1; i <= col.getColumnCount(); i++) {
                     String name = col.getColumnName(i);
                     if (property.stream().anyMatch(a -> a.name.equalsIgnoreCase(name))) {
                         PropertyModel pInfo = property.stream().filter(a -> a.name.equalsIgnoreCase(name)).findFirst().get();
-                        ReflectUtil.set(model, resultSet.getObject(name),pInfo.name,pInfo.type);
+                        ReflectUtil.set(model, resultSet.getObject(name), pInfo.name, pInfo.type);
                     } else
                         continue;
                 }
                 result.list.add(model);
             }
             resultSet.close();
-            if(config.isOutSql)
-                System.out.println("\033[35;4m" +result.sql+ "\033[0m");
+            if (config.isOutSql)
+                System.out.println("\033[35;4m" + result.sql + "\033[0m");
         } catch (Exception ex) {
             ex.printStackTrace();
-            if(config.isOutError)
+            if (config.isOutError)
                 LogUtil.error(ex);
         }
         return result;
@@ -99,21 +99,21 @@ public class DataContext implements Closeable {
                 statement = conn.createStatement();
                 resultSet = statement.executeQuery(map.sql);
             }
-            ResultSetMetaData col =  resultSet.getMetaData();
-            while(resultSet.next()) {
-                Map model = new HashMap<String,Object>();
+            ResultSetMetaData col = resultSet.getMetaData();
+            while (resultSet.next()) {
+                Map model = new HashMap<String, Object>();
                 for (int i = 1; i <= col.getColumnCount(); i++) {
                     String name = col.getColumnName(i);
-                    model.put(name,resultSet.getObject(name));
+                    model.put(name, resultSet.getObject(name));
                 }
                 result.list.add(model);
             }
             resultSet.close();
-            if(config.isOutSql)
-                System.out.println("\033[35;4m" +result.sql+ "\033[0m");
+            if (config.isOutSql)
+                System.out.println("\033[35;4m" + result.sql + "\033[0m");
         } catch (Exception ex) {
             ex.printStackTrace();
-            if(config.isOutError)
+            if (config.isOutError)
                 LogUtil.error(ex);
         }
 
@@ -137,8 +137,10 @@ public class DataContext implements Closeable {
             while (resultSet.next()) {
                 return resultSet.getInt("count");
             }
-            if (config.isOutSql)
-                System.out.println("\033[35;4m" +getSql(map)+ "\033[0m");
+            if (config.isOutSql) {
+                map.sql = sql;
+                System.out.println("\033[35;4m" + getSql(map) + "\033[0m");
+            }
         } catch (Exception ex) {
             if (config.isOutError)
                 ex.printStackTrace();
@@ -184,7 +186,7 @@ public class DataContext implements Closeable {
             }
 
             if (config.isOutSql)
-                System.out.println("\033[35;4m" +getSql(map)+ "\033[0m");
+                System.out.println("\033[35;4m" + getSql(map) + "\033[0m");
         } catch (Exception ex) {
             ex.printStackTrace();
             if (config.isOutError)
@@ -223,7 +225,7 @@ public class DataContext implements Closeable {
                             String name = col.getColumnName(i);
                             if (property.stream().anyMatch(a -> a.name.equalsIgnoreCase(name))) {
                                 PropertyModel pInfo = property.stream().filter(a -> a.name.equalsIgnoreCase(name)).findFirst().get();
-                                ReflectUtil.set(model, resultSet.getObject(name), pInfo.name,pInfo.type);
+                                ReflectUtil.set(model, resultSet.getObject(name), pInfo.name, pInfo.type);
                             } else
                                 continue;
                         }
@@ -232,8 +234,7 @@ public class DataContext implements Closeable {
                     resultSet.close();
                 }
                 result.pModel = pModel;
-            }
-            else
+            } else
                 return result;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -246,7 +247,7 @@ public class DataContext implements Closeable {
     /*
       query by page
     */
-    public PageResult page(PageModel pModel,MapResult map){
+    public PageResult page(PageModel pModel, MapResult map) {
         PageResult result = new PageResult();
         try {
             pModel.starId = (pModel.pageId - 1) * pModel.pageSize + 1;
@@ -265,22 +266,19 @@ public class DataContext implements Closeable {
                 if (resultSet != null) {
                     ResultSetMetaData col = resultSet.getMetaData();
                     while (resultSet.next()) {
-                        Map model = new HashMap<String,Object>();
+                        Map model = new HashMap<String, Object>();
                         for (int i = 1; i <= col.getColumnCount(); i++) {
                             String name = col.getColumnName(i);
-                            model.put(name,resultSet.getObject(name));
+                            model.put(name, resultSet.getObject(name));
                         }
                         result.list.add(model);
                     }
                     resultSet.close();
                 }
                 result.pModel = pModel;
-            }
-            else
+            } else
                 return result;
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
             if (config.isOutError)
                 LogUtil.error(ex);
@@ -304,12 +302,16 @@ public class DataContext implements Closeable {
                 }
                 result.writeReturn.isSuccess = preparedStatement.execute();
             }
+
+            if (config.isOutSql)
+                System.out.println("\033[35;4m" + getSql(insert) + "\033[0m");
+
         } catch (Exception ex) {
             ex.printStackTrace();
             if (config.isOutError)
                 LogUtil.error(ex);
             result.writeReturn.isSuccess = false;
-            result.writeReturn.message=ex.getMessage();
+            result.writeReturn.message = ex.getMessage();
         }
 
         return result;
@@ -334,6 +336,9 @@ public class DataContext implements Closeable {
                 }
                 result.writeReturn.isSuccess = preparedStatement.executeUpdate() > 0;
             }
+
+            if (config.isOutSql)
+                System.out.println("\033[35;4m" + getSql(delete) + "\033[0m");
         } catch (Exception ex) {
             ex.printStackTrace();
             if (config.isOutError)
@@ -353,7 +358,7 @@ public class DataContext implements Closeable {
         DataReturn result = new DataReturn();
 
         try {
-            MapResult update = BaseModel.update(model,field, config, conn);
+            MapResult update = BaseModel.update(model, field, config, conn);
 
             if (!update.isSuccess) {
                 result.writeReturn.isSuccess = false;
@@ -365,6 +370,9 @@ public class DataContext implements Closeable {
                 }
                 result.writeReturn.isSuccess = preparedStatement.executeUpdate() > 0;
             }
+
+            if (config.isOutSql)
+                System.out.println("\033[35;4m" + getSql(update) + "\033[0m");
         } catch (Exception ex) {
             ex.printStackTrace();
             if (config.isOutError)
@@ -383,7 +391,7 @@ public class DataContext implements Closeable {
         DataReturn result = new DataReturn();
 
         try {
-            MapResult update = BaseModel.update(model,null, config, conn);
+            MapResult update = BaseModel.update(model, null, config, conn);
 
             if (!update.isSuccess) {
                 result.writeReturn.isSuccess = false;
@@ -395,6 +403,9 @@ public class DataContext implements Closeable {
                 }
                 result.writeReturn.isSuccess = preparedStatement.executeUpdate() > 0;
             }
+
+            if (config.isOutSql)
+                System.out.println("\033[35;4m" + getSql(update) + "\033[0m");
         } catch (Exception ex) {
             ex.printStackTrace();
             if (config.isOutError)
@@ -427,6 +438,9 @@ public class DataContext implements Closeable {
                     result.count = Integer.parseInt(resultSet.getObject(1).toString());
                 }
             }
+
+            if (config.isOutSql)
+                System.out.println("\033[35;4m" + getSql(exists) + "\033[0m");
         } catch (Exception ex) {
             ex.printStackTrace();
             if (config.isOutError)
@@ -466,16 +480,17 @@ public class DataContext implements Closeable {
             }
             ResultSetMetaData col = resultSet.getMetaData();
             while (resultSet.next()) {
-                Map map = new HashMap<String,Object>();
+                Map map = new HashMap<String, Object>();
                 for (int i = 1; i <= col.getColumnCount(); i++) {
                     String name = col.getColumnName(i);
-                    map.put(name,resultSet.getObject(name));
+                    map.put(name, resultSet.getObject(name));
                 }
                 result.item = map;
             }
             resultSet.close();
+
             if (config.isOutSql)
-                System.out.println("\033[35;4m" +result.sql+ "\033[0m");
+                System.out.println("\033[35;4m" + getSql(query) + "\033[0m");
         } catch (Exception ex) {
             ex.printStackTrace();
             if (config.isOutError)
@@ -513,7 +528,7 @@ public class DataContext implements Closeable {
             }
             ResultSetMetaData col = resultSet.getMetaData();
             while (resultSet.next()) {
-                T item = (T)type.newInstance();
+                T item = (T) type.newInstance();
                 for (int i = 1; i <= col.getColumnCount(); i++) {
                     String name = col.getColumnName(i);
                     if (property.stream().anyMatch(a -> a.name.equalsIgnoreCase(name))) {
@@ -526,7 +541,7 @@ public class DataContext implements Closeable {
             }
             resultSet.close();
             if (config.isOutSql)
-               System.out.println("\033[35;4m" +result.sql+ "\033[0m");
+                System.out.println("\033[35;4m" + getSql(query) + "\033[0m");
         } catch (Exception ex) {
             ex.printStackTrace();
             if (config.isOutError)
@@ -539,7 +554,7 @@ public class DataContext implements Closeable {
         query count
     */
     public int count(MapResult map) {
-        int count=0;
+        int count = 0;
         try {
             ResultSet resultSet;
             if (map.param.size() != 0) {
@@ -557,7 +572,7 @@ public class DataContext implements Closeable {
             }
             resultSet.close();
             if (config.isOutSql)
-                System.out.println("\033[35;4m" +getSql(map)+ "\033[0m");
+                System.out.println("\033[35;4m" + getSql(map) + "\033[0m");
         } catch (Exception ex) {
             if (config.isOutError)
                 ex.printStackTrace();
@@ -583,10 +598,12 @@ public class DataContext implements Closeable {
                 statement = conn.createStatement();
                 result.writeReturn.isSuccess = statement.execute(map.sql);
             }
+            if (config.isOutSql)
+                System.out.println("\033[35;4m" + getSql(map) + "\033[0m");
         } catch (Exception ex) {
             ex.printStackTrace();
-           if (config.isOutError)
-               LogUtil.error(ex);
+            if (config.isOutError)
+                LogUtil.error(ex);
         }
         return result;
     }
