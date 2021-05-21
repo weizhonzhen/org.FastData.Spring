@@ -6,7 +6,7 @@
 
     <groupId>org.FastData.Spring</groupId>
     <artifactId>org.FastData.Spring</artifactId>
-    <version>1.79</version>
+    <version>1</version>
 
     <dependencies>
         <dependency>
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>2.4.5</version>
+            <version>2.4.4</version>
             <optional>true</optional>
         </dependency>
 
