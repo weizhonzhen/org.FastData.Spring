@@ -625,9 +625,9 @@ public class FastRepository implements IFastRepository {
      */
     private void init(String cachePackageName, String codeFirstPackageName, String key) {
         instanceMap();
-        if (cachePackageName != null || cachePackageName.equals(""))
+        if (cachePackageName != null && cachePackageName.equals(""))
             instanceProperties(cachePackageName);
-        if (codeFirstPackageName != null|| !codeFirstPackageName.equals(""))
+        if (codeFirstPackageName != null && !codeFirstPackageName.equals(""))
             instanceTable(codeFirstPackageName, key);
     }
 
