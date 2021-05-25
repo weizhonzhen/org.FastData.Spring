@@ -76,6 +76,7 @@ in resources add map/admin/Api.xml map/admin/Area.xml
           </sqlMap>
     
 ```
+```csharp
  registry.addInterceptor(this.fastApiInterceptor) is dyn http api 
 ```
 in Controller
