@@ -38,7 +38,8 @@ in db.json
       "isOutSql": true,
       "isOutError": true,
       "key": "test",
-      "designModel": "CodeFirst"
+      "designModel": "CodeFirst",
+      "poolSize":50
     }
   ]
 }
