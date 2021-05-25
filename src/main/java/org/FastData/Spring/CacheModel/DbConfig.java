@@ -8,7 +8,7 @@ public class DbConfig implements Serializable {
 
     public String dbType;
 
-    public  String user;
+    public String user;
 
     public String passWord;
 
@@ -21,4 +21,6 @@ public class DbConfig implements Serializable {
     public String key;
 
     public String designModel;
+
+    public int poolSize = 50;
 }
