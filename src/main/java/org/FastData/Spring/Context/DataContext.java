@@ -41,7 +41,7 @@ public class DataContext implements Closeable {
                 PoolModel model = pool.stream().filter(a -> a.id == id).findFirst().get();
                 pool.remove(model);
 
-                if (pool.size() > 50)
+                if (pool.size() > config.poolSize)
                     model.conn.close();
                 else {
                     model.isUse = false;
