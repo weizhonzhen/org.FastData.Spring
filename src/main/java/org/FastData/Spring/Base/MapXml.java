@@ -18,14 +18,13 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 public final class MapXml {
     public static List<String> readXml(String xml) {
-        Map map = CacheUtil.getMap("FastMap.Api");
         XmlModel result = getXmlList(xml, "sqlMap");
         for (int i = 0; i < result.key.size(); i++) {
             CacheUtil.set(result.key.get(i).toLowerCase(), result.sql.get(i));
         }
 
         result.db.forEach((k, v) -> {
-            CacheUtil.set(String.format("%s.db", k.toLowerCase()), v.toString());
+            CacheUtil.set(k.toLowerCase(), v.toString());
         });
 
         result.param.forEach((k, v) -> {
@@ -49,7 +48,7 @@ public final class MapXml {
     public static MapResult getMapSql(String name, Map<String, Object> param) {
         MapResult result = new MapResult();
         StringBuilder sql = new StringBuilder();
-        Map tempParam = new HashMap<String, Object>();
+        Map<String, Object> tempParam = new HashMap<String, Object>();
         name = name.toLowerCase();
 
         for (int i = 0; i <= Integer.parseInt(CacheUtil.get(name)); i++) {
@@ -265,7 +264,10 @@ public final class MapXml {
                         result.name.put(String.format("%s.log", key), node.getAttributes().getNamedItem("log").getNodeValue());
 
                     if (node.getAttributes().getNamedItem("db") != null)
-                        result.db.put(key, node.getAttributes().getNamedItem("db").getNodeValue());
+                        result.db.put(String.format("%s.db", key), node.getAttributes().getNamedItem("db").getNodeValue());
+
+                    if (node.getAttributes().getNamedItem("type") != null)
+                        result.check.put(String.format("%s.type", key), node.getAttributes().getNamedItem("type").getNodeValue());
 
                     for (int child = 0; child < node.getChildNodes().getLength(); child++) {
                         Node childNode = node.getChildNodes().item(child);
@@ -281,9 +283,7 @@ public final class MapXml {
                             if (childNode.getAttributes().getNamedItem("prepend") != null) {
                                 result.key.add(String.format("%s.format.%s", key, i));
                                 result.sql.add(childNode.getAttributes().getNamedItem("prepend").getNodeValue());
-                            }
-                            else
-                            {
+                            } else {
                                 result.key.add(String.format("%s.format.%s", key, i));
                                 result.sql.add("");
                             }
@@ -311,6 +311,11 @@ public final class MapXml {
                                 if (attribute.getNamedItem("required") != null) {
                                     String checkkey = String.format("%s.%s.required", key, attribute.getNamedItem("property").getNodeValue().toLowerCase());
                                     result.check.put(checkkey, attribute.getNamedItem("required").getNodeValue());
+                                }
+
+                                if (attribute.getNamedItem("maxlength") != null) {
+                                    String checkkey = String.format("%s.%s.maxlength", key, attribute.getNamedItem("property").getNodeValue().toLowerCase());
+                                    result.check.put(checkkey, attribute.getNamedItem("maxlength").getNodeValue());
                                 }
 
                                 if (attribute.getNamedItem("property") != null)
