@@ -77,7 +77,8 @@ in resources add map/admin/Api.xml map/admin/Area.xml
     
 ```
 ```csharp
- registry.addInterceptor(this.fastApiInterceptor) is dyn http api 
+ Interceptor registry.addInterceptor(this.fastApiInterceptor) is dyn http api 
+ http://127.0.0.1:8080/GetUser?userId=1
 ```
 in Controller
 ``````csharp
