@@ -157,14 +157,10 @@ public class DataContext implements Closeable {
                 resultSet = preparedStatement.executeQuery();
             } else {
                 statement = conn.createStatement();
-                resultSet = statement.executeQuery(map.sql);
+                resultSet = statement.executeQuery(sql);
             }
             while (resultSet.next()) {
                 return resultSet.getInt("count");
-            }
-            if (config.isOutSql) {
-                map.sql = sql;
-                System.out.println("\033[35;4m" + getSql(map) + "\033[0m");
             }
         } catch (Exception ex) {
             if (config.isOutError)
