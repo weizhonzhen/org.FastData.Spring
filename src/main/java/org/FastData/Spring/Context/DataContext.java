@@ -3,6 +3,7 @@ package org.FastData.Spring.Context;
 import org.FastData.Spring.Base.BaseModel;
 import org.FastData.Spring.Base.DataConfig;
 import org.FastData.Spring.CacheModel.DbConfig;
+import org.FastData.Spring.CacheModel.PoolModel;
 import org.FastData.Spring.CacheModel.PropertyModel;
 import org.FastData.Spring.Model.*;
 import org.FastData.Spring.Config.DataDbType;
@@ -18,12 +19,36 @@ public class DataContext implements Closeable {
     private Connection conn;
     private Statement statement;
     private PreparedStatement preparedStatement;
+    private String cacheKey;
+    private String id;
 
     public DataContext(String key) {
+        config = DataConfig.db(key);
+        cacheKey = String.format("pool.DataContext.%s", config.key.toLowerCase());
+        PoolModel model = getConnection(config, cacheKey);
+        conn = model.conn;
+        id = model.id;
+    }
+
+    public synchronized void close() {
         try {
-            config = DataConfig.db(key);
-            Class.forName(config.providerName);
-            conn = DriverManager.getConnection(config.connStr, config.user, config.passWord);
+            if (statement != null)
+                statement.close();
+            if (preparedStatement != null)
+                preparedStatement.close();
+            if (conn != null) {
+                List<PoolModel> pool = CacheUtil.getList(cacheKey, PoolModel.class);
+                PoolModel model = pool.stream().filter(a -> a.id == id).findFirst().get();
+                pool.remove(model);
+
+                if (pool.size() > 50)
+                    model.conn.close();
+                else {
+                    model.isUse = false;
+                    pool.add(model);
+                }
+                CacheUtil.setModel(cacheKey, pool);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -645,16 +670,32 @@ public class DataContext implements Closeable {
         }
     }
 
-    public void close() {
+    private synchronized PoolModel getConnection(DbConfig dbconfig,String cacheKey) {
+        PoolModel model = new PoolModel();
         try {
-            if (statement != null)
-                statement.close();
-            if (preparedStatement != null)
-                preparedStatement.close();
-            if (conn != null)
-                conn.close();
+            dbconfig = DataConfig.db(dbconfig.key);
+            Class.forName(dbconfig.providerName);
+            List<PoolModel> pool = CacheUtil.getList(cacheKey, PoolModel.class);
+            pool = pool == null ? new ArrayList<PoolModel>() : pool;
+
+            if (pool.stream().filter(a -> !a.isUse).count() < 1) {
+                conn = DriverManager.getConnection(dbconfig.connStr, dbconfig.user, dbconfig.passWord);
+                model.isUse = true;
+                model.conn = conn;
+                model.id = UUID.randomUUID().toString();
+                id = model.id;
+                pool.add(model);
+
+            } else if (pool.stream().anyMatch(a -> !a.isUse)) {
+                model = pool.stream().filter(a -> !a.isUse).findFirst().get();
+                model.isUse = true;
+                conn = model.conn;
+                id = model.id;
+            }
+            CacheUtil.setModel(cacheKey, pool);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return model;
     }
 }
