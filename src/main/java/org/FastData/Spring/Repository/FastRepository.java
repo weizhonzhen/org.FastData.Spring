@@ -24,8 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-@Configuration
-@ComponentScan(basePackages = "org.FastData.Spring.Repository")
+@ComponentScan(basePackages = {"org.FastData.Spring.Repository","org.FastData.Spring.Handler"})
 public class FastRepository implements IFastRepository {
     @PostConstruct
     public void init() {
