@@ -654,7 +654,7 @@ public class FastRepository implements IFastRepository {
         List<Class> list = ScanPackage.get(packageName);
         list.forEach(a -> {
             List<PropertyModel> cacheList = new ArrayList<PropertyModel>();
-            Arrays.stream(a.getFields()).forEach(f -> {
+            Arrays.stream(a.getDeclaredFields()).forEach(f -> {
                 try {
                     PropertyModel property = new PropertyModel();
                     property.type = f.getType();
