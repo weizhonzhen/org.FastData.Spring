@@ -1,13 +1,16 @@
 package org.FastData.Spring.CheckModel;
 
+import lombok.Data;
+
+@Data
 public class ColumnType {
-    public String name;
+    private String name;
 
-    public String type ;
+    private String type ;
 
-    public int length ;
+    private int length ;
 
-    public int precision ;
+    private int precision ;
 
-    public int scale ;
+    private int scale ;
 }

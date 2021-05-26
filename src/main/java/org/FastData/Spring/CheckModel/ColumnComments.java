@@ -1,10 +1,13 @@
 package org.FastData.Spring.CheckModel;
 
+import lombok.Data;
+
+@Data
 public class ColumnComments {
-    public String comments ;
+    private String comments ;
 
-    public String name ;
+    private String name ;
 
-    public ColumnType type;
+    private ColumnType type;
 
 }

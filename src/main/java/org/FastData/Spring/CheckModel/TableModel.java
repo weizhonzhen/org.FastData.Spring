@@ -1,12 +1,15 @@
 package org.FastData.Spring.CheckModel;
 
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
+@Data
 public class TableModel {
 
-    public String name;
+    private String name;
 
-    public String comments;
+    private String comments;
 
-    public List<ColumnModel> column=new ArrayList<>();
+    private List<ColumnModel> column=new ArrayList<>();
 }

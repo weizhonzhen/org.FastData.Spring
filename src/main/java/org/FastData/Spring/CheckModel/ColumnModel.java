@@ -1,20 +1,23 @@
 package org.FastData.Spring.CheckModel;
 
+import lombok.Data;
+
+@Data
 public class ColumnModel {
 
-    public boolean isKey = false;
+    private boolean isKey = false;
 
-    public String name;
+    private String name;
 
-    public String dataType;
+    private String dataType;
 
-    public int length;
+    private int length;
 
-    public int precision;
+    private int precision;
 
-    public int scale;
+    private int scale;
 
-    public boolean isNull = true;
+    private boolean isNull = true;
 
-    public String comments = "";
+    private String comments = "";
 }
