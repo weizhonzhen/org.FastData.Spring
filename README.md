@@ -1,6 +1,8 @@
 # org.FastData
 java orm(db first,code frist) for sqlserver mysql etl.
 
+model class all member by  
+
 in Application add Annotation
 ```csharp
  @FastData(key = "test",cachePackageName = "com.example.Entity" ,codeFirstPackageName="com.example.Entity")
