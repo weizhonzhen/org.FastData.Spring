@@ -19,7 +19,6 @@ model class all member by  public
         public string ExtendRoleId;
         public string IsAdmin;
         public string IsDel;
-        public DateTime AddTime;
         public string AddUserId;
         public string AddUserName;}
         public string DelUserId;        
