@@ -1,9 +1,11 @@
 package org.FastData.Spring.CacheModel;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
+@Data
 public class PropertyModel implements Serializable {
-    public String name;
-
-    public Class<?> type;
+    private String name;
+    private Class<?> type;
 }

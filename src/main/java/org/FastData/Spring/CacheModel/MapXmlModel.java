@@ -1,10 +1,14 @@
 package org.FastData.Spring.CacheModel;
 
+import lombok.Data;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public class MapXmlModel implements Serializable  {
-    public List<String> fileKey;
+    private List<String> fileKey=new ArrayList<>();
 
-    public String fileName;
+    private String fileName;
 }

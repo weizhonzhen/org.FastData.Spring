@@ -1,26 +1,28 @@
 package org.FastData.Spring.CacheModel;
 
+import lombok.Data;
 import java.io.Serializable;
 
+@Data
 public class DbConfig implements Serializable {
 
-    public String providerName;
+    private String providerName;
 
-    public String dbType;
+    private String dbType;
 
-    public String user;
+    private String user;
 
-    public String passWord;
+    private String passWord;
 
-    public String connStr;
+    private String connStr;
 
-    public boolean isOutSql;
+    private boolean isOutSql;
 
-    public boolean isOutError;
+    private boolean isOutError;
 
-    public String key;
+    private String key;
 
-    public String designModel;
+    private String designModel;
 
-    public int poolSize = 50;
+    private int poolSize = 50;
 }
