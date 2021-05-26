@@ -1,5 +1,6 @@
 package org.FastData.Spring.Check;
 
+import lombok.Data;
 import org.FastData.Spring.CheckModel.ColumnComments;
 import org.FastData.Spring.CheckModel.ColumnModel;
 import org.FastData.Spring.CheckModel.ColumnType;
@@ -7,10 +8,11 @@ import org.FastData.Spring.CheckModel.CompareModel;
 
 import java.util.Optional;
 
+@Data
 public class CheckModel {
     private static ColumnType getColumnType(ColumnModel item, String type, String name) {
         ColumnType result = new ColumnType();
-        result.name = name;
+        result.setName( name);
 
         switch (type.toLowerCase()) {
             case "char":
@@ -19,18 +21,18 @@ public class CheckModel {
             case "nvarchar":
             case "varchar2":
             case "nvarchar2":
-                result.length = item.length;
-                result.type = type;
+                result.setLength(item.getLength());
+                result.setType(type);
                 break;
             case "decimal":
             case "numeric":
             case "number":
-                result.precision = item.precision;
-                result.scale = item.scale;
-                result.type = type;
+                result.setPrecision(item.getPrecision());
+                result.setScale(item.getScale());
+                result.setType(type);
                 break;
             default:
-                result.type = type;
+                result.setType(type);
                 break;
         }
 
@@ -39,83 +41,83 @@ public class CheckModel {
 
     public static CompareModel<ColumnModel> compareTo(ColumnModel cacheItem, ColumnModel modelItem) {
         CompareModel<ColumnModel> result = new CompareModel<ColumnModel>();
-        result.item = modelItem;
+        result.setItem(modelItem);
 
-        if (modelItem.name == null) {
-            result.removeName.add(cacheItem.name);
-            result.isDelete = true;
+        if (modelItem.getName() == null) {
+            result.getRemoveName().add(cacheItem.getName());
+            result.setDelete(true);
             return result;
         }
 
-        String type = modelItem.dataType;
+        String type = modelItem.getDataType();
         if (type.equals(""))
-            type = cacheItem.dataType;
+            type = cacheItem.getDataType();
 
-        String name = modelItem.name;
+        String name = modelItem.getName();
         if (name.equals("")) {
-            name = cacheItem.name;
-            result.item = cacheItem;
+            name = cacheItem.getName();
+            result.setItem(cacheItem);
         }
 
-        if (modelItem.isKey != cacheItem.isKey) {
-            result.isUpdate = true;
-            if (modelItem.isKey)
-                result.addKey.add(getColumnType(modelItem, type, name));
+        if (modelItem.isKey() != cacheItem.isKey()) {
+            result.setUpdate(true);
+            if (modelItem.isKey())
+                result.getAddKey().add(getColumnType(modelItem, type, name));
             else
-                result.removeKey.add(name);
+                result.getRemoveKey().add(name);
         }
 
-        if (modelItem.isNull != cacheItem.isNull) {
-            result.isUpdate = true;
-            if (modelItem.isNull)
-                result.addNull.add(getColumnType(modelItem, type, name));
+        if (modelItem.isNull() != cacheItem.isNull()) {
+            result.setUpdate(true);
+            if (modelItem.isNull())
+                result.getAddNull().add(getColumnType(modelItem, type, name));
             else
-                result.removeNull.add(getColumnType(modelItem, type, name));
+                result.getRemoveNull().add(getColumnType(modelItem, type, name));
         }
 
-        if (!modelItem.name.equalsIgnoreCase(cacheItem.name)) {
-            result.isUpdate = true;
-            if (Optional.of(modelItem.name).orElse("").equals(""))
-                result.removeName.add(name);
+        if (!modelItem.getName().equalsIgnoreCase(cacheItem.getName())) {
+            result.setUpdate(true);
+            if (Optional.of(modelItem.getName()).orElse("").equals(""))
+                result.getRemoveName().add(name);
             else
-                result.addName.add(getColumnType(modelItem, type, name));
+                result.getAddName().add(getColumnType(modelItem, type, name));
         }
 
-        if (!modelItem.dataType.equalsIgnoreCase(cacheItem.dataType)){
-            result.isUpdate = true;
-            result.type.add(getColumnType(modelItem, type, name));
+        if (!modelItem.getDataType().equalsIgnoreCase(cacheItem.getDataType())){
+            result.setUpdate(true);
+            result.getType().add(getColumnType(modelItem, type, name));
         }
        else {
-            switch (modelItem.dataType.toLowerCase()) {
+            switch (modelItem.getDataType().toLowerCase()) {
                 case "char":
                 case "nchar":
                 case "varchar":
                 case "nvarchar":
                 case "varchar2":
                 case "nvarchar2":
-                    if (modelItem.length != cacheItem.length) {
-                        result.isUpdate = true;
-                        result.type.add(getColumnType(modelItem, type, name));
+                    if (modelItem.getLength() != cacheItem.getLength()) {
+                        result.setUpdate(true);
+                        result.getType().add(getColumnType(modelItem, type, name));
                     }
                     break;
                 case "decimal":
                 case "numeric":
                 case "number":
-                    if (modelItem.precision != cacheItem.precision || modelItem.scale != cacheItem.scale) {
-                        result.isUpdate = true;
-                        result.type.add(getColumnType(modelItem, type, name));
+                    if (modelItem.getPrecision() != cacheItem.getPrecision() || modelItem.getScale() != cacheItem.getScale()) {
+                        result.setUpdate(true);
+                        result.getType().add(getColumnType(modelItem, type, name));
                     }
                     break;
             }
         }
 
-        if (!modelItem.comments.equals(cacheItem.comments)) {
-            result.isUpdate = true;
+        if (!modelItem.getComments().equals(cacheItem.getComments())) {
+            result.setUpdate(true);
             ColumnComments temp = new ColumnComments();
-            temp.comments = modelItem.comments;
-            temp.type = getColumnType(modelItem, type, name);
-            temp.name = name;
-            result.comments.add(temp);
+            temp.setComments(modelItem.getComments());
+            temp.setType(getColumnType(modelItem, type, name));
+            temp.setName(name);
+            result.getComments().add(temp);
         }
 
         return result;
