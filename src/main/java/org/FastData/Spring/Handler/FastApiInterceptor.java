@@ -67,45 +67,45 @@ public class FastApiInterceptor implements HandlerInterceptor {
                     PageModel page = new PageModel();
                     Optional pageSizeKey = param.keySet().stream().filter(k -> k.toString().equalsIgnoreCase("pagesize")).findFirst();
                     if (pageSizeKey == Optional.empty())
-                        page.pageSize = 10;
+                        page.setPageSize(10);
                     else {
                         Object pageSize = ((String[])param.get(pageSizeKey.get()))[0];
-                        page.pageSize = pageSize == null ? 10 : Integer.parseInt(pageSize.toString());
+                        page.setPageSize( pageSize == null ? 10 : Integer.parseInt(pageSize.toString()));
                     }
 
                     Optional pageIdKey = param.keySet().stream().filter(k -> k.toString().equalsIgnoreCase("pageid")).findFirst();
                     if (pageIdKey == Optional.empty())
-                        page.pageId = 1;
+                        page.setPageId(1);
                     else {
                         Object pageId = ((String[])param.get((pageIdKey).get()))[0];
-                        page.pageId = pageId == null ? 1 : Integer.parseInt(pageId.toString());
+                        page.setPageId(pageId == null ? 1 : Integer.parseInt(pageId.toString()));
                     }
 
                     PageResult pageInfo = db.page(page, result);
 
                     data.put("success", true);
-                    map.put("data", pageInfo.list);
-                    map.put("page", pageInfo.pModel);
+                    map.put("data", pageInfo.getList());
+                    map.put("page", pageInfo.getPModel());
                     return getResult(response, map);
                 }
 
                 if (mapType(name).equalsIgnoreCase(all)) {
                     data.put("success", true);
-                    map.put("data", db.query(result).list);
+                    map.put("data", db.query(result).getList());
                     return getResult(response, map);
                 }
 
                 if (mapType(name).equalsIgnoreCase(write) && map.size() > 0) {
                     DataReturn info = db.execute(result);
-                    data.put("success", info.writeReturn.isSuccess);
-                    if (!info.writeReturn.isSuccess)
-                        data.put("error", info.writeReturn.message);
+                    data.put("success", info.getWriteReturn().getIsSuccess());
+                    if (!info.getWriteReturn().getIsSuccess())
+                        data.put("error", info.getWriteReturn().getMessage());
                     return getResult(response, map);
                 }
 
                 if (map.size() > 0) {
                     data.put("success", true);
-                    map.put("data", db.query(result).list);
+                    map.put("data", db.query(result).getList());
                     return getResult(response, map);
                 }
             }
