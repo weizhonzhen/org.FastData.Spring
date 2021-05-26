@@ -1,29 +1,6 @@
 # org.FastData
 java orm(db first,code frist) for sqlserver mysql etl.
 
-```csharp
-model class all member by  public
-    public class Base_User
-    {
-        public string UserId;      
-        public string UserPass;
-        public string FullName;
-        public string OrgId;
-        public string ExtendOrgId;
-        public string HospitalId;
-        public string ExtendHospitalId;
-        public string AreaId;
-        public string ExtendAreaId;
-        public string  UserNo;
-        public string RoleId;
-        public string ExtendRoleId;
-        public string IsAdmin;
-        public string IsDel;
-        public string AddUserId;
-        public string AddUserName;}
-        public string DelUserId;        
-        public string DelUserName;
-```
 in Application add Annotation
 ```csharp
  @FastData(key = "test",cachePackageName = "com.example.Entity" ,codeFirstPackageName="com.example.Entity")
