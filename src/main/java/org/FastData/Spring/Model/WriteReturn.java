@@ -1,8 +1,11 @@
 package org.FastData.Spring.Model;
 
+import lombok.Data;
+
+@Data
 public class WriteReturn
 {
-    public Boolean isSuccess;
+    private Boolean isSuccess;
 
-    public String message ;
+    private String message ;
 }

@@ -1,16 +1,19 @@
 package org.FastData.Spring.Model;
 
+import lombok.Data;
+
+@Data
 public class PageModel {
 
-    public int starId;
+    private int starId;
 
-    public int endId;
+    private int endId;
 
-    public int totalRecord;
+    private int totalRecord;
 
-    public int totalPage;
+    private int totalPage;
 
-    public int pageId = 1;
+    private int pageId = 1;
 
-    public int pageSize = 10;
+    private int pageSize = 10;
 }

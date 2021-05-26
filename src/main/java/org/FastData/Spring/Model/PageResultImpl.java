@@ -1,10 +1,12 @@
 package org.FastData.Spring.Model;
 
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
-
+@Data
 public class PageResultImpl<T> {
-    public PageModel pModel = new PageModel();
+    private PageModel pModel = new PageModel();
 
-    public List<T> list = new ArrayList<T>();
+    private List<T> list = new ArrayList<T>();
 }

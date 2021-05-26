@@ -1,18 +1,20 @@
 package org.FastData.Spring.Model;
 
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@Data
 public class MapResult {
-    public String sql;
+    private String sql;
 
-    public Map<String, Object> param = new HashMap<>();
+    private Map<String, Object> param = new HashMap<>();
 
-    public List<String> name = new ArrayList<>();
+    private List<String> name = new ArrayList<>();
 
-    public boolean isSuccess;
+    private boolean isSuccess;
 
-    public String message;
+    private String message;
 }

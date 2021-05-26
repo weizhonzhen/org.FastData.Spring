@@ -1,19 +1,21 @@
 package org.FastData.Spring.Model;
 
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
-
+@Data
 public class DataReturnImpl<T>{
 
-    public int count ;
+    private int count ;
 
-    public T item;
+    private T item;
 
-    public List<T> list = new ArrayList<T>();
+    private List<T> list = new ArrayList<T>();
 
-    public String sql ;
+    private String sql ;
 
-    public PageResultImpl<T> pageResult  = new PageResultImpl<T>();
+    private PageResultImpl<T> pageResult  = new PageResultImpl<T>();
 
-    public WriteReturn writeReturn = new WriteReturn();
+    private WriteReturn writeReturn = new WriteReturn();
 }

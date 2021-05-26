@@ -1,20 +1,22 @@
 package org.FastData.Spring.Model;
 
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@Data
 public class DataReturn {
-    public int count;
+    private int count;
 
-    public String sql;
+    private String sql;
 
-    public List<Map<String, Object>> list = new ArrayList<>();
+    private List<Map<String, Object>> list = new ArrayList<>();
 
-    public Map<String, Object> item = new HashMap<>();
+    private Map<String, Object> item = new HashMap<>();
 
-    public PageResult pageResult = new PageResult();
+    private PageResult pageResult = new PageResult();
 
-    public WriteReturn writeReturn = new WriteReturn();
+    private WriteReturn writeReturn = new WriteReturn();
 }
