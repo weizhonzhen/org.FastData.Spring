@@ -15,7 +15,6 @@ import org.FastData.Spring.Model.*;
 import org.FastData.Spring.Util.ScanPackage;
 import org.FastData.Spring.Util.CacheUtil;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -42,8 +41,8 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(key)) {
-                db.config.isOutSql = db.config.isOutSql || mapLog(name);
-                return db.query(result, type).list;
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name));
+                return db.query(result, type).getList();
             }
         }
         return new ArrayList<>();
@@ -54,8 +53,8 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(key)) {
-                db.config.isOutSql = db.config.isOutSql || mapLog(name) || log;
-                return db.query(result, type).list;
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
+                return db.query(result, type).getList();
             }
         }
         return new ArrayList<>();
@@ -65,8 +64,8 @@ public class FastRepository implements IFastRepository {
     public List<?> query(String name, Map<String, Object> param, Class<?> type, DataContext db) {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
-            db.config.isOutSql = db.config.isOutSql || mapLog(name);
-            return db.query(result, type).list;
+            db.config.setOutSql(db.config.isOutSql() || mapLog(name));
+            return db.query(result, type).getList();
         }
         return new ArrayList<>();
     }
@@ -75,8 +74,8 @@ public class FastRepository implements IFastRepository {
     public List<?> query(String name, Map<String, Object> param, Class<?> type, DataContext db,Boolean log) {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
-            db.config.isOutSql = db.config.isOutSql || mapLog(name) || log;
-            return db.query(result, type).list;
+            db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
+            return db.query(result, type).getList();
         }
         return new ArrayList<>();
     }
@@ -86,8 +85,8 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(mapDb(name))) {
-                db.config.isOutSql = db.config.isOutSql || mapLog(name);
-                return db.query(result, type).list;
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name));
+                return db.query(result, type).getList();
             }
         }
         return new ArrayList<>();
@@ -98,8 +97,8 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(mapDb(name))) {
-                db.config.isOutSql = db.config.isOutSql || mapLog(name) || log;
-                return db.query(result, type).list;
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
+                return db.query(result, type).getList();
             }
         }
         return new ArrayList<>();
@@ -110,8 +109,8 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(key)) {
-                db.config.isOutSql = db.config.isOutSql || mapLog(name);
-                return db.query(result).list;
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name));
+                return db.query(result).getList();
             }
         }
         return new ArrayList<Map<String, Object>>();
@@ -122,8 +121,8 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(key)) {
-                db.config.isOutSql = db.config.isOutSql || mapLog(name)||log;
-                return db.query(result).list;
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
+                return db.query(result).getList();
             }
         }
         return new ArrayList<Map<String, Object>>();
@@ -133,8 +132,8 @@ public class FastRepository implements IFastRepository {
     public List<Map<String, Object>> query(String name, Map<String, Object> param, DataContext db) {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
-            db.config.isOutSql = db.config.isOutSql || mapLog(name);
-            return db.query(result).list;
+            db.config.setOutSql(db.config.isOutSql() || mapLog(name));
+            return db.query(result).getList();
         }
         return new ArrayList<Map<String, Object>>();
     }
@@ -143,8 +142,8 @@ public class FastRepository implements IFastRepository {
     public List<Map<String, Object>> query(String name, Map<String, Object> param, DataContext db,Boolean log) {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
-            db.config.isOutSql = db.config.isOutSql || mapLog(name)||log;
-            return db.query(result).list;
+            db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
+            return db.query(result).getList();
         }
         return new ArrayList<Map<String, Object>>();
     }
@@ -154,8 +153,8 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(mapDb(name))) {
-                db.config.isOutSql = db.config.isOutSql || mapLog(name);
-                return db.query(result).list;
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name));
+                return db.query(result).getList();
             }
         }
         return new ArrayList<Map<String, Object>>();
@@ -166,8 +165,8 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(mapDb(name))) {
-                db.config.isOutSql = db.config.isOutSql || mapLog(name)||log;
-                return db.query(result).list;
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
+                return db.query(result).getList();
             }
         }
         return new ArrayList<Map<String, Object>>();
@@ -178,7 +177,7 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             try (DataContext db = new DataContext(key)) {
                 MapResult result = MapXml.getMapSql(name, param);
-                db.config.isOutSql = db.config.isOutSql || mapLog(name);
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name));
                 return db.page(pModel, result, type);
             }
         }
@@ -190,7 +189,7 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             try (DataContext db = new DataContext(key)) {
                 MapResult result = MapXml.getMapSql(name, param);
-                db.config.isOutSql = db.config.isOutSql || mapLog(name)||log;
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
                 return db.page(pModel, result, type);
             }
         }
@@ -201,7 +200,7 @@ public class FastRepository implements IFastRepository {
     public PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type, DataContext db) {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
-            db.config.isOutSql = db.config.isOutSql || mapLog(name);
+            db.config.setOutSql(db.config.isOutSql() || mapLog(name));
             return db.page(pModel, result, type);
         }
         return new PageResultImpl<>();
@@ -211,7 +210,7 @@ public class FastRepository implements IFastRepository {
     public PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type, DataContext db,Boolean log) {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
-            db.config.isOutSql = db.config.isOutSql || mapLog(name)||log;
+            db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
             return db.page(pModel, result, type);
         }
         return new PageResultImpl<>();
@@ -222,7 +221,7 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             try (DataContext db = new DataContext(mapDb(name))) {
                 MapResult result = MapXml.getMapSql(name, param);
-                db.config.isOutSql = db.config.isOutSql || mapLog(name);
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name));
                 return db.page(pModel, result, type);
             }
         }
@@ -234,7 +233,7 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             try (DataContext db = new DataContext(mapDb(name))) {
                 MapResult result = MapXml.getMapSql(name, param);
-                db.config.isOutSql = db.config.isOutSql || mapLog(name)||log;
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
                 return db.page(pModel, result, type);
             }
         }
@@ -246,7 +245,7 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             try (DataContext db = new DataContext(key)) {
                 MapResult result = MapXml.getMapSql(name, param);
-                db.config.isOutSql = db.config.isOutSql || mapLog(name);
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name));
                 return db.page(pModel, result);
             }
         }
@@ -258,7 +257,7 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             try (DataContext db = new DataContext(key)) {
                 MapResult result = MapXml.getMapSql(name, param);
-                db.config.isOutSql = db.config.isOutSql || mapLog(name)||log;
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
                 return db.page(pModel, result);
             }
         }
@@ -269,7 +268,7 @@ public class FastRepository implements IFastRepository {
     public PageResult page(PageModel pModel, String name, Map<String, Object> param, DataContext db) {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
-            db.config.isOutSql = db.config.isOutSql || mapLog(name);
+            db.config.setOutSql(db.config.isOutSql() || mapLog(name));
             return db.page(pModel, result);
         }
         return new PageResult();
@@ -279,7 +278,7 @@ public class FastRepository implements IFastRepository {
     public PageResult page(PageModel pModel, String name, Map<String, Object> param, DataContext db,Boolean log) {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
-            db.config.isOutSql = db.config.isOutSql || mapLog(name)||log;
+            db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
             return db.page(pModel, result);
         }
         return new PageResult();
@@ -290,7 +289,7 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             try (DataContext db = new DataContext(mapDb(name))) {
                 MapResult result = MapXml.getMapSql(name, param);
-                db.config.isOutSql = db.config.isOutSql || mapLog(name);
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name));
                 return db.page(pModel, result);
             }
         }
@@ -302,7 +301,7 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             try (DataContext db = new DataContext(mapDb(name))) {
                 MapResult result = MapXml.getMapSql(name, param);
-                db.config.isOutSql = db.config.isOutSql || mapLog(name)||log;
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
                 return db.page(pModel, result);
             }
         }
@@ -312,183 +311,183 @@ public class FastRepository implements IFastRepository {
     @Override
     public WriteReturn add(Object model, String key) {
         try (DataContext db = new DataContext(key)) {
-            return db.add(model).writeReturn;
+            return db.add(model).getWriteReturn();
         }
     }
 
     @Override
     public WriteReturn add(Object model, String key,Boolean log) {
         try (DataContext db = new DataContext(key)) {
-            db.config.isOutSql=db.config.isOutSql||log;
-            return db.add(model).writeReturn;
+            db.config.setOutSql(db.config.isOutSql() || log);
+            return db.add(model).getWriteReturn();
         }
     }
 
     @Override
     public WriteReturn add(Object model, DataContext db) {
-        return db.add(model).writeReturn;
+        return db.add(model).getWriteReturn();
     }
 
     @Override
     public WriteReturn add(Object model, DataContext db,Boolean log) {
-        db.config.isOutSql=db.config.isOutSql||log;
-        return db.add(model).writeReturn;
+        db.config.setOutSql(db.config.isOutSql() ||log);
+        return db.add(model).getWriteReturn();
     }
 
     @Override
     public WriteReturn update(Object model, List<String> field, String key) {
         try (DataContext db = new DataContext(key)) {
-            return db.update(model,field).writeReturn;
+            return db.update(model,field).getWriteReturn();
         }
     }
 
     @Override
     public WriteReturn update(Object model, List<String> field, String key,Boolean log) {
         try (DataContext db = new DataContext(key)) {
-            db.config.isOutSql=db.config.isOutSql||log;
-            return db.update(model,field).writeReturn;
+            db.config.setOutSql(db.config.isOutSql() ||log);
+            return db.update(model,field).getWriteReturn();
         }
     }
 
     @Override
     public WriteReturn update(Object model, List<String> field, DataContext db) {
-        return db.update(model,field).writeReturn;
+        return db.update(model,field).getWriteReturn();
     }
 
     @Override
     public WriteReturn update(Object model, List<String> field, DataContext db,Boolean log) {
-        db.config.isOutSql=db.config.isOutSql||log;
-        return db.update(model,field).writeReturn;
+        db.config.setOutSql(db.config.isOutSql() || log);
+        return db.update(model,field).getWriteReturn();
     }
 
     @Override
     public WriteReturn update(Object model, String key) {
         try (DataContext db = new DataContext(key)) {
-            return db.update(model).writeReturn;
+            return db.update(model).getWriteReturn();
         }
     }
 
     @Override
     public WriteReturn update(Object model, String key,Boolean log) {
         try (DataContext db = new DataContext(key)) {
-            db.config.isOutSql=db.config.isOutSql||log;
-            return db.update(model).writeReturn;
+            db.config.setOutSql(db.config.isOutSql() || log);
+            return db.update(model).getWriteReturn();
         }
     }
 
     @Override
     public WriteReturn update(Object model, DataContext db) {
-        return db.update(model).writeReturn;
+        return db.update(model).getWriteReturn();
     }
 
     @Override
     public WriteReturn update(Object model, DataContext db,Boolean log) {
-        db.config.isOutSql=db.config.isOutSql||log;
-        return db.update(model).writeReturn;
+        db.config.setOutSql(db.config.isOutSql() || log);
+        return db.update(model).getWriteReturn();
     }
 
     @Override
     public WriteReturn delete(Object model, String key) {
         try (DataContext db = new DataContext(key)) {
-            return db.delete(model).writeReturn;
+            return db.delete(model).getWriteReturn();
         }
     }
 
     @Override
     public WriteReturn delete(Object model, String key,Boolean log) {
         try (DataContext db = new DataContext(key)) {
-            db.config.isOutSql=db.config.isOutSql||log;
-            return db.delete(model).writeReturn;
+            db.config.setOutSql(db.config.isOutSql() ||log);
+            return db.delete(model).getWriteReturn();
         }
     }
 
     @Override
     public WriteReturn delete(Object model, DataContext db) {
-        return db.delete(model).writeReturn;
+        return db.delete(model).getWriteReturn();
     }
 
     @Override
     public WriteReturn delete(Object model, DataContext db,Boolean log) {
-        db.config.isOutSql=db.config.isOutSql||log;
-        return db.delete(model).writeReturn;
+        db.config.setOutSql(db.config.isOutSql() || log);
+        return db.delete(model).getWriteReturn();
     }
 
     @Override
     public boolean exists(Object model, String key) {
         try (DataContext db = new DataContext(key)) {
-            return db.exists(model).count>0;
+            return db.exists(model).getCount()>0;
         }
     }
 
     @Override
     public boolean exists(Object model, String key,Boolean log) {
         try (DataContext db = new DataContext(key)) {
-            db.config.isOutSql=db.config.isOutSql||log;
-            return db.exists(model).count>0;
+            db.config.setOutSql(db.config.isOutSql() || log);
+            return db.exists(model).getCount()>0;
         }
     }
 
     @Override
     public boolean exists(Object model, DataContext db) {
-        return db.exists(model).count>0;
+        return db.exists(model).getCount()>0;
     }
 
     @Override
     public boolean exists(Object model, DataContext db,Boolean log) {
-        db.config.isOutSql=db.config.isOutSql||log;
-        return db.exists(model).count>0;
+        db.config.setOutSql(db.config.isOutSql() ||log);
+        return db.exists(model).getCount()>0;
     }
 
     @Override
     public Object query(Object model,Class<?> type, String key) {
         try (DataContext db = new DataContext(key)) {
-            return db.query(model,type).item;
+            return db.query(model,type).getItem();
         }
     }
 
     @Override
     public Object query(Object model,Class<?> type, String key,Boolean log) {
         try (DataContext db = new DataContext(key)) {
-            db.config.isOutSql=db.config.isOutSql||log;
-            return db.query(model,type).item;
+            db.config.setOutSql(db.config.isOutSql() ||log);
+            return db.query(model,type).getItem();
         }
     }
 
     @Override
     public Object query(Object model,Class<?> type, DataContext db) {
-        return db.query(model,type).item;
+        return db.query(model,type).getItem();
     }
 
     @Override
     public Object query(Object model,Class<?> type, DataContext db,Boolean log) {
-        db.config.isOutSql=db.config.isOutSql||log;
-        return db.query(model,type).item;
+        db.config.setOutSql(db.config.isOutSql()||log);
+        return db.query(model,type).getItem();
     }
 
     @Override
     public Map<String,Object> query(Object model, String key) {
         try (DataContext db = new DataContext(key)) {
-            return db.query(model).item;
+            return db.query(model).getItem();
         }
     }
 
     @Override
     public Map<String,Object> query(Object model, String key,Boolean log) {
         try (DataContext db = new DataContext(key)) {
-            db.config.isOutSql=db.config.isOutSql||log;
-            return db.query(model).item;
+            db.config.setOutSql(db.config.isOutSql() ||log);
+            return db.query(model).getItem();
         }
     }
 
     @Override
     public Map<String,Object> query(Object model, DataContext db) {
-        return db.query(model).item;
+        return db.query(model).getItem();
     }
 
     @Override
     public Map<String,Object> query(Object model, DataContext db,Boolean log) {
-        db.config.isOutSql=db.config.isOutSql||log;
-        return db.query(model).item;
+        db.config.setOutSql(db.config.isOutSql() ||log);
+        return db.query(model).getItem();
     }
 
     @Override
@@ -496,11 +495,11 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             WriteReturn check = checkParam(result, name);
-            if (!check.isSuccess)
+            if (!check.getIsSuccess())
                 return check;
             try (DataContext db = new DataContext(key)) {
-                db.config.isOutSql = db.config.isOutSql || mapLog(name);
-                return db.execute(result).writeReturn;
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name));
+                return db.execute(result).getWriteReturn();
             }
         }
         return checkName(name);
@@ -511,11 +510,11 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             WriteReturn check = checkParam(result, name);
-            if (!check.isSuccess)
+            if (!check.getIsSuccess())
                 return check;
             try (DataContext db = new DataContext(key)) {
-                db.config.isOutSql = db.config.isOutSql || mapLog(name)||log;
-                return db.execute(result).writeReturn;
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
+                return db.execute(result).getWriteReturn();
             }
         }
         return checkName(name);
@@ -526,10 +525,10 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             WriteReturn check = checkParam(result, name);
-            if (!check.isSuccess)
+            if (!check.getIsSuccess())
                 return check;
-            db.config.isOutSql = db.config.isOutSql || mapLog(name);
-            return db.execute(result).writeReturn;
+            db.config.setOutSql(db.config.isOutSql() || mapLog(name));
+            return db.execute(result).getWriteReturn();
         }
         return checkName(name);
     }
@@ -539,10 +538,10 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             WriteReturn check = checkParam(result, name);
-            if (!check.isSuccess)
+            if (!check.getIsSuccess())
                 return check;
-            db.config.isOutSql = db.config.isOutSql || mapLog(name)||log;
-            return db.execute(result).writeReturn;
+            db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
+            return db.execute(result).getWriteReturn();
         }
         return checkName(name);
     }
@@ -552,11 +551,11 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             WriteReturn check = checkParam(result, name);
-            if (!check.isSuccess)
+            if (!check.getIsSuccess())
                 return check;
             try (DataContext db = new DataContext(mapDb(name))) {
-                db.config.isOutSql = db.config.isOutSql || mapLog(name);
-                return db.execute(result).writeReturn;
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name));
+                return db.execute(result).getWriteReturn();
             }
         }
         return checkName(name);
@@ -567,11 +566,11 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             WriteReturn check = checkParam(result, name);
-            if (!check.isSuccess)
+            if (!check.getIsSuccess())
                 return check;
             try (DataContext db = new DataContext(mapDb(name))) {
-                db.config.isOutSql = db.config.isOutSql || mapLog(name)||log;
-                return db.execute(result).writeReturn;
+                db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
+                return db.execute(result).getWriteReturn();
             }
         }
         return checkName(name);
@@ -591,12 +590,12 @@ public class FastRepository implements IFastRepository {
 
     private WriteReturn checkParam(MapResult map,String name) {
         WriteReturn result = new WriteReturn();
-        result.isSuccess = true;
-        for (int i = 0; i < map.name.size(); i++) {
-            String param = map.name.get(i);
-            if (mapCheck(name, param) && map.param.get(param) == null) {
-                result.isSuccess = false;
-                result.message = String.format("xml 中 id: %S 中参数 %s不能为空", name, param);
+        result.setIsSuccess(true);
+        for (int i = 0; i < map.getName().size(); i++) {
+            String param = map.getName().get(i);
+            if (mapCheck(name, param) && map.getParam().get(param) == null) {
+                result.setIsSuccess(false);
+                result.setMessage(String.format("xml 中 id: %S 中参数 %s不能为空", name, param));
             }
         }
         return result;
@@ -604,8 +603,8 @@ public class FastRepository implements IFastRepository {
 
     private WriteReturn checkName(String name) {
         WriteReturn info = new WriteReturn();
-        info.isSuccess = false;
-        info.message = String.format("xml 中 id: %S 不存在", name);
+        info.setIsSuccess(false);
+        info.setMessage(String.format("xml 中 id: %S 不存在", name));
         return info;
     }
 
@@ -633,14 +632,14 @@ public class FastRepository implements IFastRepository {
     /* xml cache */
     private void instanceMap() {
         MapConfig list = DataConfig.map();
-        if (list.path.size() == 0)
+        if (list.getPath().size() == 0)
             return;
-        list.path.forEach(p -> {
+        list.getPath().forEach(p -> {
             try {
                 MapXmlModel temp = new MapXmlModel();
                 byte[] bytes = MessageDigest.getInstance("md5").digest(p.getBytes());
-                temp.fileName = p;
-                temp.fileKey = MapXml.readXml(DataConfig.Content(p));
+                temp.setFileName(p);
+                temp.setFileKey(MapXml.readXml(DataConfig.Content(p)));
                 String key = new BigInteger(1, bytes).toString(32);
                 CacheUtil.setModel(key, temp);
             } catch (Exception e) {
@@ -657,8 +656,8 @@ public class FastRepository implements IFastRepository {
             Arrays.stream(a.getDeclaredFields()).forEach(f -> {
                 try {
                     PropertyModel property = new PropertyModel();
-                    property.type = f.getType();
-                    property.name = f.getName();
+                    property.setType(f.getType());
+                    property.setName(f.getName());
                     cacheList.add(property);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -675,7 +674,7 @@ public class FastRepository implements IFastRepository {
     private void instanceTable(String packageName, String key) {
         List<Class> list = ScanPackage.get(packageName);
         DbConfig config = DataConfig.db(key);
-        if (config.designModel.equalsIgnoreCase(Config.codeFirst)) {
+        if (config.getDesignModel().equalsIgnoreCase(Config.codeFirst)) {
             list.forEach(a -> {
                 if (a.getAnnotation(Table.class) != null)
                     BaseTable.check(a, config);
