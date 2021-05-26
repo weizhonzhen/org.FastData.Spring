@@ -19,30 +19,30 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public final class MapXml {
     public static List<String> readXml(String xml) {
         XmlModel result = getXmlList(xml, "sqlMap");
-        for (int i = 0; i < result.key.size(); i++) {
-            CacheUtil.set(result.key.get(i).toLowerCase(), result.sql.get(i));
+        for (int i = 0; i < result.getKey().size(); i++) {
+            CacheUtil.set(result.getKey().get(i).toLowerCase(), result.getSql().get(i));
         }
 
-        result.db.forEach((k, v) -> {
+        result.getDb().forEach((k, v) -> {
             CacheUtil.set(k.toLowerCase(), v.toString());
         });
 
-        result.param.forEach((k, v) -> {
+        result.getParam().forEach((k, v) -> {
             CacheUtil.setModel(String.format("%s.param", k.toLowerCase()), v);
-            result.key.add(String.format("%s.param", k.toLowerCase()));
+            result.getKey().add(String.format("%s.param", k.toLowerCase()));
         });
 
-        result.name.forEach((k, v) -> {
+        result.getName().forEach((k, v) -> {
             CacheUtil.set(k.toLowerCase(), v.toString());
-            result.key.add(k.toLowerCase());
+            result.getKey().add(k.toLowerCase());
         });
 
-        result.check.forEach((k, v) -> {
+        result.getCheck().forEach((k, v) -> {
             CacheUtil.set(k.toLowerCase(), v.toString());
-            result.key.add(k.toLowerCase());
+            result.getKey().add(k.toLowerCase());
         });
 
-        return result.key;
+        return result.getKey();
     }
 
     public static MapResult getMapSql(String name, Map<String, Object> param) {
@@ -67,9 +67,9 @@ public final class MapXml {
                     if (param.keySet().stream().noneMatch(a -> a.equals(item)))
                         continue;
                     String tempName = item.toLowerCase();
-                    if (result.name.stream().noneMatch(a -> a.equals(item))) {
+                    if (result.getName().stream().noneMatch(a -> a.equals(item))) {
                         tempParam.put(item, param.get(item));
-                        result.name.add(item);
+                        result.getName().add(item);
                     }
 
                     String key = String.format("%s.%s.%s", name, tempName, i).toLowerCase();
@@ -86,17 +86,17 @@ public final class MapXml {
                             case "isnotnullorempty": {
                                 if (param.get(item) == null || param.get(item).equals("")) {
                                     tempParam.remove(item);
-                                    result.name.remove(item);
+                                    result.getName().remove(item);
                                 } else {
                                     if (paramSql.contains(tempKey)) {
                                         tempParam.remove(item);
-                                        result.name.remove(item);
+                                        result.getName().remove(item);
                                         condtionSql.append(paramSql.replace(tempKey, param.get(item).toString()));
                                     } else if (paramSql.contains(flagParam))
                                         condtionSql.append(paramSql.replace(flagParam, "?"));
                                     else {
                                         tempParam.remove(item);
-                                        result.name.remove(item);
+                                        result.getName().remove(item);
                                         condtionSql.append(condtionSql);
                                     }
                                 }
@@ -107,18 +107,18 @@ public final class MapXml {
                                 if (ifSuccess) {
                                     if (paramSql.contains(tempKey)) {
                                         tempParam.remove(key);
-                                        result.name.remove(item);
+                                        result.getName().remove(item);
                                         condtionSql.append(paramSql.replace(tempKey, param.get(item).toString()));
                                     } else if (paramSql.contains(flagParam))
                                         condtionSql.append(paramSql.replace(flagParam, "?"));
                                     else {
                                         tempParam.remove(item);
-                                        result.name.remove(item);
+                                        result.getName().remove(item);
                                         condtionSql.append(paramSql);
                                     }
                                 } else {
                                     tempParam.remove(item);
-                                    result.name.remove(item);
+                                    result.getName().remove(item);
                                 }
                             }
                             case "choose": {
@@ -137,13 +137,13 @@ public final class MapXml {
                                         if (isSuccess) {
                                             if (chooseSql.contains(tempKey)) {
                                                 tempParam.remove(item);
-                                                result.name.remove(item);
+                                                result.getName().remove(item);
                                                 condtionSql.append(chooseSql.replace(tempKey, param.get(item).toString()));
                                             } else if (chooseSql.contains(flagParam))
                                                 condtionSql.append(chooseSql.replace(flagParam, "?"));
                                             else {
                                                 tempParam.remove(item);
-                                                result.name.remove(item);
+                                                result.getName().remove(item);
                                                 condtionSql.append(chooseSql);
                                             }
                                             break;
@@ -154,16 +154,16 @@ public final class MapXml {
                                 if (!isSuccess) {
                                     if (conditionOtherSql.equals("")) {
                                         tempParam.remove(item);
-                                        result.name.remove(item);
+                                        result.getName().remove(item);
                                     } else if (conditionOtherSql.contains(tempKey)) {
                                         tempParam.remove(item);
-                                        result.name.remove(item);
+                                        result.getName().remove(item);
                                         condtionSql.append(conditionOtherSql.replace(tempKey, param.get(item).toString()));
                                     } else if (conditionOtherSql.contains(flagParam))
                                         condtionSql.append(conditionOtherSql.replace(flagParam, "?"));
                                     else {
                                         tempParam.remove(item);
-                                        result.name.remove(item);
+                                        result.getName().remove(item);
                                         condtionSql.append(conditionOtherSql);
                                     }
                                 }
@@ -172,13 +172,13 @@ public final class MapXml {
                             default: {
                                 if (paramSql.contains(tempKey)) {
                                     tempParam.remove(item);
-                                    result.name.remove(item);
+                                    result.getName().remove(item);
                                     condtionSql.append(paramSql.replace(tempKey, param.get(item).toString()));
                                 } else if (paramSql.contains(flagParam))
                                     condtionSql.append(paramSql.replace(flagParam, "?"));
                                 else {
                                     tempParam.remove(item);
-                                    result.name.remove(item);
+                                    result.getName().remove(item);
                                     condtionSql.append(condtionSql);
                                 }
                                 break;
@@ -206,7 +206,7 @@ public final class MapXml {
         }
 
         if (CacheUtil.getList(String.format("%s.param", name), String.class).size() > 0)
-            result.param = tempParam;
+            result.setParam(tempParam);
         else {
             assert param != null;
             for (Map.Entry<String, Object> item : param.entrySet()) {
@@ -219,17 +219,17 @@ public final class MapXml {
                 } else if (sql.toString().toLowerCase().contains(flagParam))
                     tempParam.put(item.getKey(), item.getValue());
             }
-            result.param = tempParam;
+            result.setParam(tempParam);
         }
 
-        result.sql = sql.toString();
+        result.setSql(sql.toString());
 
         return result;
     }
 
     private static XmlModel getXmlList(String xml, String xmlNode) {
         XmlModel result = new XmlModel();
-        result.isSuccess = true;
+        result.setSuccess(true);
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -241,7 +241,7 @@ public final class MapXml {
             for (int j = 0; j < nodeList.getLength(); j++) {
                 Node node = nodeList.item(j);
                 if (!node.getParentNode().getNodeName().equals(xmlNode)) {
-                    result.isSuccess = false;
+                    result.setSuccess(false);
                     throw new Exception(String.format("%s节点不存在", xmlNode));
                 }
 
@@ -252,50 +252,50 @@ public final class MapXml {
                     List<String> param = new ArrayList<String>();
                     String key = node.getAttributes().getNamedItem("id").getNodeValue().toLowerCase();
 
-                    if (result.key.stream().anyMatch(t -> t.equals(key))) {
-                        result.isSuccess = false;
+                    if (result.getKey().stream().anyMatch(t -> t.equals(key))) {
+                        result.setSuccess(false);
                         throw new Exception(String.format("key:%s已经存在", key));
                     }
 
-                    result.key.add(key);
-                    result.sql.add(String.valueOf(node.getChildNodes().getLength()));
+                    result.getKey().add(key);
+                    result.getSql().add(String.valueOf(node.getChildNodes().getLength()));
 
                     if (node.getAttributes().getNamedItem("log") != null)
-                        result.name.put(String.format("%s.log", key), node.getAttributes().getNamedItem("log").getNodeValue());
+                        result.getName().put(String.format("%s.log", key), node.getAttributes().getNamedItem("log").getNodeValue());
 
                     if (node.getAttributes().getNamedItem("db") != null)
-                        result.db.put(String.format("%s.db", key), node.getAttributes().getNamedItem("db").getNodeValue());
+                        result.getDb().put(String.format("%s.db", key), node.getAttributes().getNamedItem("db").getNodeValue());
 
                     if (node.getAttributes().getNamedItem("type") != null)
-                        result.check.put(String.format("%s.type", key), node.getAttributes().getNamedItem("type").getNodeValue());
+                        result.getCheck().put(String.format("%s.type", key), node.getAttributes().getNamedItem("type").getNodeValue());
 
                     for (int child = 0; child < node.getChildNodes().getLength(); child++) {
                         Node childNode = node.getChildNodes().item(child);
 
                         if (childNode instanceof DeferredTextImpl) {
-                            result.key.add(String.format("%s.%s", key, i));
-                            result.sql.add(((DeferredTextImpl) childNode).getNodeValue());
+                            result.getKey().add(String.format("%s.%s", key, i));
+                            result.getSql().add(((DeferredTextImpl) childNode).getNodeValue());
                         }
 
                         if (childNode instanceof DeferredElementImpl) {
                             NodeList tempNode = childNode.getChildNodes();
 
                             if (childNode.getAttributes().getNamedItem("prepend") != null) {
-                                result.key.add(String.format("%s.format.%s", key, i));
-                                result.sql.add(childNode.getAttributes().getNamedItem("prepend").getNodeValue());
+                                result.getKey().add(String.format("%s.format.%s", key, i));
+                                result.getSql().add(childNode.getAttributes().getNamedItem("prepend").getNodeValue());
                             } else {
-                                result.key.add(String.format("%s.format.%s", key, i));
-                                result.sql.add("");
+                                result.getKey().add(String.format("%s.format.%s", key, i));
+                                result.getSql().add("");
                             }
 
                             if (childNode.getAttributes().getNamedItem("rtrim") != null) {
-                                result.key.add(String.format("%s.rtrim.%s", key, i));
-                                result.sql.add(childNode.getAttributes().getNamedItem("rtrim").getNodeValue());
+                                result.getKey().add(String.format("%s.rtrim.%s", key, i));
+                                result.getSql().add(childNode.getAttributes().getNamedItem("rtrim").getNodeValue());
                             }
 
                             if (childNode.getAttributes().getNamedItem("ltrim") != null) {
-                                result.key.add(String.format("%s.ltrim.%s", key, i));
-                                result.sql.add(childNode.getAttributes().getNamedItem("ltrim").getNodeValue());
+                                result.getKey().add(String.format("%s.ltrim.%s", key, i));
+                                result.getSql().add(childNode.getAttributes().getNamedItem("ltrim").getNodeValue());
                             }
 
                             for (int condtion = 0; condtion < tempNode.getLength(); condtion++) {
@@ -305,43 +305,43 @@ public final class MapXml {
                                     continue;
 
                                 NamedNodeMap attribute = condtionNode.getAttributes();
-                                result.key.add(String.format("%s.%s.condition.%s", key, attribute.getNamedItem("property").getNodeValue().toLowerCase(), i));
-                                result.sql.add(condtionNode.getNodeName());
+                                result.getKey().add(String.format("%s.%s.condition.%s", key, attribute.getNamedItem("property").getNodeValue().toLowerCase(), i));
+                                result.getSql().add(condtionNode.getNodeName());
 
                                 if (attribute.getNamedItem("required") != null) {
                                     String checkkey = String.format("%s.%s.required", key, attribute.getNamedItem("property").getNodeValue().toLowerCase());
-                                    result.check.put(checkkey, attribute.getNamedItem("required").getNodeValue());
+                                    result.getCheck().put(checkkey, attribute.getNamedItem("required").getNodeValue());
                                 }
 
                                 if (attribute.getNamedItem("maxlength") != null) {
                                     String checkkey = String.format("%s.%s.maxlength", key, attribute.getNamedItem("property").getNodeValue().toLowerCase());
-                                    result.check.put(checkkey, attribute.getNamedItem("maxlength").getNodeValue());
+                                    result.getCheck().put(checkkey, attribute.getNamedItem("maxlength").getNodeValue());
                                 }
 
                                 if (attribute.getNamedItem("property") != null)
                                     param.add(attribute.getNamedItem("property").getNodeValue());
 
                                 if (condtionNode.getNodeName().equalsIgnoreCase("ispropertyavailable")) {
-                                    result.key.add(String.format("%s.%s.%s", key, attribute.getNamedItem("property").getNodeValue().toLowerCase(), i));
-                                    result.sql.add(String.format("%s%s", attribute.getNamedItem("prepend").getNodeValue(), condtionNode.getTextContent()));
+                                    result.getKey().add(String.format("%s.%s.%s", key, attribute.getNamedItem("property").getNodeValue().toLowerCase(), i));
+                                    result.getSql().add(String.format("%s%s", attribute.getNamedItem("prepend").getNodeValue(), condtionNode.getTextContent()));
                                 } else if (!condtionNode.getNodeName().equalsIgnoreCase("choose")) {
 
-                                    result.key.add(String.format("%s.%s.%s", key, attribute.getNamedItem("property").getNodeValue().toLowerCase(), i));
-                                    result.sql.add(String.format("%s%s", attribute.getNamedItem("prepend").getNodeValue(), condtionNode.getTextContent()));
+                                    result.getKey().add(String.format("%s.%s.%s", key, attribute.getNamedItem("property").getNodeValue().toLowerCase(), i));
+                                    result.getSql().add(String.format("%s%s", attribute.getNamedItem("prepend").getNodeValue(), condtionNode.getTextContent()));
 
                                     if (attribute.getNamedItem("condition") != null) {
-                                        result.key.add(String.format("%s.%s.condition.value.%s", key, attribute.getNamedItem("property").getNodeValue().toLowerCase(), i));
-                                        result.sql.add(attribute.getNamedItem("condition").getNodeValue());
+                                        result.getKey().add(String.format("%s.%s.condition.value.%s", key, attribute.getNamedItem("property").getNodeValue().toLowerCase(), i));
+                                        result.getSql().add(attribute.getNamedItem("condition").getNodeValue());
                                     }
 
                                     if (attribute.getNamedItem("compareValue") != null) {
-                                        result.key.add(String.format("%s.%s.condition.value.%s", key, attribute.getNamedItem("property").getNodeValue().toLowerCase(), i));
-                                        result.sql.add(attribute.getNamedItem("compareValue").getNodeValue());
+                                        result.getKey().add(String.format("%s.%s.condition.value.%s", key, attribute.getNamedItem("property").getNodeValue().toLowerCase(), i));
+                                        result.getSql().add(attribute.getNamedItem("compareValue").getNodeValue());
                                     }
                                 } else {
                                     int count = 0;
-                                    result.key.add(String.format("%s.%s.%s", key, attribute.getNamedItem("property").getNodeValue().toLowerCase(), i));
-                                    result.sql.add(String.valueOf(node.getChildNodes().getLength()));
+                                    result.getKey().add(String.format("%s.%s.%s", key, attribute.getNamedItem("property").getNodeValue().toLowerCase(), i));
+                                    result.getSql().add(String.valueOf(node.getChildNodes().getLength()));
                                     NodeList chooseNodeList = condtionNode.getChildNodes();
                                     String chooseKey = attribute.getNamedItem("property").getNodeValue().toLowerCase();
                                     for (int choose = 0; choose < chooseNodeList.getLength(); choose++) {
@@ -350,16 +350,16 @@ public final class MapXml {
                                         if (attribute == null)
                                             continue;
                                         if (chooseNode.getNodeName().equalsIgnoreCase("other")) {
-                                            result.key.add(String.format("%s.%s.%s.choose.other.%s", key, chooseKey, i, count));
-                                            result.sql.add(String.format("%s%s", attribute.getNamedItem("prepend").getNodeValue(), chooseNode.getTextContent()));
+                                            result.getKey().add(String.format("%s.%s.%s.choose.other.%s", key, chooseKey, i, count));
+                                            result.getSql().add(String.format("%s%s", attribute.getNamedItem("prepend").getNodeValue(), chooseNode.getTextContent()));
                                         } else {
                                             if (attribute.getNamedItem("property") != null) {
-                                                result.key.add(String.format("%s.%s.%s.choose.condition.%s", key, chooseKey, i, count));
-                                                result.sql.add(attribute.getNamedItem("property").getNodeValue());
+                                                result.getKey().add(String.format("%s.%s.%s.choose.condition.%s", key, chooseKey, i, count));
+                                                result.getSql().add(attribute.getNamedItem("property").getNodeValue());
                                             }
 
-                                            result.key.add(String.format("%s.%s.%s.choose.%s", key, chooseKey, i, count));
-                                            result.sql.add(String.format("%s%s", attribute.getNamedItem("prepend").getNodeValue().toLowerCase(), chooseNode.getTextContent()));
+                                            result.getKey().add(String.format("%s.%s.%s.choose.%s", key, chooseKey, i, count));
+                                            result.getSql().add(String.format("%s%s", attribute.getNamedItem("prepend").getNodeValue().toLowerCase(), chooseNode.getTextContent()));
                                         }
                                         count++;
                                     }
@@ -369,16 +369,16 @@ public final class MapXml {
 
                         i++;
                     }
-                    result.param.put(key, param);
+                    result.getParam().put(key, param);
 
-                    result.sql.forEach(a -> {
+                    result.getSql().forEach(a -> {
                         a = a.replace("&lt;", "<").replace("&gt", ">");
                     });
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            result.isSuccess = false;
+            result.setSuccess(false);
         }
         return result;
     }

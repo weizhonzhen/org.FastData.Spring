@@ -16,7 +16,7 @@ public final class DataConfig {
         String cacheKey = "FastData.Config";
         if (CacheUtil.exists(cacheKey)) {
             List<DbConfig> list = CacheUtil.getList(cacheKey, DbConfig.class);
-            Optional<DbConfig> confgOptional = list.stream().filter(a -> a.key.equals(key)).findFirst();
+            Optional<DbConfig> confgOptional = list.stream().filter(a -> a.getKey().equals(key)).findFirst();
             return confgOptional.orElseGet(DbConfig::new);
         } else {
             Map map = JSON.parseObject(Content("db.json"), Map.class);
@@ -24,7 +24,7 @@ public final class DataConfig {
                 return new DbConfig();
             List<DbConfig> list = JSON.parseArray(map.get("dataConfig").toString(), DbConfig.class);
             CacheUtil.setModel(cacheKey, list);
-            Optional<DbConfig> confgOptional = list.stream().filter(a -> a.key.equals(key)).findFirst();
+            Optional<DbConfig> confgOptional = list.stream().filter(a -> a.getKey().equals(key)).findFirst();
             return confgOptional.orElseGet(DbConfig::new);
         }
     }
