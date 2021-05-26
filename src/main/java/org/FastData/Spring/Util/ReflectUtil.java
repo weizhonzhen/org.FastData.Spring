@@ -1,6 +1,9 @@
 package org.FastData.Spring.Util;
 
 import com.esotericsoftware.reflectasm.MethodAccess;
+import org.apache.commons.beanutils.ConvertUtils;
+
+import javax.xml.bind.DatatypeConverter;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +20,7 @@ public final class ReflectUtil {
             if (value == null)
                 return;
             Method method = null;
-            String key = String.format("%s.set%s",model.getClass().getName(),name);
+            String key = String.format("%s.set%s", model.getClass().getName(), name);
             if (cache.get(key) == null) {
                 method = model.getClass().getMethod(String.format("set%s", name), type);
                 cache.put(key, method);
@@ -25,7 +28,7 @@ public final class ReflectUtil {
                 method = cache.get(key);
 
             MethodAccess methodAccess = MethodAccess.get(model.getClass());
-            methodAccess.invoke(model, method.getName(), value);
+                methodAccess.invoke(model, method.getName(), ConvertUtils.convert(value,type));
         } catch (Throwable e) {
             e.printStackTrace();
         }
