@@ -18,9 +18,9 @@ import Table;
 @Table(comments = "测试")
 public class TestTable {
     @Column(isKey = true,dataType = "NVARCHAR2",length = 15,isNull = true,comments = "id")
-    public  String Id;
+    private  String Id;
     @Column(dataType = "NUMBER",isNull = true,comments = "value")
-    public  Number value;
+    private  Number value;
 }
 ```
 
