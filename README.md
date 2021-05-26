@@ -1,8 +1,48 @@
 # org.FastData
 java orm(db first,code frist) for sqlserver mysql etl.
 
+```csharp
 model class all member by  
+    public class Base_User
+    {
+        public string UserId { get; set; }
+        
+        public string UserPass { get; set; }
 
+        public string FullName { get; set; }
+
+        public string OrgId { get; set; }
+
+        public string ExtendOrgId { get; set; }
+
+        public string HospitalId { get; set; }
+
+        public string ExtendHospitalId { get; set; }
+
+        public string AreaId { get; set; }
+
+        public string ExtendAreaId { get; set; }
+
+        public string  UserNo { get; set; }
+
+        public string RoleId { get; set; }
+
+        public string ExtendRoleId { get; set; }
+
+        public string IsAdmin { get; set; }
+
+        public string IsDel { get; set; }
+
+        public DateTime AddTime { get; set; }
+
+        public string AddUserId { get; set; }
+
+        public string AddUserName { get; set; }
+
+        public string DelUserId { get; set; }        
+
+        public string DelUserName { get; set; }
+```
 in Application add Annotation
 ```csharp
  @FastData(key = "test",cachePackageName = "com.example.Entity" ,codeFirstPackageName="com.example.Entity")
