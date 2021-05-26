@@ -2,7 +2,7 @@
 java orm(db first,code frist) for sqlserver mysql etl.
 
 ```csharp
-model class all member by  
+model class all member by  public
     public class Base_User
     {
         public string UserId { get; set; }
