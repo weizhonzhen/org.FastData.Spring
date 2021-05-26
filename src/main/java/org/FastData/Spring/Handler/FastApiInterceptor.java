@@ -16,11 +16,11 @@ import java.util.*;
 
 @Component
 public class FastApiInterceptor implements HandlerInterceptor {
-    public final static String page = "page";
-    public final static String pageAll = "pageall";
-    public final static String param = "param";
-    public final static String all = "all";
-    public final static String write = "write";
+    private final static String page = "page";
+    private final static String pageAll = "pageall";
+    private final static String param = "param";
+    private final static String all = "all";
+    private final static String write = "write";
 
     @Resource
     IFastRepository ifast;
