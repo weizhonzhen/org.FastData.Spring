@@ -1,4 +1,4 @@
-# org.FastData
+# org.FastData.Spring
 java orm(db first,code frist) for sqlserver mysql etl.
 
 in Application add Annotation
