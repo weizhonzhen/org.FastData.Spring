@@ -12,7 +12,7 @@ import java.util.Optional;
 public class CheckModel {
     private static ColumnType getColumnType(ColumnModel item, String type, String name) {
         ColumnType result = new ColumnType();
-        result.setName( name);
+        result.setName(name);
 
         switch (type.toLowerCase()) {
             case "char":
@@ -67,7 +67,7 @@ public class CheckModel {
                 result.getRemoveKey().add(name);
         }
 
-        if (modelItem.isNull() != cacheItem.isNull()) {
+        if (modelItem.isNull() != cacheItem.isNull() && !modelItem.isKey()) {
             result.setUpdate(true);
             if (modelItem.isNull())
                 result.getAddNull().add(getColumnType(modelItem, type, name));
@@ -83,11 +83,10 @@ public class CheckModel {
                 result.getAddName().add(getColumnType(modelItem, type, name));
         }
 
-        if (!modelItem.getDataType().equalsIgnoreCase(cacheItem.getDataType())){
+        if (!modelItem.getDataType().equalsIgnoreCase(cacheItem.getDataType())) {
             result.setUpdate(true);
             result.getType().add(getColumnType(modelItem, type, name));
-        }
-       else {
+        } else {
             switch (modelItem.getDataType().toLowerCase()) {
                 case "char":
                 case "nchar":

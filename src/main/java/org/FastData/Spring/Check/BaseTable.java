@@ -379,7 +379,7 @@ public class BaseTable {
 
     private static List<ColumnModel> getColumnClass(Class<?> type) {
         List<ColumnModel> list = new ArrayList<ColumnModel>();
-        Arrays.stream(type.getFields()).sequential().forEach(a -> {
+        Arrays.stream(type.getDeclaredFields()).sequential().forEach(a -> {
             Column info = a.getAnnotation(Column.class);
             if(info!=null) {
                 ColumnModel temp = new ColumnModel();
