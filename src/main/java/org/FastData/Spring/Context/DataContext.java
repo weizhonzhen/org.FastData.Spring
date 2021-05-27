@@ -246,7 +246,9 @@ public class DataContext implements Closeable {
                             String name = col.getColumnName(i);
                             if (property.stream().anyMatch(a -> a.getName().equalsIgnoreCase(name))) {
                                 PropertyModel pInfo = property.stream().filter(a -> a.getName().equalsIgnoreCase(name)).findFirst().get();
-                                ReflectUtil.set(model, resultSet.getObject(name), pInfo.getName(), pInfo.getType());
+                                Object value = resultSet.getObject(name);
+                                if (!resultSet.wasNull())
+                                    ReflectUtil.set(model, value, pInfo.getName(), pInfo.getType());
                             } else
                                 continue;
                         }
@@ -554,7 +556,9 @@ public class DataContext implements Closeable {
                     String name = col.getColumnName(i);
                     if (property.stream().anyMatch(a -> a.getName().equalsIgnoreCase(name))) {
                         PropertyModel pInfo = property.stream().filter(a -> a.getName().equalsIgnoreCase(name)).findFirst().get();
-                        ReflectUtil.set(item, resultSet.getObject(name), pInfo.getName(), pInfo.getType());
+                        Object value = resultSet.getObject(name);
+                        if (!resultSet.wasNull())
+                            ReflectUtil.set(model, value, pInfo.getName(), pInfo.getType());
                     } else
                         continue;
                 }
