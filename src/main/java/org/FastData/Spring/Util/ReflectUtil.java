@@ -25,8 +25,7 @@ public final class ReflectUtil {
                 method = cache.get(key);
 
             MethodAccess methodAccess = MethodAccess.get(model.getClass());
-            if (!value.equals(""))
-                methodAccess.invoke(model, method.getName(), convert(value, type));
+            methodAccess.invoke(model, method.getName(), convert(value, type));
         } catch (Throwable e) {
             e.printStackTrace();
         }
