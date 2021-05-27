@@ -558,7 +558,7 @@ public class DataContext implements Closeable {
                         PropertyModel pInfo = property.stream().filter(a -> a.getName().equalsIgnoreCase(name)).findFirst().get();
                         Object value = resultSet.getObject(name);
                         if (!resultSet.wasNull())
-                            ReflectUtil.set(model, value, pInfo.getName(), pInfo.getType());
+                            ReflectUtil.set(item, value, pInfo.getName(), pInfo.getType());
                     } else
                         continue;
                 }
