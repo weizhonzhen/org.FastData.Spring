@@ -26,7 +26,7 @@ public final class BaseModel {
             name.append(String.format("%s,", a.getName()));
             value.append("?,");
             result.getName().add(a.getName());
-            result.getParam().put(a.getName(), ReflectUtil.get(model,a.getName()));
+            result.getParam().put(a.getName(), ReflectUtil.get(model,a.getName(),a.getType()));
         });
         result.setSql(String.format("%s) %s)", name.substring(0, name.length() - 1), value.substring(0, value.length() - 1)));
         return result;
@@ -107,7 +107,7 @@ public final class BaseModel {
                 PropertyModel pinfo=property.stream().filter(a-> a.getName().equalsIgnoreCase(item)).findFirst().get();
                 result.getName().add(pinfo.getName());
                 result.setSql(String.format("%s %s=?,", result.getSql(), pinfo.getName()));
-                result.getParam().put(pinfo.getName(), ReflectUtil.get(model,pinfo.getName()));
+                result.getParam().put(pinfo.getName(), ReflectUtil.get(model,pinfo.getName(),pinfo.getType()));
             }
             else {
                 result.setSuccess(false);
@@ -139,7 +139,7 @@ public final class BaseModel {
         for (PropertyModel item : property) {
             result.getName().add(item.getName());
             result.setSql(String.format("%s %s=?,", result.getSql(), item.getName()));
-            result.getParam().put(item.getName(), ReflectUtil.get(model, item.getName()));
+            result.getParam().put(item.getName(), ReflectUtil.get(model, item.getName(),item.getType()));
         }
 
         result.setSql(result.getSql().substring(0, result.getSql().length() - 1));
@@ -184,7 +184,7 @@ public final class BaseModel {
         for (String item : list) {
             if (property.stream().anyMatch(a -> a.getName().equalsIgnoreCase(item))) {
                 PropertyModel pinfo = property.stream().filter(a -> a.getName().equalsIgnoreCase(item)).findFirst().get();
-                Object value = ReflectUtil.get(model, pinfo.getName());
+                Object value = ReflectUtil.get(model, pinfo.getName(),pinfo.getType());
                 if (value == null) {
                     result.setSuccess(false);
                     result.setMessage(String.format("主键%s值为空", item));
