@@ -7,17 +7,17 @@ import java.util.Map;
 public final class CacheUtil {
     private static Map<String, Object> cache = new HashMap<String, Object>();
 
-    public synchronized static void set(String key, String value) {
+    public static void set(String key, String value) {
         cache.remove(key);
         cache.put(key, value);
     }
 
-    public synchronized static void setMap(String key, Map value) {
+    public static void setMap(String key, Map value) {
         cache.remove(key);
         cache.put(key, value);
     }
 
-    public synchronized static <T> void setModel(String key, T value) {
+    public static <T> void setModel(String key, T value) {
         cache.remove(key);
         cache.put(key, value);
     }
