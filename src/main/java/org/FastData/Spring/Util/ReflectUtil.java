@@ -2,6 +2,7 @@ package org.FastData.Spring.Util;
 
 import com.esotericsoftware.reflectasm.MethodAccess;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,9 +18,13 @@ public final class ReflectUtil {
             if (value == null)
                 return;
             Method method = null;
+
             String key = String.format("%s.set%s", model.getClass().getName(), name);
             if (cache.get(key) == null) {
-                method = model.getClass().getMethod(String.format("set%s", name), type);
+                if (type == Boolean.TYPE)
+                    method = Arrays.stream(model.getClass().getMethods()).filter(a -> a.getName().contains(name)).findFirst().get();
+                else
+                    method = model.getClass().getMethod(String.format("set%s", name), type);
                 cache.put(key, method);
             } else
                 method = cache.get(key);
@@ -31,13 +36,16 @@ public final class ReflectUtil {
         }
     }
 
-    public static <T> Object get(T model, String name) {
+    public static <T> Object get(T model, String name, Class<?> type) {
         Object result = null;
         try {
             Method method = null;
             String key = String.format("%s.get%s", model.getClass().getName(), name);
             if (cache.get(key) == null) {
-                method = model.getClass().getMethod(String.format("get%s", name));
+                if (type == Boolean.TYPE)
+                    method = Arrays.stream(model.getClass().getMethods()).filter(a -> a.getName().contains(name)).findFirst().get();
+                else
+                    method = model.getClass().getMethod(String.format("get%s", name));
                 cache.put(key, method);
             } else
                 method = cache.get(key);
