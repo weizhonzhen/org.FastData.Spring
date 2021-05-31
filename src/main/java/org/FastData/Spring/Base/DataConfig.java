@@ -47,6 +47,8 @@ public final class DataConfig {
                 while ((s = reader.readLine()) != null) {
                     sb.append(s);
                 }
+                reader.close();
+                stream.close();
             }
             return sb.toString();
         } catch (Exception e) {
