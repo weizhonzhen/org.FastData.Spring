@@ -1,22 +1,23 @@
 package org.FastData.Spring.Util;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public final class CacheUtil {
-    private static Map<String, Object> cache = new HashMap<>();
+    private static Map<String, Object> cache = new HashMap<String, Object>();
 
-    public static void set(String key, String value) {
+    public synchronized static void set(String key, String value) {
         cache.remove(key);
         cache.put(key, value);
     }
 
-    public static void setMap(String key, Map value) {
+    public synchronized static void setMap(String key, Map value) {
         cache.remove(key);
         cache.put(key, value);
     }
 
-    public static <T> void setModel(String key, T value) {
+    public synchronized static <T> void setModel(String key, T value) {
         cache.remove(key);
         cache.put(key, value);
     }
@@ -41,7 +42,7 @@ public final class CacheUtil {
         return cache.containsKey(key);
     }
 
-    public static void remove(String key) {
+    public synchronized static void remove(String key) {
         cache.remove(key);
     }
 }
