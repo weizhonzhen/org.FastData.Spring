@@ -495,7 +495,7 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             WriteReturn check = checkParam(result, name);
-            if (!check.getIsSuccess())
+            if (!check.getSuccess())
                 return check;
             try (DataContext db = new DataContext(key)) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
@@ -510,7 +510,7 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             WriteReturn check = checkParam(result, name);
-            if (!check.getIsSuccess())
+            if (!check.getSuccess())
                 return check;
             try (DataContext db = new DataContext(key)) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
@@ -525,7 +525,7 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             WriteReturn check = checkParam(result, name);
-            if (!check.getIsSuccess())
+            if (!check.getSuccess())
                 return check;
             db.config.setOutSql(db.config.isOutSql() || mapLog(name));
             return db.execute(result).getWriteReturn();
@@ -538,7 +538,7 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             WriteReturn check = checkParam(result, name);
-            if (!check.getIsSuccess())
+            if (!check.getSuccess())
                 return check;
             db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
             return db.execute(result).getWriteReturn();
@@ -551,7 +551,7 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             WriteReturn check = checkParam(result, name);
-            if (!check.getIsSuccess())
+            if (!check.getSuccess())
                 return check;
             try (DataContext db = new DataContext(mapDb(name))) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
@@ -566,7 +566,7 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             WriteReturn check = checkParam(result, name);
-            if (!check.getIsSuccess())
+            if (!check.getSuccess())
                 return check;
             try (DataContext db = new DataContext(mapDb(name))) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
@@ -590,11 +590,11 @@ public class FastRepository implements IFastRepository {
 
     private WriteReturn checkParam(MapResult map,String name) {
         WriteReturn result = new WriteReturn();
-        result.setIsSuccess(true);
+        result.setSuccess(true);
         for (int i = 0; i < map.getName().size(); i++) {
             String param = map.getName().get(i);
             if (mapCheck(name, param) && map.getParam().get(param) == null) {
-                result.setIsSuccess(false);
+                result.setSuccess(false);
                 result.setMessage(String.format("xml 中 id: %S 中参数 %s不能为空", name, param));
             }
         }
@@ -603,7 +603,7 @@ public class FastRepository implements IFastRepository {
 
     private WriteReturn checkName(String name) {
         WriteReturn info = new WriteReturn();
-        info.setIsSuccess(false);
+        info.setSuccess(false);
         info.setMessage(String.format("xml 中 id: %S 不存在", name));
         return info;
     }
