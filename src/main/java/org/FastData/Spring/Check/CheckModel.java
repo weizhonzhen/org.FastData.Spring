@@ -1,6 +1,5 @@
 package org.FastData.Spring.Check;
 
-import lombok.Data;
 import org.FastData.Spring.CheckModel.ColumnComments;
 import org.FastData.Spring.CheckModel.ColumnModel;
 import org.FastData.Spring.CheckModel.ColumnType;
@@ -8,7 +7,6 @@ import org.FastData.Spring.CheckModel.CompareModel;
 
 import java.util.Optional;
 
-@Data
 public class CheckModel {
     private static ColumnType getColumnType(ColumnModel item, String type, String name) {
         ColumnType result = new ColumnType();
