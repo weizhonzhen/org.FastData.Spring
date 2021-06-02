@@ -256,7 +256,7 @@ public class DataContext implements Closeable {
                     }
                     resultSet.close();
                 }
-                result.setPModel( pModel);
+                result.setpModel( pModel);
             } else
                 return result;
         } catch (Exception ex) {
@@ -298,7 +298,7 @@ public class DataContext implements Closeable {
                     }
                     resultSet.close();
                 }
-                result.setPModel( pModel);
+                result.setpModel( pModel);
             } else
                 return result;
         } catch (Exception ex) {
@@ -323,7 +323,7 @@ public class DataContext implements Closeable {
                 for (int i = 0; i < insert.getName().size(); i++) {
                     preparedStatement.setObject(i + 1, insert.getParam().get(insert.getName().get(i)));
                 }
-                result.getWriteReturn().setIsSuccess( preparedStatement.execute());
+                result.getWriteReturn().setSuccess( preparedStatement.execute());
             }
 
             if (config.isOutSql())
@@ -333,7 +333,7 @@ public class DataContext implements Closeable {
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
-            result.getWriteReturn().setIsSuccess(false);
+            result.getWriteReturn().setSuccess(false);
             result.getWriteReturn().setMessage(ex.getMessage());
         }
 
@@ -350,14 +350,14 @@ public class DataContext implements Closeable {
             MapResult delete = BaseModel.delete(model, config, conn);
 
             if (!delete.isSuccess()) {
-                result.getWriteReturn().setIsSuccess(false);
+                result.getWriteReturn().setSuccess(false);
                 result.getWriteReturn().setMessage(delete.getMessage());
             } else {
                 preparedStatement = conn.prepareStatement(delete.getSql());
                 for (int i = 0; i < delete.getName().size(); i++) {
                     preparedStatement.setObject(i + 1, delete.getParam().get(delete.getName().get(i)));
                 }
-                result.getWriteReturn().setIsSuccess( preparedStatement.executeUpdate() > 0);
+                result.getWriteReturn().setSuccess( preparedStatement.executeUpdate() > 0);
             }
 
             if (config.isOutSql())
@@ -366,7 +366,7 @@ public class DataContext implements Closeable {
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
-            result.getWriteReturn().setIsSuccess(false);
+            result.getWriteReturn().setSuccess(false);
             result.getWriteReturn().setMessage( ex.getMessage());
         }
         return result;
@@ -384,14 +384,14 @@ public class DataContext implements Closeable {
             MapResult update = BaseModel.update(model, field, config, conn);
 
             if (!update.isSuccess()) {
-                result.getWriteReturn().setIsSuccess (false);
+                result.getWriteReturn().setSuccess (false);
                 result.getWriteReturn().setMessage(update.getMessage());
             } else {
                 preparedStatement = conn.prepareStatement(update.getSql());
                 for (int i = 0; i < update.getName().size(); i++) {
                     preparedStatement.setObject(i + 1, update.getParam().get(update.getName().get(i)));
                 }
-                result.getWriteReturn().setIsSuccess(preparedStatement.executeUpdate() > 0);
+                result.getWriteReturn().setSuccess(preparedStatement.executeUpdate() > 0);
             }
 
             if (config.isOutSql())
@@ -400,7 +400,7 @@ public class DataContext implements Closeable {
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
-            result.getWriteReturn().setIsSuccess(false);
+            result.getWriteReturn().setSuccess(false);
             result.getWriteReturn().setMessage(ex.getMessage());
         }
         return result;
@@ -417,14 +417,14 @@ public class DataContext implements Closeable {
             MapResult update = BaseModel.update(model, null, config, conn);
 
             if (!update.isSuccess()) {
-                result.getWriteReturn().setIsSuccess(false);
+                result.getWriteReturn().setSuccess(false);
                 result.getWriteReturn().setMessage(update.getMessage());
             } else {
                 preparedStatement = conn.prepareStatement(update.getSql());
                 for (int i = 0; i < update.getName().size(); i++) {
                     preparedStatement.setObject(i + 1, update.getParam().get(update.getName().get(i)));
                 }
-                result.getWriteReturn().setIsSuccess(preparedStatement.executeUpdate() > 0);
+                result.getWriteReturn().setSuccess(preparedStatement.executeUpdate() > 0);
             }
 
             if (config.isOutSql())
@@ -433,7 +433,7 @@ public class DataContext implements Closeable {
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
-            result.getWriteReturn().setIsSuccess(false);
+            result.getWriteReturn().setSuccess(false);
             result.getWriteReturn().setMessage( ex.getMessage());
         }
         return result;
@@ -449,7 +449,7 @@ public class DataContext implements Closeable {
             ResultSet resultSet;
             MapResult exists = BaseModel.exists(model, config, conn);
             if (!exists.isSuccess()) {
-                result.getWriteReturn().setIsSuccess(false);
+                result.getWriteReturn().setSuccess(false);
                 result.getWriteReturn().setMessage( exists.getMessage());
             } else {
                 preparedStatement = conn.prepareStatement(exists.getSql());
@@ -468,7 +468,7 @@ public class DataContext implements Closeable {
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
-            result.getWriteReturn().setIsSuccess(false);
+            result.getWriteReturn().setSuccess(false);
             result.getWriteReturn().setMessage(ex.getMessage());
         }
         return result;
@@ -617,10 +617,10 @@ public class DataContext implements Closeable {
                 for (int i = 0; i < map.getName().size(); i++) {
                     preparedStatement.setObject(i + 1, map.getParam().get(map.getName().get(i)));
                 }
-                result.getWriteReturn().setIsSuccess(preparedStatement.executeUpdate() > 0);
+                result.getWriteReturn().setSuccess(preparedStatement.executeUpdate() > 0);
             } else {
                 statement = conn.createStatement();
-                result.getWriteReturn().setIsSuccess(statement.execute(map.getSql()));
+                result.getWriteReturn().setSuccess(statement.execute(map.getSql()));
             }
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(map) + "\033[0m");
