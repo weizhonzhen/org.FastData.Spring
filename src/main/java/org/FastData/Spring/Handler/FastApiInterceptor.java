@@ -85,7 +85,7 @@ public class FastApiInterceptor implements HandlerInterceptor {
 
                     data.put("success", true);
                     map.put("data", pageInfo.getList());
-                    map.put("page", pageInfo.getPModel());
+                    map.put("page", pageInfo.getpModel());
                     return getResult(response, map);
                 }
 
@@ -97,8 +97,8 @@ public class FastApiInterceptor implements HandlerInterceptor {
 
                 if (mapType(name).equalsIgnoreCase(write) && map.size() > 0) {
                     DataReturn info = db.execute(result);
-                    data.put("success", info.getWriteReturn().getIsSuccess());
-                    if (!info.getWriteReturn().getIsSuccess())
+                    data.put("success", info.getWriteReturn().getSuccess());
+                    if (!info.getWriteReturn().getSuccess())
                         data.put("error", info.getWriteReturn().getMessage());
                     return getResult(response, map);
                 }
