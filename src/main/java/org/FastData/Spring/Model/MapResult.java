@@ -1,12 +1,10 @@
 package org.FastData.Spring.Model;
 
-import lombok.Data;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-@Data
+
 public class MapResult {
     private String sql;
 
@@ -17,4 +15,44 @@ public class MapResult {
     private boolean isSuccess;
 
     private String message;
+
+    public String getSql() {
+        return sql;
+    }
+
+    public void setSql(String sql) {
+        this.sql = sql;
+    }
+
+    public Map<String, Object> getParam() {
+        return param;
+    }
+
+    public void setParam(Map<String, Object> param) {
+        this.param = param;
+    }
+
+    public List<String> getName() {
+        return name;
+    }
+
+    public void setName(List<String> name) {
+        this.name = name;
+    }
+
+    public boolean isSuccess() {
+        return isSuccess;
+    }
+
+    public void setSuccess(boolean success) {
+        isSuccess = success;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }
