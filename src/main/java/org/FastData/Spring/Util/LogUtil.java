@@ -8,16 +8,22 @@ import java.time.format.DateTimeFormatter;
 
 public final class LogUtil {
     public static void error(Exception ex) {
+        StringBuilder sb = new StringBuilder();
         try {
-            StringBuilder sb = new StringBuilder();
             sb.append(System.getProperty("user.dir"));
             sb.append("\\log\\");
-            sb.append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-            sb.append("\\");
             sb.append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
             sb.append("\\");
-            sb.append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + ".log");
+            sb.append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
             File file = new File(sb.toString());
+            if (!file.exists())
+                file.mkdirs();
+
+            sb.append("\\");
+            sb.append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + ".log");
+
+            file = new File(sb.toString());
             if (!file.exists())
                 file.createNewFile();
 
@@ -29,6 +35,7 @@ public final class LogUtil {
             write.close();
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println(sb.toString());
         }
     }
 }
