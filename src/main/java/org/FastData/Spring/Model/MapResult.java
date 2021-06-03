@@ -1,16 +1,11 @@
 package org.FastData.Spring.Model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MapResult {
     private String sql;
 
-    private Map<String, Object> param = new HashMap<>();
-
-    private List<String> name = new ArrayList<>();
+    private LinkedHashMap<String, Object> param = new LinkedHashMap<>();
 
     private boolean isSuccess;
 
@@ -24,20 +19,12 @@ public class MapResult {
         this.sql = sql;
     }
 
-    public Map<String, Object> getParam() {
+    public LinkedHashMap<String, Object> getParam() {
         return param;
     }
 
-    public void setParam(Map<String, Object> param) {
+    public void setParam(LinkedHashMap<String, Object> param) {
         this.param = param;
-    }
-
-    public List<String> getName() {
-        return name;
-    }
-
-    public void setName(List<String> name) {
-        this.name = name;
     }
 
     public boolean isSuccess() {
