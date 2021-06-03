@@ -70,8 +70,9 @@ public class DataContext implements Closeable {
 
             if (map.getParam().size() != 0) {
                 preparedStatement = conn.prepareStatement(map.getSql());
-                for (int i = 0; i < map.getName().size(); i++) {
-                    preparedStatement.setObject(i + 1, map.getParam().get(map.getName().get(i)));
+                Object[] param = map.getParam().keySet().toArray();
+                for (int i = 0; i < param.length; i++) {
+                    preparedStatement.setObject(i + 1, map.getParam().get(param[i]));
                 }
                 resultSet = preparedStatement.executeQuery();
             } else {
@@ -116,8 +117,9 @@ public class DataContext implements Closeable {
 
             if (map.getParam().size() != 0) {
                 preparedStatement = conn.prepareStatement(map.getSql());
-                for (int i = 0; i < map.getName().size(); i++) {
-                    preparedStatement.setObject(i + 1, map.getParam().get(map.getName().get(i)));
+                Object[] param = map.getParam().keySet().toArray();
+                for (int i = 0; i < param.length; i++) {
+                    preparedStatement.setObject(i + 1, map.getParam().get(param[i]));
                 }
                 resultSet = preparedStatement.executeQuery();
             } else {
@@ -151,8 +153,9 @@ public class DataContext implements Closeable {
             String sql = String.format("select count(0) count from (%s)t", map.getSql());
             if (map.getParam().size() != 0) {
                 preparedStatement = conn.prepareStatement(sql);
-                for (int i = 0; i < map.getName().size(); i++) {
-                    preparedStatement.setObject(i + 1, map.getParam().get(map.getName().get(i)));
+                Object[] param = map.getParam().keySet().toArray();
+                for (int i = 0; i < param.length; i++) {
+                    preparedStatement.setObject(i + 1, map.getParam().get(param[i]));
                 }
                 resultSet = preparedStatement.executeQuery();
             } else {
@@ -197,8 +200,9 @@ public class DataContext implements Closeable {
 
             if (map.getParam().size() != 0) {
                 preparedStatement = conn.prepareStatement(map.getSql());
-                for (int i = 0; i < map.getName().size(); i++) {
-                    preparedStatement.setObject(i + 1, map.getParam().get(map.getName().get(i)));
+                Object[] param = map.getParam().keySet().toArray();
+                for (int i = 0; i < param.length; i++) {
+                    preparedStatement.setObject(i + 1, map.getParam().get(param[i]));
                 }
                 resultSet = preparedStatement.executeQuery();
             } else {
@@ -320,8 +324,9 @@ public class DataContext implements Closeable {
 
             if (insert.getParam().size() != 0) {
                 preparedStatement = conn.prepareStatement(insert.getSql());
-                for (int i = 0; i < insert.getName().size(); i++) {
-                    preparedStatement.setObject(i + 1, insert.getParam().get(insert.getName().get(i)));
+                Object[] param = insert.getParam().keySet().toArray();
+                for (int i = 0; i < param.length; i++) {
+                    preparedStatement.setObject(i + 1, insert.getParam().get(param[i]));
                 }
                 result.getWriteReturn().setSuccess( preparedStatement.execute());
             }
@@ -354,8 +359,9 @@ public class DataContext implements Closeable {
                 result.getWriteReturn().setMessage(delete.getMessage());
             } else {
                 preparedStatement = conn.prepareStatement(delete.getSql());
-                for (int i = 0; i < delete.getName().size(); i++) {
-                    preparedStatement.setObject(i + 1, delete.getParam().get(delete.getName().get(i)));
+                Object[] param = delete.getParam().keySet().toArray();
+                for (int i = 0; i < param.length; i++) {
+                    preparedStatement.setObject(i + 1, delete.getParam().get(param[i]));
                 }
                 result.getWriteReturn().setSuccess( preparedStatement.executeUpdate() > 0);
             }
@@ -388,8 +394,9 @@ public class DataContext implements Closeable {
                 result.getWriteReturn().setMessage(update.getMessage());
             } else {
                 preparedStatement = conn.prepareStatement(update.getSql());
-                for (int i = 0; i < update.getName().size(); i++) {
-                    preparedStatement.setObject(i + 1, update.getParam().get(update.getName().get(i)));
+                Object[] param = update.getParam().keySet().toArray();
+                for (int i = 0; i < param.length; i++) {
+                    preparedStatement.setObject(i + 1, update.getParam().get(param[i]));
                 }
                 result.getWriteReturn().setSuccess(preparedStatement.executeUpdate() > 0);
             }
@@ -421,8 +428,9 @@ public class DataContext implements Closeable {
                 result.getWriteReturn().setMessage(update.getMessage());
             } else {
                 preparedStatement = conn.prepareStatement(update.getSql());
-                for (int i = 0; i < update.getName().size(); i++) {
-                    preparedStatement.setObject(i + 1, update.getParam().get(update.getName().get(i)));
+                Object[] param = update.getParam().keySet().toArray();
+                for (int i = 0; i < param.length; i++) {
+                    preparedStatement.setObject(i + 1, update.getParam().get(param[i]));
                 }
                 result.getWriteReturn().setSuccess(preparedStatement.executeUpdate() > 0);
             }
@@ -453,8 +461,9 @@ public class DataContext implements Closeable {
                 result.getWriteReturn().setMessage( exists.getMessage());
             } else {
                 preparedStatement = conn.prepareStatement(exists.getSql());
-                for (int i = 0; i < exists.getName().size(); i++) {
-                    preparedStatement.setObject(i + 1, exists.getParam().get(exists.getName().get(i)));
+                Object[] param = exists.getParam().keySet().toArray();
+                for (int i = 0; i < param.length; i++) {
+                    preparedStatement.setObject(i + 1, exists.getParam().get(param[i]));
                 }
                 resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
@@ -493,8 +502,9 @@ public class DataContext implements Closeable {
 
             if (query.getParam().size() != 0) {
                 preparedStatement = conn.prepareStatement(query.getSql());
-                for (int i = 0; i < query.getName().size(); i++) {
-                    preparedStatement.setObject(i + 1, query.getParam().get(query.getName().get(i)));
+                Object[] param = query.getParam().keySet().toArray();
+                for (int i = 0; i < param.length; i++) {
+                    preparedStatement.setObject(i + 1, query.getParam().get(param[i]));
                 }
                 resultSet = preparedStatement.executeQuery();
             } else {
@@ -541,8 +551,9 @@ public class DataContext implements Closeable {
 
             if (query.getParam().size() != 0) {
                 preparedStatement = conn.prepareStatement(query.getSql());
-                for (int i = 0; i < query.getName().size(); i++) {
-                    preparedStatement.setObject(i + 1, query.getParam().get(query.getName().get(i)));
+                Object[] param = query.getParam().keySet().toArray();
+                for (int i = 0; i < param.length; i++) {
+                    preparedStatement.setObject(i + 1, query.getParam().get(param[i]));
                 }
                 resultSet = preparedStatement.executeQuery();
             } else {
@@ -584,8 +595,9 @@ public class DataContext implements Closeable {
             ResultSet resultSet;
             if (map.getParam().size() != 0) {
                 preparedStatement = conn.prepareStatement(map.getSql());
-                for (int i = 0; i < map.getName().size(); i++) {
-                    preparedStatement.setObject(i + 1, map.getParam().get(map.getName().get(i)));
+                Object[] param = map.getParam().keySet().toArray();
+                for (int i = 0; i < param.length; i++) {
+                    preparedStatement.setObject(i + 1, map.getParam().get(param[i]));
                 }
                 resultSet = preparedStatement.executeQuery();
             } else {
@@ -614,8 +626,9 @@ public class DataContext implements Closeable {
         try {
             if (map.getParam().size() != 0) {
                 preparedStatement = conn.prepareStatement(map.getSql());
-                for (int i = 0; i < map.getName().size(); i++) {
-                    preparedStatement.setObject(i + 1, map.getParam().get(map.getName().get(i)));
+                Object[] param = map.getParam().keySet().toArray();
+                for (int i = 0; i < param.length; i++) {
+                    preparedStatement.setObject(i + 1, map.getParam().get(param[i]));
                 }
                 result.getWriteReturn().setSuccess(preparedStatement.executeUpdate() > 0);
             } else {
