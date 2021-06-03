@@ -111,7 +111,7 @@ in Controller
 
    var model = new TestTable();
    model.setId("1");
-   var exists = FastRead.exists(model, db);
+   var exists = ifast.exists(model, db);
 
    var field = new ArrayList<String>();
    field.add("Value");
