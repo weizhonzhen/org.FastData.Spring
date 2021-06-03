@@ -591,13 +591,14 @@ public class FastRepository implements IFastRepository {
     private WriteReturn checkParam(MapResult map,String name) {
         WriteReturn result = new WriteReturn();
         result.setSuccess(true);
-        for (int i = 0; i < map.getName().size(); i++) {
-            String param = map.getName().get(i);
+        map.getParam().keySet().forEach(a->{
+            String param = map.getParam().get(a).toString();
             if (mapCheck(name, param) && map.getParam().get(param) == null) {
                 result.setSuccess(false);
                 result.setMessage(String.format("xml 中 id: %S 中参数 %s不能为空", name, param));
             }
-        }
+        });
+
         return result;
     }
 
