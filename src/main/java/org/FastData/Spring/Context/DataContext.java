@@ -25,38 +25,13 @@ public class DataContext implements Closeable {
     public DataContext(String key) {
         config = DataConfig.db(key);
         cacheKey = String.format("pool.DataContext.%s", config.getKey().toLowerCase());
-        PoolModel model = getConnection(config, cacheKey);
+        PoolModel model = PoolUtil.getConnection(config, cacheKey);
+        conn = model.getConn();
+        id = model.getId();
     }
 
-    public synchronized void close() {
-        try {
-            if (statement != null)
-                statement.close();
-            if (preparedStatement != null)
-                preparedStatement.close();
-            if (conn != null) {
-                List<PoolModel> pool = CacheUtil.getList(cacheKey, PoolModel.class);
-                Optional<PoolModel> temp = pool.stream().filter(a -> a.getId().equals(id)).findFirst();
-                if(temp.isPresent()) {
-                    PoolModel model = temp.get();
-                    pool.remove(model);
-                    if (pool.size() > config.getPoolSize())
-                        model.getConn().close();
-                    else {
-                        model.setUse(false);
-                        pool.add(model);
-                    }
-                    CacheUtil.setModel(cacheKey, pool);
-                }
-                else
-                    conn.close();
-            }
-        } catch (Exception ex) {
-            if (config.isOutError())
-                ex.printStackTrace();
-            if (config.isOutError())
-                LogUtil.error(ex);
-        }
+    public void close() {
+        PoolUtil.close(config, statement, preparedStatement, conn, cacheKey, id);
     }
 
     /*
@@ -686,8 +661,10 @@ public class DataContext implements Closeable {
             e.printStackTrace();
         }
     }
+}
 
-    private synchronized PoolModel getConnection(DbConfig dbconfig,String cacheKey) {
+class  PoolUtil {
+    public static synchronized PoolModel getConnection(DbConfig dbconfig, String cacheKey) {
         PoolModel model = new PoolModel();
         try {
             dbconfig = DataConfig.db(dbconfig.getKey());
@@ -696,27 +673,54 @@ public class DataContext implements Closeable {
             pool = pool == null ? new ArrayList<PoolModel>() : pool;
 
             if (pool.stream().filter(a -> !a.isUse()).count() < 1) {
-                conn = DriverManager.getConnection(dbconfig.getConnStr(), dbconfig.getUser(), dbconfig.getPassWord());
+                Connection conn = DriverManager.getConnection(dbconfig.getConnStr(), dbconfig.getUser(), dbconfig.getPassWord());
                 model.setUse(true);
                 model.setConn(conn);
                 model.setId(UUID.randomUUID().toString());
                 model.setKey(dbconfig.getKey());
-                id = model.getId();
                 pool.add(model);
 
             } else if (pool.stream().anyMatch(a -> !a.isUse())) {
                 model = pool.stream().filter(a -> !a.isUse()).findFirst().get();
                 model.setUse(true);
-                conn = model.getConn();
-                id = model.getId();
             }
             CacheUtil.setModel(cacheKey, pool);
+        } catch (Exception ex) {
+            if (dbconfig.isOutError())
+                ex.printStackTrace();
+            if (dbconfig.isOutError())
+                LogUtil.error(ex);
+        }
+        return model;
+    }
+
+    public static synchronized void close(DbConfig config, Statement statement, PreparedStatement preparedStatement, Connection conn, String cacheKey, String id) {
+        try {
+            if (statement != null)
+                statement.close();
+            if (preparedStatement != null)
+                preparedStatement.close();
+            if (conn != null) {
+                List<PoolModel> pool = CacheUtil.getList(cacheKey, PoolModel.class);
+                Optional<PoolModel> temp = pool.stream().filter(a -> a.getId().equals(id)).findFirst();
+                if (temp.isPresent()) {
+                    PoolModel model = temp.get();
+                    pool.remove(model);
+                    if (pool.size() > config.getPoolSize())
+                        model.getConn().close();
+                    else {
+                        model.setUse(false);
+                        pool.add(model);
+                    }
+                    CacheUtil.setModel(cacheKey, pool);
+                } else
+                    conn.close();
+            }
         } catch (Exception ex) {
             if (config.isOutError())
                 ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
         }
-        return model;
     }
 }
