@@ -91,7 +91,7 @@ in Controller
  @Resource
    IFastRepository iFast;
 
-     try (var db = new DataContext("db")) {
+ try (var db = new DataContext("db")) {
    LinkedHashMap<String, Object> param = new LinkedHashMap<>();
    var map = new MapResult();
    map.setSql("update TestTable set Value=? where Id=?");
@@ -117,4 +117,8 @@ in Controller
    field.add("Value");
    var update = ifast.update(model, field, db);
    var del = ifast.delete(model, db);
-  }
+   
+   db.beginTrans();
+   db.submitTrans();
+   db.rollbackTrans();
+ }
