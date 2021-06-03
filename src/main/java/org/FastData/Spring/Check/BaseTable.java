@@ -187,8 +187,6 @@ public class BaseTable {
 
     private static Map<String, Object> isExistsKey(DataContext db, String tableName, String colName) {
         MapResult map = new MapResult();
-        map.getName().add("tableName");
-        map.getName().add("colName");
         map.getParam().put("tableName", tableName.toUpperCase());
         map.getParam().put("colName", colName.toUpperCase());
 
@@ -362,7 +360,6 @@ public class BaseTable {
 
     private static boolean isExistsTable(String tableName, DataContext db) {
         MapResult map = new MapResult();
-        map.getName().add(tableName);
         map.getParam().put(tableName, tableName.toUpperCase());
 
         if (db.config.getDbType().equalsIgnoreCase(DataDbType.Oracle))
