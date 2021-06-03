@@ -48,7 +48,7 @@ public final class MapXml {
     public static MapResult getMapSql(String name, Map<String, Object> param) {
         MapResult result = new MapResult();
         StringBuilder sql = new StringBuilder();
-        Map<String, Object> tempParam = new HashMap<String, Object>();
+        LinkedHashMap<String, Object> tempParam = new LinkedHashMap<String, Object>();
         name = name.toLowerCase();
 
         for (int i = 0; i <= Integer.parseInt(CacheUtil.get(name)); i++) {
@@ -67,10 +67,9 @@ public final class MapXml {
                     if (param.keySet().stream().noneMatch(a -> a.equals(item)))
                         continue;
                     String tempName = item.toLowerCase();
-                    if (result.getName().stream().noneMatch(a -> a.equals(item))) {
-                        tempParam.put(item, param.get(item));
-                        result.getName().add(item);
-                    }
+                   if(result.getParam().keySet().stream().noneMatch(a->a.equalsIgnoreCase(item))) {
+                       tempParam.put(item, param.get(item));
+                   }
 
                     String key = String.format("%s.%s.%s", name, tempName, i).toLowerCase();
                     String conditionKey = String.format("%s.%s.condition.%s", name, tempName, i).toLowerCase();
@@ -86,17 +85,14 @@ public final class MapXml {
                             case "isnotnullorempty": {
                                 if (param.get(item) == null || param.get(item).equals("")) {
                                     tempParam.remove(item);
-                                    result.getName().remove(item);
                                 } else {
                                     if (paramSql.contains(tempKey)) {
                                         tempParam.remove(item);
-                                        result.getName().remove(item);
                                         condtionSql.append(paramSql.replace(tempKey, param.get(item).toString()));
                                     } else if (paramSql.contains(flagParam))
                                         condtionSql.append(paramSql.replace(flagParam, "?"));
                                     else {
                                         tempParam.remove(item);
-                                        result.getName().remove(item);
                                         condtionSql.append(condtionSql);
                                     }
                                 }
@@ -107,18 +103,15 @@ public final class MapXml {
                                 if (ifSuccess) {
                                     if (paramSql.contains(tempKey)) {
                                         tempParam.remove(key);
-                                        result.getName().remove(item);
                                         condtionSql.append(paramSql.replace(tempKey, param.get(item).toString()));
                                     } else if (paramSql.contains(flagParam))
                                         condtionSql.append(paramSql.replace(flagParam, "?"));
                                     else {
                                         tempParam.remove(item);
-                                        result.getName().remove(item);
                                         condtionSql.append(paramSql);
                                     }
                                 } else {
                                     tempParam.remove(item);
-                                    result.getName().remove(item);
                                 }
                             }
                             case "choose": {
@@ -137,13 +130,11 @@ public final class MapXml {
                                         if (isSuccess) {
                                             if (chooseSql.contains(tempKey)) {
                                                 tempParam.remove(item);
-                                                result.getName().remove(item);
                                                 condtionSql.append(chooseSql.replace(tempKey, param.get(item).toString()));
                                             } else if (chooseSql.contains(flagParam))
                                                 condtionSql.append(chooseSql.replace(flagParam, "?"));
                                             else {
                                                 tempParam.remove(item);
-                                                result.getName().remove(item);
                                                 condtionSql.append(chooseSql);
                                             }
                                             break;
@@ -154,16 +145,13 @@ public final class MapXml {
                                 if (!isSuccess) {
                                     if (conditionOtherSql.equals("")) {
                                         tempParam.remove(item);
-                                        result.getName().remove(item);
                                     } else if (conditionOtherSql.contains(tempKey)) {
                                         tempParam.remove(item);
-                                        result.getName().remove(item);
                                         condtionSql.append(conditionOtherSql.replace(tempKey, param.get(item).toString()));
                                     } else if (conditionOtherSql.contains(flagParam))
                                         condtionSql.append(conditionOtherSql.replace(flagParam, "?"));
                                     else {
                                         tempParam.remove(item);
-                                        result.getName().remove(item);
                                         condtionSql.append(conditionOtherSql);
                                     }
                                 }
@@ -172,13 +160,11 @@ public final class MapXml {
                             default: {
                                 if (paramSql.contains(tempKey)) {
                                     tempParam.remove(item);
-                                    result.getName().remove(item);
                                     condtionSql.append(paramSql.replace(tempKey, param.get(item).toString()));
                                 } else if (paramSql.contains(flagParam))
                                     condtionSql.append(paramSql.replace(flagParam, "?"));
                                 else {
                                     tempParam.remove(item);
-                                    result.getName().remove(item);
                                     condtionSql.append(condtionSql);
                                 }
                                 break;

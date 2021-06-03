@@ -25,7 +25,6 @@ public final class BaseModel {
         property.forEach(a -> {
             name.append(String.format("%s,", a.getName()));
             value.append("?,");
-            result.getName().add(a.getName());
             result.getParam().put(a.getName(), ReflectUtil.get(model,a.getName(),a.getType()));
         });
         result.setSql(String.format("%s) %s)", name.substring(0, name.length() - 1), value.substring(0, value.length() - 1)));
@@ -105,7 +104,6 @@ public final class BaseModel {
         for (String item : field) {
             if(property.stream().anyMatch(a-> a.getName().equalsIgnoreCase(item))) {
                 PropertyModel pinfo=property.stream().filter(a-> a.getName().equalsIgnoreCase(item)).findFirst().get();
-                result.getName().add(pinfo.getName());
                 result.setSql(String.format("%s %s=?,", result.getSql(), pinfo.getName()));
                 result.getParam().put(pinfo.getName(), ReflectUtil.get(model,pinfo.getName(),pinfo.getType()));
             }
@@ -137,7 +135,6 @@ public final class BaseModel {
         result.setSql(String.format("update %s set ", tableName));;
 
         for (PropertyModel item : property) {
-            result.getName().add(item.getName());
             result.setSql(String.format("%s %s=?,", result.getSql(), item.getName()));
             result.getParam().put(item.getName(), ReflectUtil.get(model, item.getName(),item.getType()));
         }
@@ -191,7 +188,6 @@ public final class BaseModel {
                     return result;
                 }
 
-                result.getName().add(item);
                 result.getParam().put(item, value);
             } else {
                 result.setSuccess(false);
