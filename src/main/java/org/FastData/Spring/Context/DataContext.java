@@ -26,8 +26,6 @@ public class DataContext implements Closeable {
         config = DataConfig.db(key);
         cacheKey = String.format("pool.DataContext.%s", config.getKey().toLowerCase());
         PoolModel model = getConnection(config, cacheKey);
-        conn = model.getConn();
-        id = model.getId();
     }
 
     public synchronized void close() {
@@ -38,19 +36,26 @@ public class DataContext implements Closeable {
                 preparedStatement.close();
             if (conn != null) {
                 List<PoolModel> pool = CacheUtil.getList(cacheKey, PoolModel.class);
-                PoolModel model = pool.stream().filter(a -> a.getId() == id).findFirst().get();
-                pool.remove(model);
-
-                if (pool.size() > config.getPoolSize())
-                    model.getConn().close();
-                else {
-                    model.setUse(false);
-                    pool.add(model);
+                Optional<PoolModel> temp = pool.stream().filter(a -> a.getId().equals(id)).findFirst();
+                if(temp.isPresent()) {
+                    PoolModel model = temp.get();
+                    pool.remove(model);
+                    if (pool.size() > config.getPoolSize())
+                        model.getConn().close();
+                    else {
+                        model.setUse(false);
+                        pool.add(model);
+                    }
+                    CacheUtil.setModel(cacheKey, pool);
                 }
-                CacheUtil.setModel(cacheKey, pool);
+                else
+                    conn.close();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            if (config.isOutError())
+                ex.printStackTrace();
+            if (config.isOutError())
+                LogUtil.error(ex);
         }
     }
 
@@ -695,6 +700,7 @@ public class DataContext implements Closeable {
                 model.setUse(true);
                 model.setConn(conn);
                 model.setId(UUID.randomUUID().toString());
+                model.setKey(dbconfig.getKey());
                 id = model.getId();
                 pool.add(model);
 
@@ -705,8 +711,11 @@ public class DataContext implements Closeable {
                 id = model.getId();
             }
             CacheUtil.setModel(cacheKey, pool);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            if (config.isOutError())
+                ex.printStackTrace();
+            if (config.isOutError())
+                LogUtil.error(ex);
         }
         return model;
     }
