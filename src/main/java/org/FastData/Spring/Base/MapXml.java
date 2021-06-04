@@ -326,8 +326,7 @@ public final class MapXml {
                                     }
                                 } else {
                                     int count = 0;
-                                    result.getKey().add(String.format("%s.%s.%s", key, attribute.getNamedItem("property").getNodeValue().toLowerCase(), i));
-                                    result.getSql().add(String.valueOf(node.getChildNodes().getLength()));
+                                    String chooseCountKey=String.format("%s.%s.%s", key, attribute.getNamedItem("property").getNodeValue().toLowerCase(), i);
                                     NodeList chooseNodeList = condtionNode.getChildNodes();
                                     String chooseKey = attribute.getNamedItem("property").getNodeValue().toLowerCase();
                                     for (int choose = 0; choose < chooseNodeList.getLength(); choose++) {
@@ -349,6 +348,8 @@ public final class MapXml {
                                         }
                                         count++;
                                     }
+                                    result.getKey().add(chooseCountKey);
+                                    result.getSql().add(String.valueOf(count));
                                 }
                             }
                         }
