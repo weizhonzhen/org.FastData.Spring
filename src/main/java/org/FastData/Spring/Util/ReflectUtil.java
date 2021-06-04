@@ -9,7 +9,7 @@ import java.util.Map;
 public final class ReflectUtil {
     private static Map<String, Method> cache;
 
-    static {
+     static {
         cache = new HashMap<String, Method>();
     }
 
@@ -24,7 +24,7 @@ public final class ReflectUtil {
                 if (type == Boolean.TYPE)
                     method = Arrays.stream(model.getClass().getMethods()).filter(a -> a.getName().contains(name)).findFirst().get();
                 else
-                    method = model.getClass().getMethod(String.format("set%s", name), type);
+                    method =  Arrays.stream(model.getClass().getMethods()).filter(a->a.getName().equalsIgnoreCase(String.format("set%s", name))).findFirst().get();
                 cache.put(key, method);
             } else
                 method = cache.get(key);
@@ -45,7 +45,7 @@ public final class ReflectUtil {
                 if (type == Boolean.TYPE)
                     method = Arrays.stream(model.getClass().getMethods()).filter(a -> a.getName().contains(name)).findFirst().get();
                 else
-                    method = model.getClass().getMethod(String.format("get%s", name));
+                    method =  Arrays.stream(model.getClass().getMethods()).filter(a->a.getName().equalsIgnoreCase(String.format("set%s", name))).findFirst().get();
                 cache.put(key, method);
             } else
                 method = cache.get(key);
