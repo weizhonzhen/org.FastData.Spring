@@ -13,6 +13,7 @@ import org.FastData.Spring.Util.ReflectUtil;
 import java.io.Closeable;
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DataContext implements Closeable {
     public DbConfig config;
@@ -625,6 +626,46 @@ public class DataContext implements Closeable {
         return result;
     }
 
+    public WriteReturn executeParam(MapResult map)
+    {
+        WriteReturn result = new WriteReturn();
+        try {
+            if (map.getParam().size() != 0) {
+                Object[] param = map.getParam().keySet().toArray();
+                LinkedHashMap<Integer,String> item =new LinkedHashMap<>();
+                int[] sort = new int[param.length];
+                for (int i = 0; i < param.length; i++) {
+                    String temp = String.format("?%s", param[i].toString().toLowerCase());
+                    int count = map.getSql().toLowerCase().indexOf(temp);
+                    map.setSql(map.getSql().toLowerCase().replace(temp, "?"));
+                    if (count > 0) {
+                        item.put(count, param[i].toString());
+                        sort[i] = count;
+                    }
+                }
+
+                Arrays.sort(sort);
+                preparedStatement = conn.prepareStatement(map.getSql());
+                for (int i = 0; i < sort.length; i++) {
+                    if (sort[i] != 0)
+                        preparedStatement.setObject(i + 1, map.getParam().get(sort[i]));
+                }
+
+                result.setSuccess(preparedStatement.executeUpdate() > 0);
+            } else {
+                statement = conn.createStatement();
+                result.setSuccess(statement.execute(map.getSql()));
+            }
+            if (config.isOutSql())
+                System.out.println("\033[35;4m" + getSql(map) + "\033[0m");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            if (config.isOutError())
+                LogUtil.error(ex);
+        }
+        return result;
+    }
+
     private String getSql(MapResult map) {
         if (map.getParam() == null || map.getParam().size() == 0)
             return map.getSql();
@@ -663,7 +704,7 @@ public class DataContext implements Closeable {
     }
 }
 
-class  PoolUtil {
+class PoolUtil {
     public static synchronized PoolModel getConnection(DbConfig dbconfig, String cacheKey) {
         PoolModel model = new PoolModel();
         try {
