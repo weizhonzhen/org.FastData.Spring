@@ -576,6 +576,32 @@ public class FastRepository implements IFastRepository {
         return checkName(name);
     }
 
+    @Override
+    public WriteReturn execute(MapResult map, DataContext db, Boolean log) {
+        db.config.setOutSql(db.config.isOutSql() || log);
+        return db.executeParam(map);
+    }
+
+    @Override
+    public WriteReturn execute(MapResult map, DataContext db) {
+        return db.executeParam(map);
+    }
+
+    @Override
+    public WriteReturn execute(MapResult map, String key, Boolean log) {
+        try (DataContext db = new DataContext(key)) {
+            db.config.setOutSql(db.config.isOutSql() || log);
+            return db.executeParam(map);
+        }
+    }
+
+    @Override
+    public WriteReturn execute(MapResult map, String key) {
+        try (DataContext db = new DataContext(key)) {
+            return db.executeParam(map);
+        }
+    }
+
     private String mapDb(String name) {
         return CacheUtil.get(String.format("%s.db", name.toLowerCase()));
     }

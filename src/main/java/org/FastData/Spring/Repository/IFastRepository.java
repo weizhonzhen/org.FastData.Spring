@@ -1,9 +1,6 @@
 package org.FastData.Spring.Repository;
 
-import org.FastData.Spring.Model.PageModel;
-import org.FastData.Spring.Model.PageResult;
-import org.FastData.Spring.Model.PageResultImpl;
-import org.FastData.Spring.Model.WriteReturn;
+import org.FastData.Spring.Model.*;
 import org.FastData.Spring.Context.DataContext;
 import org.springframework.stereotype.Component;
 import java.util.List;
@@ -493,4 +490,33 @@ public interface IFastRepository {
       log:sql log
     */
     WriteReturn write(String name,Map<String, Object> param,Boolean log);
+
+    /*
+     exec sql
+     map:sql param
+     db: database context
+     log:sql log
+    */
+    WriteReturn execute(MapResult map, DataContext db, Boolean log);
+
+    /*
+     exec sql
+     map:sql param
+     db: database context
+    */
+    WriteReturn execute(MapResult map, DataContext db);
+
+    /*
+     exec sql
+     map:sql param
+     key: database key
+     log:sql log
+   */
+    WriteReturn execute(MapResult map, String key, Boolean log);
+
+    /*
+     exec sql
+     key: database key
+   */
+    WriteReturn execute(MapResult map, String key);
 }
