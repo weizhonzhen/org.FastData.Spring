@@ -94,7 +94,7 @@ in Controller
  try (var db = new DataContext("db")) {
    LinkedHashMap<String, Object> param = new LinkedHashMap<>();
    var map = new MapResult();
-   map.setSql("update TestTable set Value=? where Id=?");
+   map.setSql("update TestTable set Value=?Value where Id=?Id");
    param.put("Value", "1");
    param.put("Id", "2");
    var result = db.execute(map);
