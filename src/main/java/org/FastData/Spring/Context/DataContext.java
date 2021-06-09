@@ -13,7 +13,6 @@ import org.FastData.Spring.Util.ReflectUtil;
 import java.io.Closeable;
 import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DataContext implements Closeable {
     public DbConfig config;
@@ -109,7 +108,7 @@ public class DataContext implements Closeable {
             }
             ResultSetMetaData col = resultSet.getMetaData();
             while (resultSet.next()) {
-                Map model = new HashMap<String, Object>();
+                Map<String, Object> model = new HashMap<String, Object>();
                 for (int i = 1; i <= col.getColumnCount(); i++) {
                     String name = col.getColumnName(i);
                     model.put(name, resultSet.getObject(name));
@@ -274,7 +273,7 @@ public class DataContext implements Closeable {
                 if (resultSet != null) {
                     ResultSetMetaData col = resultSet.getMetaData();
                     while (resultSet.next()) {
-                        Map model = new HashMap<String, Object>();
+                        Map<String, Object> model = new HashMap<String, Object>();
                         for (int i = 1; i <= col.getColumnCount(); i++) {
                             String name = col.getColumnName(i);
                             model.put(name, resultSet.getObject(name));
@@ -494,7 +493,7 @@ public class DataContext implements Closeable {
             }
             ResultSetMetaData col = resultSet.getMetaData();
             while (resultSet.next()) {
-                Map map = new HashMap<String, Object>();
+                Map<String, Object> map = new HashMap<String, Object>();
                 for (int i = 1; i <= col.getColumnCount(); i++) {
                     String name = col.getColumnName(i);
                     map.put(name, resultSet.getObject(name));
@@ -597,6 +596,23 @@ public class DataContext implements Closeable {
                 LogUtil.error(ex);
         }
         return count;
+    }
+
+    public int count(Map<String,Object> map, Class<?> type) {
+        MapResult param = new MapResult();
+        LinkedHashMap<String, Object> linkMap = new LinkedHashMap<>();
+        String tableName = type.getName().replace(type.getPackage().getName(), "").replace(".", "");
+        param.setSql(String.format("select count(0) from %S where 1=1 ", tableName));
+        map.keySet().forEach(a -> {
+            linkMap.put(a, map.get(a));
+        });
+
+        linkMap.keySet().forEach(a -> {
+            param.setSql(String.format("%s and %s=?", param.getSql(), a));
+        });
+
+        param.setParam(linkMap);
+        return count(param);
     }
 
     /*
