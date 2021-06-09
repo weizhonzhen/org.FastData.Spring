@@ -18,10 +18,7 @@ import org.springframework.context.annotation.ComponentScan;
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ComponentScan(basePackages = {"org.FastData.Spring.Repository","org.FastData.Spring.Handler"})
 public class FastRepository implements IFastRepository {
@@ -599,6 +596,32 @@ public class FastRepository implements IFastRepository {
     public WriteReturn execute(MapResult map, String key) {
         try (DataContext db = new DataContext(key)) {
             return db.executeParam(map);
+        }
+    }
+
+    @Override
+    public int count(Map<String, Object> map, Class<?> type, DataContext db, Boolean log) {
+        db.config.setOutSql(db.config.isOutSql() || log);
+        return db.count(map, type);
+    }
+
+    @Override
+    public int count(Map<String, Object> map, Class<?> type, DataContext db) {
+        return db.count(map, type);
+    }
+
+    @Override
+    public int count(Map<String, Object> map, Class<?> type, String key, Boolean log) {
+        try (DataContext db = new DataContext(key)) {
+            db.config.setOutSql(db.config.isOutSql() || log);
+            return db.count(map, type);
+        }
+    }
+
+    @Override
+    public int count(Map<String, Object> map, Class<?> type, String key) {
+        try (DataContext db = new DataContext(key)) {
+            return db.count(map, type);
         }
     }
 

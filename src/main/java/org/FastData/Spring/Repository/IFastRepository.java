@@ -519,4 +519,29 @@ public interface IFastRepository {
      key: database key
    */
     WriteReturn execute(MapResult map, String key);
+
+    /*
+    map:sql param
+    db: database context
+    log:sql log
+   */
+    int count(Map<String,Object> map,Class<?> type, DataContext db, Boolean log);
+
+    /*
+     map:sql param
+     db: database context
+    */
+    int count(Map<String,Object> map,Class<?> type, DataContext db);
+
+    /*
+     map:sql param
+     key: database key
+     log:sql log
+   */
+    int count(Map<String,Object> map,Class<?> type,  String key, Boolean log);
+
+    /*
+     key: database key
+   */
+    int count(Map<String,Object> map,Class<?> type,  String key);
 }
