@@ -308,7 +308,8 @@ public class DataContext implements Closeable {
                 for (int i = 0; i < param.length; i++) {
                     preparedStatement.setObject(i + 1, insert.getParam().get(param[i]));
                 }
-                result.getWriteReturn().setSuccess( preparedStatement.execute());
+                preparedStatement.execute();
+                result.getWriteReturn().setSuccess(true);
             }
 
             if (config.isOutSql())
@@ -343,6 +344,7 @@ public class DataContext implements Closeable {
                 for (int i = 0; i < param.length; i++) {
                     preparedStatement.setObject(i + 1, delete.getParam().get(param[i]));
                 }
+
                 result.getWriteReturn().setSuccess( preparedStatement.executeUpdate() > 0);
             }
 
@@ -664,7 +666,7 @@ public class DataContext implements Closeable {
                 preparedStatement = conn.prepareStatement(map.getSql());
                 for (int i = 0; i < sort.length; i++) {
                     if (sort[i] != 0)
-                        preparedStatement.setObject(i + 1, map.getParam().get(sort[i]));
+                        preparedStatement.setObject(i + 1, map.getParam().get(item.get(sort[i])));
                 }
 
                 result.setSuccess(preparedStatement.executeUpdate() > 0);
