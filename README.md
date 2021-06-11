@@ -91,13 +91,21 @@ in Controller
  @Resource
    IFastRepository iFast;
 
+//database write sql param must ?name,dtabase read sql param only ?
  try (var db = new DataContext("db")) {
-   LinkedHashMap<String, Object> param = new LinkedHashMap<>();
-   var map = new MapResult();
-   map.setSql("update TestTable set Value=?Value where Id=?Id");
-   param.put("Value", "1");
-   param.put("Id", "2");
-   var result = ifast.execute(map);
+   LinkedHashMap<String, Object> paramWrite = new LinkedHashMap<>();
+   var mapWrite = new MapResult();
+   mapWrite.setSql("update TestTable set Value=?Value where Id=?Id");
+   paramWrite.put("Value", "1");
+   paramWrite.put("Id", "2");
+   var result = ifast.execute(mapWrite);
+   
+   LinkedHashMap<String, Object> paramRead = new LinkedHashMap<>();
+   var mapRead = new MapResult();
+   mapRead.setSql("select count(0) TestTable set Value=? where Id=?");
+   paramRead.put("Value", "1");
+   paramRead.put("Id", "2");
+   var result = ifast.count(mapRead);
 
    var query = new HashMap<String, Object>();
    query.put("Id", "00010162");
