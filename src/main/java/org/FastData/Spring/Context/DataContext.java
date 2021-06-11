@@ -644,8 +644,7 @@ public class DataContext implements Closeable {
         return result;
     }
 
-    public WriteReturn executeParam(MapResult map)
-    {
+    public WriteReturn executeParam(MapResult map){
         WriteReturn result = new WriteReturn();
         try {
             if (map.getParam().size() != 0) {
@@ -699,7 +698,7 @@ public class DataContext implements Closeable {
 
     public void beginTrans() {
         try {
-            this.conn.setAutoCommit(true);
+            this.conn.setAutoCommit(false);
         } catch (Exception e) {
             e.printStackTrace();
         }
