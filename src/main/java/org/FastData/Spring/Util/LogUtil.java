@@ -1,8 +1,8 @@
 package org.FastData.Spring.Util;
 
 import java.io.File;
-import java.io.RandomAccessFile;
-import java.nio.charset.StandardCharsets;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -24,15 +24,23 @@ public final class LogUtil {
             sb.append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + ".log");
 
             file = new File(sb.toString());
-            if (!file.exists())
+            FileOutputStream stream = null;
+            if (!file.exists()) {
                 file.createNewFile();
+                stream = new FileOutputStream(file);
+            } else
+                stream = new FileOutputStream(file, true);
 
-            RandomAccessFile write = new RandomAccessFile(file, "rw");
-            write.write(ex.getMessage().getBytes(StandardCharsets.UTF_8));
-            write.write("\r\n".getBytes(StandardCharsets.UTF_8));
-            write.write(ex.getStackTrace().toString().getBytes(StandardCharsets.UTF_8));
-            write.write("\r\n".getBytes(StandardCharsets.UTF_8));
+            OutputStreamWriter write = new OutputStreamWriter(stream, "UTF-8");
+
+            write.write(ex.getMessage());
+            write.write("\r\n");
+            for (StackTraceElement item : ex.getStackTrace()) {
+                write.write(item.toString());
+                write.write("\r\n");
+            }
             write.close();
+            stream.close();
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(sb.toString());
