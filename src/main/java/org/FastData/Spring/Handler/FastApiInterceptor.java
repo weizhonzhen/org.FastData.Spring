@@ -6,6 +6,7 @@ import org.FastData.Spring.Context.DataContext;
 import org.FastData.Spring.Model.*;
 import org.FastData.Spring.Repository.IFastRepository;
 import org.FastData.Spring.Util.CacheUtil;
+import org.FastData.Spring.Util.Util;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import javax.annotation.Resource;
@@ -116,7 +117,7 @@ public class FastApiInterceptor implements HandlerInterceptor {
     private int mapMaxlength(String name, String param) {
         try {
             String len = CacheUtil.get(String.format("%s.%s.maxlength", name.toLowerCase(), param.toLowerCase()));
-            if (len == null || len.equals(""))
+            if (Util.isNullOrEmpty(len))
                 return 0;
             else
                 return Integer.parseInt(len);
@@ -127,7 +128,7 @@ public class FastApiInterceptor implements HandlerInterceptor {
 
     private boolean mapRequired(String name, String param) {
         String value = CacheUtil.get(String.format("%s.%s.required", name.toLowerCase(), param.toLowerCase()));
-        if (value == null)
+        if (Util.isNullOrEmpty(value))
             return false;
         else
             return value.equalsIgnoreCase("true");
@@ -135,7 +136,7 @@ public class FastApiInterceptor implements HandlerInterceptor {
 
     private String mapType(String name) {
         String value = CacheUtil.get(String.format("%s.type", name.toLowerCase()));
-        if (value == null)
+        if (Util.isNullOrEmpty(value))
             return "";
         else
             return value;
