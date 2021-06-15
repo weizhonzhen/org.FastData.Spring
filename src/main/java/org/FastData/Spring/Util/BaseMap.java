@@ -9,7 +9,7 @@ public final class BaseMap {
         Map<String, Object> result = new HashMap<>();
         Arrays.stream(model.getClass().getDeclaredFields()).forEach((a) -> {
             Object value = ReflectUtil.get(model, a.getName(), a.getType());
-            if (value != null && !value.equals(""))
+            if (!Util.isNullOrEmpty(value))
                 result.put(a.getName(), value);
         });
         return result;
