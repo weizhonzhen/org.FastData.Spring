@@ -6,7 +6,7 @@ import com.sun.org.apache.xerces.internal.dom.DeferredTextImpl;
 import org.FastData.Spring.Model.MapResult;
 import org.FastData.Spring.Model.XmlModel;
 import org.FastData.Spring.Util.CacheUtil;
-import org.FastData.Spring.Util.Util;
+import org.FastData.Spring.Util.FastUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -84,7 +84,7 @@ public final class MapXml {
                         String conditionValue = CacheUtil.get(conditionValueKey);
                         switch (condition) {
                             case "isnotnullorempty": {
-                                if (Util.isNullOrEmpty(param.get(item))) {
+                                if (FastUtil.isNullOrEmpty(param.get(item))) {
                                     tempParam.remove(item);
                                 } else {
                                     if (paramSql.contains(tempKey)) {
