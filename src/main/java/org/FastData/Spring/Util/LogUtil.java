@@ -36,7 +36,7 @@ public final class LogUtil {
             write.write(ex.getMessage());
             write.write("\r\n");
             for (StackTraceElement item : ex.getStackTrace()) {
-                write.write(item.toString());
+                write.write(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))+item.toString());
                 write.write("\r\n");
             }
             write.close();
