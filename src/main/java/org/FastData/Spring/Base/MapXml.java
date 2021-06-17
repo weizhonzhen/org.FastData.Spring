@@ -209,6 +209,12 @@ public final class MapXml {
             result.setParam(tempParam);
         }
 
+        if (!sql.toString().contains("?"))
+        {
+            tempParam.clear();
+            result.setParam(tempParam);
+        }
+
         result.setSql(sql.toString());
 
         return result;
