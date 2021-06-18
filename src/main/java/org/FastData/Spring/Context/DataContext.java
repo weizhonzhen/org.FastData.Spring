@@ -55,9 +55,11 @@ public class DataContext implements Closeable {
                     preparedStatement.setObject(i + 1, map.getParam().get(param[i]));
                 }
                 resultSet = preparedStatement.executeQuery();
+                preparedStatement.close();
             } else {
                 statement = conn.createStatement();
                 resultSet = statement.executeQuery(map.getSql());
+                statement.close();
             }
             ResultSetMetaData col = resultSet.getMetaData();
             while (resultSet.next()) {
@@ -102,9 +104,11 @@ public class DataContext implements Closeable {
                     preparedStatement.setObject(i + 1, map.getParam().get(param[i]));
                 }
                 resultSet = preparedStatement.executeQuery();
+                preparedStatement.close();
             } else {
                 statement = conn.createStatement();
                 resultSet = statement.executeQuery(map.getSql());
+                statement.close();
             }
             ResultSetMetaData col = resultSet.getMetaData();
             while (resultSet.next()) {
@@ -138,9 +142,11 @@ public class DataContext implements Closeable {
                     preparedStatement.setObject(i + 1, map.getParam().get(param[i]));
                 }
                 resultSet = preparedStatement.executeQuery();
+                preparedStatement.close();
             } else {
                 statement = conn.createStatement();
                 resultSet = statement.executeQuery(sql);
+                statement.close();
             }
             while (resultSet.next()) {
                 return resultSet.getInt("count");
@@ -185,9 +191,11 @@ public class DataContext implements Closeable {
                     preparedStatement.setObject(i + 1, map.getParam().get(param[i]));
                 }
                 resultSet = preparedStatement.executeQuery();
+                preparedStatement.close();
             } else {
                 statement = conn.createStatement();
                 resultSet = statement.executeQuery(map.getSql());
+                statement.close();
             }
 
             if (config.isOutSql())
@@ -309,6 +317,7 @@ public class DataContext implements Closeable {
                     preparedStatement.setObject(i + 1, insert.getParam().get(param[i]));
                 }
                 preparedStatement.execute();
+                preparedStatement.close();
                 result.getWriteReturn().setSuccess(true);
             }
 
@@ -346,6 +355,7 @@ public class DataContext implements Closeable {
                 }
 
                 result.getWriteReturn().setSuccess( preparedStatement.executeUpdate() > 0);
+                preparedStatement.close();
             }
 
             if (config.isOutSql())
@@ -381,6 +391,7 @@ public class DataContext implements Closeable {
                     preparedStatement.setObject(i + 1, update.getParam().get(param[i]));
                 }
                 result.getWriteReturn().setSuccess(preparedStatement.executeUpdate() > 0);
+                preparedStatement.close();
             }
 
             if (config.isOutSql())
@@ -415,6 +426,7 @@ public class DataContext implements Closeable {
                     preparedStatement.setObject(i + 1, update.getParam().get(param[i]));
                 }
                 result.getWriteReturn().setSuccess(preparedStatement.executeUpdate() > 0);
+                preparedStatement.close();
             }
 
             if (config.isOutSql())
@@ -448,6 +460,7 @@ public class DataContext implements Closeable {
                     preparedStatement.setObject(i + 1, exists.getParam().get(param[i]));
                 }
                 resultSet = preparedStatement.executeQuery();
+                preparedStatement.close();
                 while (resultSet.next()) {
                     result.setCount(Integer.parseInt(resultSet.getObject(1).toString()));
                 }
@@ -489,9 +502,11 @@ public class DataContext implements Closeable {
                     preparedStatement.setObject(i + 1, query.getParam().get(param[i]));
                 }
                 resultSet = preparedStatement.executeQuery();
+                preparedStatement.close();
             } else {
                 statement = conn.createStatement();
                 resultSet = statement.executeQuery(query.getSql());
+                statement.close();
             }
             ResultSetMetaData col = resultSet.getMetaData();
             while (resultSet.next()) {
@@ -538,9 +553,11 @@ public class DataContext implements Closeable {
                     preparedStatement.setObject(i + 1, query.getParam().get(param[i]));
                 }
                 resultSet = preparedStatement.executeQuery();
+                preparedStatement.close();
             } else {
                 statement = conn.createStatement();
                 resultSet = statement.executeQuery(query.getSql());
+                statement.close();
             }
             ResultSetMetaData col = resultSet.getMetaData();
             while (resultSet.next()) {
@@ -582,9 +599,11 @@ public class DataContext implements Closeable {
                     preparedStatement.setObject(i + 1, map.getParam().get(param[i]));
                 }
                 resultSet = preparedStatement.executeQuery();
+                preparedStatement.close();
             } else {
                 statement = conn.createStatement();
                 resultSet = statement.executeQuery(map.getSql());
+                statement.close();
             }
             while (resultSet.next()) {
                 count = Integer.parseInt(resultSet.getObject(1).toString());
@@ -630,9 +649,11 @@ public class DataContext implements Closeable {
                     preparedStatement.setObject(i + 1, map.getParam().get(param[i]));
                 }
                 result.getWriteReturn().setSuccess(preparedStatement.executeUpdate() > 0);
+                preparedStatement.close();
             } else {
                 statement = conn.createStatement();
                 result.getWriteReturn().setSuccess(statement.execute(map.getSql()));
+                statement.close();
             }
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(map) + "\033[0m");
@@ -669,9 +690,11 @@ public class DataContext implements Closeable {
                 }
 
                 result.setSuccess(preparedStatement.executeUpdate() > 0);
+                preparedStatement.close();
             } else {
                 statement = conn.createStatement();
                 result.setSuccess(statement.execute(map.getSql()));
+                statement.close();
             }
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(map) + "\033[0m");
