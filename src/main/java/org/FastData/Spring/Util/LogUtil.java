@@ -33,11 +33,11 @@ public final class LogUtil {
 
             OutputStreamWriter write = new OutputStreamWriter(stream, "UTF-8");
 
-            write.write(ex.getMessage());
-            write.write("\r\n");
+            if (ex.getMessage() != null)
+                write.write(String.format("%s:%s\n", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), ex.getMessage()));
+
             for (StackTraceElement item : ex.getStackTrace()) {
-                write.write(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))+item.toString());
-                write.write("\r\n");
+                write.write(String.format("%s:%s\n", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), item.toString()));
             }
             write.close();
             stream.close();
