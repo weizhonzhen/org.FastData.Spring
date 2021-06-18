@@ -23,9 +23,6 @@ public class FastApiInterceptor implements HandlerInterceptor {
     private final static String all = "all";
     private final static String write = "write";
 
-    @Resource
-    IFastRepository ifast;
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Map param = request.getParameterMap();
