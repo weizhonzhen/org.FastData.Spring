@@ -3,11 +3,9 @@ package org.FastData.Spring.Util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.security.cert.TrustAnchor;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.stream.Stream;
+import java.util.Map;
 
 public final class LogUtil {
     public static void error(Exception ex) {
@@ -60,7 +58,7 @@ public final class LogUtil {
         return stream;
     }
 
-    public static void error(HashMap<String,Object> param){
+    public static void error(Map<String,Object> param){
         try {
             FileOutputStream stream = init();
             if (stream == null)
