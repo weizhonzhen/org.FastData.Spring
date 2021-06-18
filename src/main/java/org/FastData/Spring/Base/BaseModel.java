@@ -169,6 +169,7 @@ public final class BaseModel {
                     list.add(resultset.getString("name"));
                 }
                 resultset.close();
+                statement.close();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
