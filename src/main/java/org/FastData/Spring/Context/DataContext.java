@@ -10,6 +10,8 @@ import org.FastData.Spring.Config.DataDbType;
 import org.FastData.Spring.Util.CacheUtil;
 import org.FastData.Spring.Util.LogUtil;
 import org.FastData.Spring.Util.ReflectUtil;
+import sun.security.pkcs11.wrapper.CK_AES_CTR_PARAMS;
+
 import java.io.Closeable;
 import java.sql.*;
 import java.util.*;
@@ -58,7 +60,6 @@ public class DataContext implements Closeable {
             } else {
                 statement = conn.createStatement();
                 resultSet = statement.executeQuery(map.getSql());
-                
             }
             ResultSetMetaData col = resultSet.getMetaData();
             while (resultSet.next()) {
@@ -287,7 +288,6 @@ public class DataContext implements Closeable {
                     }
                     resultSet.close();
                 }
-                close(resultSet,map);
                 result.setpModel( pModel);
             } else
                 return result;
@@ -315,9 +315,9 @@ public class DataContext implements Closeable {
                     preparedStatement.setObject(i + 1, insert.getParam().get(param[i]));
                 }
                 preparedStatement.execute();
-                preparedStatement.close();
                 result.getWriteReturn().setSuccess(true);
             }
+            close(null,insert);
 
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(insert) + "\033[0m");
@@ -353,8 +353,8 @@ public class DataContext implements Closeable {
                 }
 
                 result.getWriteReturn().setSuccess( preparedStatement.executeUpdate() > 0);
-                preparedStatement.close();
             }
+            close(null,delete);
 
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(delete) + "\033[0m");
@@ -389,8 +389,8 @@ public class DataContext implements Closeable {
                     preparedStatement.setObject(i + 1, update.getParam().get(param[i]));
                 }
                 result.getWriteReturn().setSuccess(preparedStatement.executeUpdate() > 0);
-                preparedStatement.close();
             }
+            close(null,update);
 
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(update) + "\033[0m");
@@ -424,8 +424,8 @@ public class DataContext implements Closeable {
                     preparedStatement.setObject(i + 1, update.getParam().get(param[i]));
                 }
                 result.getWriteReturn().setSuccess(preparedStatement.executeUpdate() > 0);
-                preparedStatement.close();
             }
+            close(null,update);
 
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(update) + "\033[0m");
