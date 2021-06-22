@@ -58,7 +58,7 @@ public final class LogUtil {
         return stream;
     }
 
-    public static void error(Map<String,Object> param){
+    public static void msg(Map<String,Object> param){
         try {
             FileOutputStream stream = init();
             if (stream == null)
@@ -76,6 +76,22 @@ public final class LogUtil {
             }
 
             write.write(sb.toString());
+            write.write("\r\n");
+            write.close();
+            stream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void msg(String msg){
+        try {
+            FileOutputStream stream = init();
+            if (stream == null)
+                return;
+
+            OutputStreamWriter write = new OutputStreamWriter(stream, "UTF-8");
+            write.write(msg);
             write.write("\r\n");
             write.close();
             stream.close();
