@@ -12,6 +12,7 @@ import org.FastData.Spring.Check.BaseTable;
 import org.FastData.Spring.Config.Config;
 import org.FastData.Spring.Context.DataContext;
 import org.FastData.Spring.Model.*;
+import org.FastData.Spring.Util.FastUtil;
 import org.FastData.Spring.Util.ScanPackage;
 import org.FastData.Spring.Util.CacheUtil;
 import org.springframework.context.annotation.ComponentScan;
@@ -677,9 +678,9 @@ public class FastRepository implements IFastRepository {
      */
     private void init(String cachePackageName, String codeFirstPackageName, String key) {
         instanceMap();
-        if (cachePackageName != null && !cachePackageName.equals(""))
+        if (!FastUtil.isNullOrEmpty(cachePackageName))
             instanceProperties(cachePackageName);
-        if (codeFirstPackageName != null && !codeFirstPackageName.equals(""))
+        if (!FastUtil.isNullOrEmpty(codeFirstPackageName))
             instanceTable(codeFirstPackageName, key);
     }
 
