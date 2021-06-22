@@ -25,9 +25,13 @@ public class FastRepository implements IFastRepository {
     @PostConstruct
     public void init() {
         try {
-            String mainClass = Thread.currentThread().getStackTrace()[Thread.currentThread().getStackTrace().length - 1].getClassName();
-            FastData annotation = Thread.currentThread().getContextClassLoader().loadClass(mainClass).getAnnotation(FastData.class);
-            init(annotation.cachePackageName(),annotation.codeFirstPackageName(),annotation.key());
+            for(StackTraceElement item:Thread.currentThread().getStackTrace()) {
+                FastData annotation = Thread.currentThread().getContextClassLoader().loadClass(item.getClassName()).getAnnotation(FastData.class);
+                if (annotation != null) {
+                    init(annotation.cachePackageName(), annotation.codeFirstPackageName(), annotation.key());
+                    break;
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
