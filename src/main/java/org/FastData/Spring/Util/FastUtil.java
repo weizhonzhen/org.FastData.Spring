@@ -1,5 +1,7 @@
 package org.FastData.Spring.Util;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,5 +23,9 @@ public final class FastUtil {
             return true;
         else
             return false;
+    }
+
+    public static String getDateTime(String pattern){
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern(pattern));
     }
 }
