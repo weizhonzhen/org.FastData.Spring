@@ -3,6 +3,7 @@ package org.FastData.Spring.Util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -13,7 +14,7 @@ public final class LogUtil {
             FileOutputStream stream = init();
             if (stream == null)
                 return;
-            OutputStreamWriter write = new OutputStreamWriter(stream, "UTF-8");
+            OutputStreamWriter write = new OutputStreamWriter(stream, StandardCharsets.UTF_8);
 
             if (ex.getMessage() != null)
                 write.write(String.format("%s:%s\r\n", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), ex.getMessage()));
