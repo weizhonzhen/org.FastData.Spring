@@ -42,7 +42,7 @@ public final class DataConfig {
         String s;
         StringBuilder sb = new StringBuilder();
         try {
-            InputStream stream = Class.forName(Thread.currentThread().getStackTrace()[1].getClassName()).getResourceAsStream("/"+fileName);
+            InputStream stream=Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
             if (stream != null) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
                 while ((s = reader.readLine()) != null) {
