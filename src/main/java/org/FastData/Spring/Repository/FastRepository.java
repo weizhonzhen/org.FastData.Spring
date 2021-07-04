@@ -16,15 +16,14 @@ import org.FastData.Spring.Util.FastUtil;
 import org.FastData.Spring.Util.ScanPackage;
 import org.FastData.Spring.Util.CacheUtil;
 import org.springframework.context.annotation.ComponentScan;
-import javax.annotation.PostConstruct;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.*;
 
 @ComponentScan(basePackages = {"org.FastData.Spring.Repository","org.FastData.Spring.Handler"})
 public class FastRepository implements IFastRepository {
-    @PostConstruct
-    public void init() {
+    public FastRepository()
+    {
         try {
             for(StackTraceElement item:Thread.currentThread().getStackTrace()) {
                 FastData annotation = Thread.currentThread().getContextClassLoader().loadClass(item.getClassName()).getAnnotation(FastData.class);
