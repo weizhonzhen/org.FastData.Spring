@@ -11,6 +11,7 @@ import org.FastData.Spring.Config.Config;
 import org.FastData.Spring.Config.DataDbType;
 import org.FastData.Spring.Context.DataContext;
 import org.FastData.Spring.Model.DataReturn;
+import org.FastData.Spring.Model.FastMap;
 import org.FastData.Spring.Model.MapResult;
 import java.util.*;
 
@@ -199,7 +200,7 @@ public class BaseTable {
         if (db.config.getDbType().equalsIgnoreCase(DataDbType.Oracle))
             map.setSql("select a.CONSTRAINT_NAME PK from all_constraints a inner join all_cons_columns b on a.TABLE_NAME=b.TABLE_NAME and a.CONSTRAINT_NAME=b.CONSTRAINT_NAME where a.table_name=? and a.constraint_type = 'P' and b.COLUMN_NAME=?");
 
-        List<Map<String,Object>> result = db.query(map).getList();
+        List<FastMap<String,Object>> result = db.query(map).getList();
         return result.size() == 0 ? new HashMap<>() : result.get(0);
     }
 
