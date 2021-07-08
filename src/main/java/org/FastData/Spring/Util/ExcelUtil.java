@@ -78,7 +78,7 @@ public final class ExcelUtil {
         return result;
     }
 
-    public static void fillContent(List<Map<String, Object>> listContent, ExcelModel model, String exclude, boolean isSmallTile){
+    public static void fillContent(List<LinkedHashMap<String, Object>> listContent, ExcelModel model, String exclude, boolean isSmallTile){
         try {
             int i = 0;
             HSSFCellStyle style_n = getStyle(model.getWorkbook(), true, true);
@@ -130,7 +130,7 @@ public final class ExcelUtil {
         }
     }
 
-    public static void fillContent(List<Map<String, Object>> listContent, ExcelModel model){
+    public static void fillContent(List<LinkedHashMap<String, Object>> listContent, ExcelModel model){
         fillContent(listContent,model,"",false);
     }
 
