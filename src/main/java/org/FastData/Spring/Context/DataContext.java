@@ -110,7 +110,7 @@ public class DataContext implements Closeable {
             }
             ResultSetMetaData col = resultSet.getMetaData();
             while (resultSet.next()) {
-                Map<String, Object> model = new HashMap<String, Object>();
+                FastMap<String, Object> model = new FastMap<String, Object>();
                 for (int i = 1; i <= col.getColumnCount(); i++) {
                     String name = col.getColumnName(i);
                     model.put(name, resultSet.getObject(name));
@@ -277,7 +277,7 @@ public class DataContext implements Closeable {
                 if (resultSet != null) {
                     ResultSetMetaData col = resultSet.getMetaData();
                     while (resultSet.next()) {
-                        Map<String, Object> model = new HashMap<String, Object>();
+                        FastMap<String, Object> model = new FastMap<String, Object>();
                         for (int i = 1; i <= col.getColumnCount(); i++) {
                             String name = col.getColumnName(i);
                             model.put(name, resultSet.getObject(name));
@@ -507,7 +507,7 @@ public class DataContext implements Closeable {
             }
             ResultSetMetaData col = resultSet.getMetaData();
             while (resultSet.next()) {
-                Map<String, Object> map = new HashMap<String, Object>();
+                FastMap<String, Object> map = new FastMap<String, Object>();
                 for (int i = 1; i <= col.getColumnCount(); i++) {
                     String name = col.getColumnName(i);
                     map.put(name, resultSet.getObject(name));
