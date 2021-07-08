@@ -65,7 +65,7 @@ public interface IFastRepository {
       param: sql preparedStatement
       key: database key
     */
-    List<Map<String, Object>> query(String name, Map<String, Object> param, String key);
+    List<FastMap<String, Object>> query(String name, Map<String, Object> param, String key);
 
     /*
      name: xml file -> sqlMap -> id
@@ -73,14 +73,14 @@ public interface IFastRepository {
      key: database key
      log:sql log
    */
-    List<Map<String, Object>> query(String name, Map<String, Object> param, String key,Boolean log);
+    List<FastMap<String, Object>> query(String name, Map<String, Object> param, String key,Boolean log);
 
     /*
       name: xml file -> sqlMap -> id
       param: sql preparedStatement
       db: database context
     */
-    List<Map<String, Object>> query(String name, Map<String, Object> param, DataContext db);
+    List<FastMap<String, Object>> query(String name, Map<String, Object> param, DataContext db);
 
     /*
          name: xml file -> sqlMap -> id
@@ -88,14 +88,14 @@ public interface IFastRepository {
          db: database context
      log:sql log
        */
-    List<Map<String, Object>> query(String name, Map<String, Object> param, DataContext db,Boolean log);
+    List<FastMap<String, Object>> query(String name, Map<String, Object> param, DataContext db,Boolean log);
 
     /*
       name: xml file -> sqlMap -> id
       param: sql preparedStatement
       xml file -> sql have db key value (db="dbkey")
     */
-    List<Map<String, Object>> query(String name, Map<String, Object> param);
+    List<FastMap<String, Object>> query(String name, Map<String, Object> param);
 
     /*
       name: xml file -> sqlMap -> id
@@ -103,7 +103,7 @@ public interface IFastRepository {
       xml file -> sql have db key value (db="dbkey")
      log:sql log
     */
-    List<Map<String, Object>> query(String name, Map<String, Object> param,Boolean log);
+    List<FastMap<String, Object>> query(String name, Map<String, Object> param,Boolean log);
 
     /*
       query by page
@@ -423,14 +423,14 @@ public interface IFastRepository {
          key: database key
       log:sql log
     */
-    Map<String,Object> query(Object model, String key,Boolean log);
+    FastMap<String,Object> query(Object model, String key,Boolean log);
 
     /*
       query model by primary Key
       model: database table
       db: database context
     */
-    Map<String,Object> query(Object model, DataContext db);
+    FastMap<String,Object> query(Object model, DataContext db);
 
     /*
       query model by primary Key
@@ -438,7 +438,7 @@ public interface IFastRepository {
       db: database context
       log:sql log
     */
-    Map<String,Object> query(Object model, DataContext db,Boolean log);
+    FastMap<String,Object> query(Object model, DataContext db,Boolean log);
 
     /*
      update,delete sql

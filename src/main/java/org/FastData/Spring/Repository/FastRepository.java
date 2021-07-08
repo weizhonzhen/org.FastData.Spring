@@ -106,7 +106,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public List<Map<String, Object>> query(String name, Map<String, Object> param, String key) {
+    public List<FastMap<String, Object>> query(String name, Map<String, Object> param, String key) {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(key)) {
@@ -114,11 +114,11 @@ public class FastRepository implements IFastRepository {
                 return db.query(result).getList();
             }
         }
-        return new ArrayList<Map<String, Object>>();
+        return new ArrayList<FastMap<String, Object>>();
     }
 
     @Override
-    public List<Map<String, Object>> query(String name, Map<String, Object> param, String key,Boolean log) {
+    public List<FastMap<String, Object>> query(String name, Map<String, Object> param, String key,Boolean log) {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(key)) {
@@ -126,31 +126,31 @@ public class FastRepository implements IFastRepository {
                 return db.query(result).getList();
             }
         }
-        return new ArrayList<Map<String, Object>>();
+        return new ArrayList<FastMap<String, Object>>();
     }
 
     @Override
-    public List<Map<String, Object>> query(String name, Map<String, Object> param, DataContext db) {
+    public List<FastMap<String, Object>> query(String name, Map<String, Object> param, DataContext db) {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             db.config.setOutSql(db.config.isOutSql() || mapLog(name));
             return db.query(result).getList();
         }
-        return new ArrayList<Map<String, Object>>();
+        return new ArrayList<FastMap<String, Object>>();
     }
 
     @Override
-    public List<Map<String, Object>> query(String name, Map<String, Object> param, DataContext db,Boolean log) {
+    public List<FastMap<String, Object>> query(String name, Map<String, Object> param, DataContext db,Boolean log) {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
             return db.query(result).getList();
         }
-        return new ArrayList<Map<String, Object>>();
+        return new ArrayList<FastMap<String, Object>>();
     }
 
     @Override
-    public List<Map<String, Object>> query(String name, Map<String, Object> param) {
+    public List<FastMap<String, Object>> query(String name, Map<String, Object> param) {
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(mapDb(name))) {
@@ -158,11 +158,11 @@ public class FastRepository implements IFastRepository {
                 return db.query(result).getList();
             }
         }
-        return new ArrayList<Map<String, Object>>();
+        return new ArrayList<FastMap<String, Object>>();
     }
 
     @Override
-    public List<Map<String, Object>> query(String name, Map<String, Object> param,Boolean log) {
+    public List<FastMap<String, Object>> query(String name, Map<String, Object> param,Boolean log) {
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(mapDb(name))) {
@@ -170,7 +170,7 @@ public class FastRepository implements IFastRepository {
                 return db.query(result).getList();
             }
         }
-        return new ArrayList<Map<String, Object>>();
+        return new ArrayList<FastMap<String, Object>>();
     }
 
     @Override
@@ -473,7 +473,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public Map<String,Object> query(Object model, String key,Boolean log) {
+    public FastMap<String,Object> query(Object model, String key,Boolean log) {
         try (DataContext db = new DataContext(key)) {
             db.config.setOutSql(db.config.isOutSql() ||log);
             return db.query(model).getItem();
@@ -481,12 +481,12 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public Map<String,Object> query(Object model, DataContext db) {
+    public FastMap<String,Object> query(Object model, DataContext db) {
         return db.query(model).getItem();
     }
 
     @Override
-    public Map<String,Object> query(Object model, DataContext db,Boolean log) {
+    public FastMap<String,Object> query(Object model, DataContext db,Boolean log) {
         db.config.setOutSql(db.config.isOutSql() ||log);
         return db.query(model).getItem();
     }
