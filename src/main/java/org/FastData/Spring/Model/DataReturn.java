@@ -10,9 +10,9 @@ public class DataReturn {
 
     private String sql;
 
-    private List<Map<String, Object>> list = new ArrayList<>();
+    private List<FastMap<String, Object>> list = new ArrayList<>();
 
-    private Map<String, Object> item = new HashMap<>();
+    private FastMap<String, Object> item = new FastMap<>();
 
     private PageResult pageResult = new PageResult();
 
@@ -34,19 +34,19 @@ public class DataReturn {
         this.sql = sql;
     }
 
-    public List<Map<String, Object>> getList() {
+    public List<FastMap<String, Object>> getList() {
         return list;
     }
 
-    public void setList(List<Map<String, Object>> list) {
+    public void setList(List<FastMap<String, Object>> list) {
         this.list = list;
     }
 
-    public Map<String, Object> getItem() {
+    public FastMap<String, Object> getItem() {
         return item;
     }
 
-    public void setItem(Map<String, Object> item) {
+    public void setItem(FastMap<String, Object> item) {
         this.item = item;
     }
 
