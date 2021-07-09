@@ -31,7 +31,7 @@ public class DataContext implements Closeable {
     }
 
     public void close() {
-        PoolUtil.close(config, statement, preparedStatement, conn, cacheKey, id);
+        PoolUtil.close(config, conn, cacheKey, id);
     }
 
     /*
@@ -785,12 +785,8 @@ class PoolUtil {
         return model;
     }
 
-    public static synchronized void close(DbConfig config, Statement statement, PreparedStatement preparedStatement, Connection conn, String cacheKey, String id) {
+    public static synchronized void close(DbConfig config, Connection conn, String cacheKey, String id) {
         try {
-            if (statement != null)
-                
-            if (preparedStatement != null)
-                
             if (conn != null) {
                 List<PoolModel> pool = CacheUtil.getList(cacheKey, PoolModel.class);
                 Optional<PoolModel> temp = pool.stream().filter(a -> a.getId().equals(id)).findFirst();
@@ -803,6 +799,7 @@ class PoolUtil {
                         model.setUse(false);
                         pool.add(model);
                     }
+                    System.out.println(pool.size());
                     CacheUtil.setModel(cacheKey, pool);
                 } else
                     conn.close();
