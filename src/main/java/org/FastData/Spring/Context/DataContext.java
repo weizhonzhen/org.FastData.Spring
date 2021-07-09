@@ -799,7 +799,6 @@ class PoolUtil {
                         model.setUse(false);
                         pool.add(model);
                     }
-                    System.out.println(pool.size());
                     CacheUtil.setModel(cacheKey, pool);
                 } else
                     conn.close();
