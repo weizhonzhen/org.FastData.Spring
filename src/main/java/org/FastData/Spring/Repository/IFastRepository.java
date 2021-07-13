@@ -544,4 +544,29 @@ public interface IFastRepository {
      key: database key
    */
     int count(Map<String,Object> map,Class<?> type,  String key);
+
+    /*
+   map:sql param
+   db: database context
+   log:sql log
+  */
+    DataReturn delete(Map<String,Object> map,Class<?> type, DataContext db, Boolean log);
+
+    /*
+     map:sql param
+     db: database context
+    */
+    DataReturn delete(Map<String,Object> map,Class<?> type, DataContext db);
+
+    /*
+     map:sql param
+     key: database key
+     log:sql log
+   */
+    DataReturn delete(Map<String,Object> map,Class<?> type,  String key, Boolean log);
+
+    /*
+     key: database key
+   */
+    DataReturn delete(Map<String,Object> map,Class<?> type,  String key);
 }

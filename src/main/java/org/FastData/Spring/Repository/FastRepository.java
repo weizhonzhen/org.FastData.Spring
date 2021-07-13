@@ -629,6 +629,32 @@ public class FastRepository implements IFastRepository {
         }
     }
 
+    @Override
+    public DataReturn delete(Map<String, Object> map, Class<?> type, DataContext db, Boolean log) {
+        db.config.setOutSql(db.config.isOutSql() || log);
+        return db.delete(map, type);
+    }
+
+    @Override
+    public DataReturn delete(Map<String, Object> map, Class<?> type, DataContext db) {
+        return db.delete(map, type);
+    }
+
+    @Override
+    public DataReturn delete(Map<String, Object> map, Class<?> type, String key, Boolean log) {
+        try (DataContext db = new DataContext(key)) {
+            db.config.setOutSql(db.config.isOutSql() || log);
+            return db.delete(map, type);
+        }
+    }
+
+    @Override
+    public DataReturn delete(Map<String, Object> map, Class<?> type, String key) {
+        try (DataContext db = new DataContext(key)) {
+            return db.delete(map, type);
+        }
+    }
+
     private String mapDb(String name) {
         return CacheUtil.get(String.format("%s.db", name.toLowerCase()));
     }
