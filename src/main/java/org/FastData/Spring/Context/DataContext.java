@@ -367,6 +367,27 @@ public class DataContext implements Closeable {
     }
 
     /*
+         delete table by primary Key
+         model: database table
+        */
+    public DataReturn delete(Map<String,Object> map, Class<?> type) {
+        MapResult param = new MapResult();
+        LinkedHashMap<String, Object> linkMap = new LinkedHashMap<>();
+        String tableName = type.getName().replace(type.getPackage().getName(), "").replace(".", "");
+        param.setSql(String.format("delete from %s where 1=1 ", tableName));
+        map.keySet().forEach(a -> {
+            linkMap.put(a, map.get(a));
+        });
+
+        linkMap.keySet().forEach(a -> {
+            param.setSql(String.format("%s and %s=?", param.getSql(), a));
+        });
+
+        param.setParam(linkMap);
+        return execute(param);
+    }
+
+    /*
      update table by primary Key
      model: database table
      field: update field
