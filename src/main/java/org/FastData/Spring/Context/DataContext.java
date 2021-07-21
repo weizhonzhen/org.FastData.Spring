@@ -305,15 +305,19 @@ public class DataContext implements Closeable {
         DataReturn result = new DataReturn();
         try {
             MapResult insert = BaseModel.insert(model);
-
-            if (insert.getParam().size() != 0) {
-                preparedStatement = conn.prepareStatement(insert.getSql());
-                Object[] param = insert.getParam().keySet().toArray();
-                for (int i = 0; i < param.length; i++) {
-                    preparedStatement.setObject(i + 1, insert.getParam().get(param[i]));
+            if (!insert.isSuccess()) {
+                result.getWriteReturn().setSuccess(false);
+                result.getWriteReturn().setMessage(insert.getMessage());
+            } else {
+                if (insert.getParam().size() != 0) {
+                    preparedStatement = conn.prepareStatement(insert.getSql());
+                    Object[] param = insert.getParam().keySet().toArray();
+                    for (int i = 0; i < param.length; i++) {
+                        preparedStatement.setObject(i + 1, insert.getParam().get(param[i]));
+                    }
+                    preparedStatement.execute();
+                    result.getWriteReturn().setSuccess(true);
                 }
-                preparedStatement.execute();
-                result.getWriteReturn().setSuccess(true);
             }
             close(null,insert);
 
@@ -508,34 +512,39 @@ public class DataContext implements Closeable {
         try {
             ResultSet resultSet;
             MapResult query = BaseModel.query(model, config, conn);
-            if (query.getParam().size() != 0)
-                result.setSql(getSql(query));
-            else
-                result.setSql(query.getSql());
-
-            if (query.getParam().size() != 0) {
-                preparedStatement = conn.prepareStatement(query.getSql());
-                Object[] param = query.getParam().keySet().toArray();
-                for (int i = 0; i < param.length; i++) {
-                    preparedStatement.setObject(i + 1, query.getParam().get(param[i]));
-                }
-                resultSet = preparedStatement.executeQuery();
-                
+            if (!query.isSuccess()) {
+                result.getWriteReturn().setSuccess(false);
+                result.getWriteReturn().setMessage(query.getMessage());
             } else {
-                statement = conn.createStatement();
-                resultSet = statement.executeQuery(query.getSql());
-                
-            }
-            ResultSetMetaData col = resultSet.getMetaData();
-            while (resultSet.next()) {
-                FastMap<String, Object> map = new FastMap<String, Object>();
-                for (int i = 1; i <= col.getColumnCount(); i++) {
-                    String name = col.getColumnName(i);
-                    map.put(name, resultSet.getObject(name));
+                if (query.getParam().size() != 0)
+                    result.setSql(getSql(query));
+                else
+                    result.setSql(query.getSql());
+
+                if (query.getParam().size() != 0) {
+                    preparedStatement = conn.prepareStatement(query.getSql());
+                    Object[] param = query.getParam().keySet().toArray();
+                    for (int i = 0; i < param.length; i++) {
+                        preparedStatement.setObject(i + 1, query.getParam().get(param[i]));
+                    }
+                    resultSet = preparedStatement.executeQuery();
+
+                } else {
+                    statement = conn.createStatement();
+                    resultSet = statement.executeQuery(query.getSql());
+
                 }
-                result.setItem(map);
+                ResultSetMetaData col = resultSet.getMetaData();
+                while (resultSet.next()) {
+                    FastMap<String, Object> map = new FastMap<String, Object>();
+                    for (int i = 1; i <= col.getColumnCount(); i++) {
+                        String name = col.getColumnName(i);
+                        map.put(name, resultSet.getObject(name));
+                    }
+                    result.setItem(map);
+                }
+                close(resultSet,query);
             }
-            close(resultSet,query);
 
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(query) + "\033[0m");
@@ -559,40 +568,45 @@ public class DataContext implements Closeable {
         try {
             ResultSet resultSet;
             MapResult query = BaseModel.query(model, config, conn);
-            if (query.getParam().size() != 0)
-                result.setSql(getSql(query));
-            else
-                result.setSql(query.getSql());
-
-            if (query.getParam().size() != 0) {
-                preparedStatement = conn.prepareStatement(query.getSql());
-                Object[] param = query.getParam().keySet().toArray();
-                for (int i = 0; i < param.length; i++) {
-                    preparedStatement.setObject(i + 1, query.getParam().get(param[i]));
-                }
-                resultSet = preparedStatement.executeQuery();
-                
+            if (!query.isSuccess()) {
+                result.getWriteReturn().setSuccess(false);
+                result.getWriteReturn().setMessage(query.getMessage());
             } else {
-                statement = conn.createStatement();
-                resultSet = statement.executeQuery(query.getSql());
-                
-            }
-            ResultSetMetaData col = resultSet.getMetaData();
-            while (resultSet.next()) {
-                T item = (T) type.newInstance();
-                for (int i = 1; i <= col.getColumnCount(); i++) {
-                    String name = col.getColumnName(i);
-                    if (property.stream().anyMatch(a -> a.getName().equalsIgnoreCase(name))) {
-                        PropertyModel pInfo = property.stream().filter(a -> a.getName().equalsIgnoreCase(name)).findFirst().get();
-                        Object value = resultSet.getObject(name);
-                        if (!resultSet.wasNull())
-                            ReflectUtil.set(item, value, pInfo.getName(), pInfo.getType());
-                    } else
-                        continue;
+                if (query.getParam().size() != 0)
+                    result.setSql(getSql(query));
+                else
+                    result.setSql(query.getSql());
+
+                if (query.getParam().size() != 0) {
+                    preparedStatement = conn.prepareStatement(query.getSql());
+                    Object[] param = query.getParam().keySet().toArray();
+                    for (int i = 0; i < param.length; i++) {
+                        preparedStatement.setObject(i + 1, query.getParam().get(param[i]));
+                    }
+                    resultSet = preparedStatement.executeQuery();
+
+                } else {
+                    statement = conn.createStatement();
+                    resultSet = statement.executeQuery(query.getSql());
+
                 }
-                result.setItem(item);
+                ResultSetMetaData col = resultSet.getMetaData();
+                while (resultSet.next()) {
+                    T item = (T) type.newInstance();
+                    for (int i = 1; i <= col.getColumnCount(); i++) {
+                        String name = col.getColumnName(i);
+                        if (property.stream().anyMatch(a -> a.getName().equalsIgnoreCase(name))) {
+                            PropertyModel pInfo = property.stream().filter(a -> a.getName().equalsIgnoreCase(name)).findFirst().get();
+                            Object value = resultSet.getObject(name);
+                            if (!resultSet.wasNull())
+                                ReflectUtil.set(item, value, pInfo.getName(), pInfo.getType());
+                        } else
+                            continue;
+                    }
+                    result.setItem(item);
+                }
+                close(resultSet, query);
             }
-            close(resultSet,query);
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(query) + "\033[0m");
         } catch (Exception ex) {
