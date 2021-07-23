@@ -78,13 +78,20 @@ public final class ExcelUtil {
         return result;
     }
 
-    public static void fillContent(List<LinkedHashMap<String, Object>> listContent, ExcelModel model, String exclude, boolean isSmallTile){
+    public static void fillContent(List<LinkedHashMap<String, Object>> listContent, ExcelModel model, String exclude, boolean isSmallTile) {
         try {
             int i = 0;
             HSSFCellStyle style_n = getStyle(model.getWorkbook(), true, true);
             HSSFCellStyle style = getStyle(model.getWorkbook(), false, false);
             HSSFRow row = null;
             HSSFCell cell = null;
+            String text = null;
+            String cellValue = null;
+            Integer rowbegin = null;
+            Integer rowend = null;
+            Integer colbegin = null;
+            Integer colend = null;
+            Map<String, Object> info = null;
 
             for (Map<String, Object> item : listContent) {
                 if (isSmallTile)
@@ -101,21 +108,26 @@ public final class ExcelUtil {
                     cell.getRow().setHeight((short) 420);
 
                     if (temp.getValue() instanceof Map) {
-                        Map<String, Object> info = (Map<String, Object>) temp.getValue();
-                        model.getSheet().addMergedRegion(new CellRangeAddress(
-                                Integer.parseInt(info.get("rowbegin").toString()), Integer.parseInt(info.get("rowend").toString()),
-                                Integer.parseInt(info.get("colbegin").toString()) - 1, Integer.parseInt(info.get("colend").toString()) - 1));
+                        info = (Map<String, Object>) temp.getValue();
 
-                        cell.setCellValue(info.get("text").toString());
+                        rowbegin = Integer.parseInt(FastUtil.isNullOrEmpty(info.get("rowbegin")) ? "0" : info.get("rowbegin").toString());
+                        rowend = Integer.parseInt(FastUtil.isNullOrEmpty(info.get("rowend")) ? "0" : info.get("rowend").toString());
+                        colbegin = Integer.parseInt(FastUtil.isNullOrEmpty(info.get("colbegin")) ? "1" : info.get("colbegin").toString());
+                        colend = Integer.parseInt(FastUtil.isNullOrEmpty(info.get("colend")) ? "1" : info.get("colend").toString());
+                        model.getSheet().addMergedRegion(new CellRangeAddress(rowbegin, rowend, colbegin - 1, colend - 1));
 
-                        if (info.get("text").toString().contains("\n"))
+                        text = FastUtil.isNullOrEmpty(info.get("text")) ? "" : info.get("text").toString();
+                        cell.setCellValue(text);
+
+                        if (text.contains("\n"))
                             cell.setCellStyle(style_n);
                         else
                             cell.setCellStyle(style);
                     } else {
-                        cell.setCellValue(temp.getValue().toString());
+                        cellValue = FastUtil.isNullOrEmpty(temp.getValue()) ? "" : temp.getValue().toString();
+                        cell.setCellValue(cellValue);
 
-                        if (temp.getValue().toString().contains("\n"))
+                        if (cellValue.contains("\n"))
                             cell.setCellStyle(style_n);
                         else
                             cell.setCellStyle(style);
@@ -124,8 +136,7 @@ public final class ExcelUtil {
 
                 i++;
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             LogUtil.error(ex);
         }
     }
