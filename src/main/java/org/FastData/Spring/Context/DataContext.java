@@ -110,12 +110,9 @@ public class DataContext implements Closeable {
             }
             ResultSetMetaData col = resultSet.getMetaData();
             while (resultSet.next()) {
-                FastMap<String, Object> model = new FastMap<String, Object>();
-                for (int i = 1; i <= col.getColumnCount(); i++) {
-                    String name = col.getColumnName(i);
-                    model.put(name, resultSet.getObject(name));
-                }
-                result.getList().add(model);
+                FastMap<String, Object> model = read(col, resultSet);
+                if (model != null)
+                    result.getList().add(model);
             }
             close(resultSet,map);
             if (config.isOutSql())
@@ -277,12 +274,9 @@ public class DataContext implements Closeable {
                 if (resultSet != null) {
                     ResultSetMetaData col = resultSet.getMetaData();
                     while (resultSet.next()) {
-                        FastMap<String, Object> model = new FastMap<String, Object>();
-                        for (int i = 1; i <= col.getColumnCount(); i++) {
-                            String name = col.getColumnName(i);
-                            model.put(name, resultSet.getObject(name));
-                        }
-                        result.getList().add(model);
+                        FastMap<String, Object> model = read(col, resultSet);
+                        if (model != null)
+                            result.getList().add(model);
                     }
                     resultSet.close();
                 }
@@ -536,12 +530,9 @@ public class DataContext implements Closeable {
                 }
                 ResultSetMetaData col = resultSet.getMetaData();
                 while (resultSet.next()) {
-                    FastMap<String, Object> map = new FastMap<String, Object>();
-                    for (int i = 1; i <= col.getColumnCount(); i++) {
-                        String name = col.getColumnName(i);
-                        map.put(name, resultSet.getObject(name));
-                    }
-                    result.setItem(map);
+                    FastMap<String, Object> map = read(col, resultSet);
+                    if (model != null)
+                        result.setItem(map);
                 }
                 close(resultSet,query);
             }
@@ -785,6 +776,31 @@ public class DataContext implements Closeable {
         catch (Exception ex)
         {
             ex.printStackTrace();
+        }
+    }
+
+    private FastMap<String, Object> read(ResultSetMetaData col ,ResultSet resultSet){
+        FastMap<String, Object> model =new FastMap<>();
+        try {
+            for (int i = 1; i <= col.getColumnCount(); i++) {
+                String name = col.getColumnName(i);
+                if (col.getColumnClassName(i).contains("oracle.jdbc.OracleNClob")) {
+                    NClob nClob = resultSet.getNClob(name);
+                    model.put(name, nClob.getSubString(1, (int) nClob.length()));
+                } else if (col.getColumnClassName(i).contains("oracle.jdbc.OracleClob")) {
+                    Clob Clob = resultSet.getClob(name);
+                    model.put(name, Clob.getSubString(1, (int) Clob.length()));
+                } else if (col.getColumnClassName(i).contains("oracle.jdbc.OracleBlob")) {
+                    Blob blob = resultSet.getBlob(name);
+                    model.put(name, new String(blob.getBytes(1, (int) blob.length())));
+                } else
+                    model.put(name, resultSet.getObject(name));
+            }
+            return model;
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
         }
     }
 }
