@@ -3,6 +3,7 @@ package org.FastData.Spring.Base;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.sun.org.apache.xerces.internal.dom.DeferredElementImpl;
 import com.sun.org.apache.xerces.internal.dom.DeferredTextImpl;
+import org.FastData.Spring.Aop.FastDataConfig;
 import org.FastData.Spring.Model.MapResult;
 import org.FastData.Spring.Model.XmlModel;
 import org.FastData.Spring.Util.CacheUtil;
@@ -333,7 +334,7 @@ public final class MapXml {
                                     }
                                 } else {
                                     int count = 0;
-                                    String chooseCountKey=String.format("%s.%s.%s", key, attribute.getNamedItem("property").getNodeValue().toLowerCase(), i);
+                                    String chooseCountKey = String.format("%s.%s.%s", key, attribute.getNamedItem("property").getNodeValue().toLowerCase(), i);
                                     NodeList chooseNodeList = condtionNode.getChildNodes();
                                     String chooseKey = attribute.getNamedItem("property").getNodeValue().toLowerCase();
                                     for (int choose = 0; choose < chooseNodeList.getLength(); choose++) {
@@ -371,6 +372,8 @@ public final class MapXml {
                 }
             }
         } catch (Exception e) {
+            if (FastDataConfig.getAop() != null)
+                FastDataConfig.getAop().exception(e, xml + " Parsing xml");
             e.printStackTrace();
             result.setSuccess(false);
         }
