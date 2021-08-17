@@ -8,6 +8,23 @@ in Application add Annotation
  codeFirstPackageName is code first model
  cachePackageName is cache model
 ```
+aop
+```csharp
+public class FastAop implements IFastAop {
+    @Override
+    public void before(BeforeContext beforeContext) { }
+
+    @Override
+    public void after(AfterContext afterContext) {   }
+
+    @Override
+    public void map(MapContext mapContext) {  }
+}
+
+//in Application
+FastDataConfig.setAop(new FastAop());
+```
+
 code first model
 package Entity;
        
