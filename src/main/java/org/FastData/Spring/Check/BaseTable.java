@@ -2,6 +2,7 @@ package org.FastData.Spring.Check;
 
 import org.FastData.Spring.Annotation.Column;
 import org.FastData.Spring.Annotation.Table;
+import org.FastData.Spring.Aop.FastDataConfig;
 import org.FastData.Spring.CacheModel.DbConfig;
 import org.FastData.Spring.CheckModel.ColumnModel;
 import org.FastData.Spring.CheckModel.ColumnType;
@@ -66,8 +67,9 @@ public class BaseTable {
                 }
             }
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
+            if (FastDataConfig.getAop() != null)
+                FastDataConfig.getAop().exception(e, "code first tableName:" + type.getName());
             e.printStackTrace();
         }
     }
