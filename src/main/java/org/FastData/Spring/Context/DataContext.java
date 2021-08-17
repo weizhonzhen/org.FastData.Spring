@@ -82,6 +82,7 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + result.getSql() + "\033[0m");
         } catch (Exception ex) {
+            aopException(ex,"to list tableName:"+type.getName());
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
@@ -126,6 +127,7 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + result.getSql() + "\033[0m");
         } catch (Exception ex) {
+            aopException(ex,"to List<map>");
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
@@ -256,6 +258,7 @@ public class DataContext implements Closeable {
             } else
                 return result;
         } catch (Exception ex) {
+            aopException(ex,"tp page tableName:"+type.getName());
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
@@ -297,6 +300,7 @@ public class DataContext implements Closeable {
             } else
                 return result;
         } catch (Exception ex) {
+            aopException(ex,"to page");
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
@@ -334,6 +338,7 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(insert) + "\033[0m");
         } catch (Exception ex) {
+            aopException(ex,"add tableName:"+model.getClass().getName());
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
@@ -373,6 +378,7 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(delete) + "\033[0m");
         } catch (Exception ex) {
+            aopException(ex,"delete by Primary Key tableName:"+model.getClass().getName());
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
@@ -436,6 +442,7 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(update) + "\033[0m");
         } catch (Exception ex) {
+            aopException(ex,"update by Primary Key tableName " + model.getClass().getName());
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
@@ -473,6 +480,7 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(update) + "\033[0m");
         } catch (Exception ex) {
+            aopException(ex,"update by Primary Key tableName " + model.getClass().getName());
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
@@ -515,6 +523,7 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(exists) + "\033[0m");
         } catch (Exception ex) {
+            aopException(ex,"exists tableName by Primary Key" + model.getClass().getName());
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
@@ -573,6 +582,7 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(query) + "\033[0m");
         } catch (Exception ex) {
+            aopException(ex,"query by Primary Key tableName " + model.getClass().getName());
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
@@ -725,6 +735,7 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(map) + "\033[0m");
         } catch (Exception ex) {
+            aopException(ex,"execute sql");
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
@@ -767,6 +778,7 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(map) + "\033[0m");
         } catch (Exception ex) {
+            aopException(ex,"execute sql");
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
@@ -906,6 +918,11 @@ public class DataContext implements Closeable {
             aop.after(context);
         }
     }
+
+    private void aopException(Exception ex, String name){
+        if (FastDataConfig.getAop() != null)
+            FastDataConfig.getAop().exception(ex, name);
+    }
 }
 
 class PoolUtil {
@@ -931,6 +948,8 @@ class PoolUtil {
             }
             CacheUtil.setModel(cacheKey, pool);
         } catch (Exception ex) {
+            if (FastDataConfig.getAop() != null)
+                FastDataConfig.getAop().exception(ex, "DataContext open key :" +dbconfig.getKey());
             if (dbconfig.isOutError())
                 ex.printStackTrace();
             if (dbconfig.isOutError())
@@ -958,6 +977,9 @@ class PoolUtil {
                     conn.close();
             }
         } catch (Exception ex) {
+            if (FastDataConfig.getAop() != null)
+                FastDataConfig.getAop().exception(ex, "DataContext close key :" + config.getKey());
+
             if (config.isOutError())
                 ex.printStackTrace();
             if (config.isOutError())
