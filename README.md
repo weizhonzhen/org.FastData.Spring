@@ -19,6 +19,9 @@ public class FastAop implements IFastAop {
 
     @Override
     public void map(MapContext mapContext) {  }
+    
+     @Override
+    public void exception(Exception ex,String name) {  }
 }
 
 //in Application
