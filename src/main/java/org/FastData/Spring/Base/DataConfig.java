@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import org.FastData.Spring.CacheModel.DbConfig;
 import org.FastData.Spring.CacheModel.MapConfig;
 import org.FastData.Spring.Util.CacheUtil;
+import org.FastData.Spring.Util.FastUtil;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 public final class DataConfig {
     public static DbConfig db(String key) {
+        if(FastUtil.isNullOrEmpty(key)) return new DbConfig();
         String cacheKey = "FastData.Config";
         if (CacheUtil.exists(cacheKey)) {
             List<DbConfig> list = CacheUtil.getList(cacheKey, DbConfig.class);
