@@ -6,4 +6,6 @@ public interface IFastAop {
     void after(AfterContext context);
 
     void map(MapContext context);
+
+    void exception(Exception ex,String name);
 }
