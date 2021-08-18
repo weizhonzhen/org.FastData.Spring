@@ -781,7 +781,7 @@ public class FastRepository implements IFastRepository {
                 MapXmlModel temp = new MapXmlModel();
                 byte[] bytes = MessageDigest.getInstance("md5").digest(p.getBytes());
                 temp.setFileName(p);
-                temp.setFileKey(MapXml.readXml(DataConfig.Content(p)));
+                temp.setFileKey(MapXml.readXml(DataConfig.Content(p),p));
                 String key = new BigInteger(1, bytes).toString(32);
                 CacheUtil.setModel(key, temp);
             } catch (Exception e) {
