@@ -19,8 +19,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 public final class MapXml {
-    public static List<String> readXml(String xml) {
-        XmlModel result = getXmlList(xml, "sqlMap");
+    public static List<String> readXml(String xml,String fileName) {
+        XmlModel result = getXmlList(xml, "sqlMap",fileName);
         for (int i = 0; i < result.getKey().size(); i++) {
             CacheUtil.set(result.getKey().get(i).toLowerCase(), result.getSql().get(i));
         }
@@ -221,7 +221,7 @@ public final class MapXml {
         return result;
     }
 
-    private static XmlModel getXmlList(String xml, String xmlNode) {
+    private static XmlModel getXmlList(String xml, String xmlNode,String fileName) {
         XmlModel result = new XmlModel();
         result.setSuccess(true);
         try {
@@ -373,7 +373,7 @@ public final class MapXml {
             }
         } catch (Exception e) {
             if (FastDataConfig.getAop() != null)
-                FastDataConfig.getAop().exception(e, xml + " Parsing xml");
+                FastDataConfig.getAop().exception(e, "file Nme" + fileName + "  Parsing xml");
             e.printStackTrace();
             result.setSuccess(false);
         }
