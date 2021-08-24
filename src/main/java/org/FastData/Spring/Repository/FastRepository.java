@@ -2,9 +2,7 @@ package org.FastData.Spring.Repository;
 
 import org.FastData.Spring.Annotation.FastData;
 import org.FastData.Spring.Annotation.Table;
-import org.FastData.Spring.Aop.FastDataConfig;
-import org.FastData.Spring.Aop.IFastAop;
-import org.FastData.Spring.Aop.MapContext;
+import org.FastData.Spring.Aop.*;
 import org.FastData.Spring.Base.DataConfig;
 import org.FastData.Spring.Base.MapXml;
 import org.FastData.Spring.CacheModel.DbConfig;
@@ -41,322 +39,417 @@ public class FastRepository implements IFastRepository {
 
     @Override
     public List<?> query(String name, Map<String, Object> param, Class<?> type, String key) {
+        List<?> data =new ArrayList<>();
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(key)) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                aopMap(name, result, db.config);
-                return db.query(result, type).getList();
+                aopMapBefore(name, result, db.config, AopEnum.Map_List_Model);
+                data = db.query(result, type,false).getList();
+                aopMapAfter(name, result, db.config, AopEnum.Map_List_Model,data);
+                return data;
             }
         }
-        aopMap(name, null, DataConfig.db(key));
-        return new ArrayList<>();
+        aopMapBefore(name, null, DataConfig.db(key), AopEnum.Map_List_Model);
+        aopMapAfter(name, null, DataConfig.db(key), AopEnum.Map_List_Model,data);
+        return  data;
     }
 
     @Override
     public List<?> query(String name, Map<String, Object> param, Class<?> type, String key,Boolean log) {
+        List<?> data = new ArrayList<>();
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(key)) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-                aopMap(name, result, db.config);
-                return db.query(result, type).getList();
+                aopMapBefore(name, result, db.config, AopEnum.Map_List_Model);
+                data = db.query(result, type,false).getList();
+                aopMapAfter(name, result, db.config, AopEnum.Map_List_Model,data);
+                return data;
             }
         }
-        aopMap(name, null, DataConfig.db(key));
-        return new ArrayList<>();
+        aopMapBefore(name, null, DataConfig.db(key), AopEnum.Map_List_Model);
+        aopMapAfter(name, null, DataConfig.db(key), AopEnum.Map_List_Model,data);
+        return data;
     }
 
     @Override
     public List<?> query(String name, Map<String, Object> param, Class<?> type, DataContext db) {
+        List<?> data = new ArrayList<>();
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-            aopMap(name, result, db.config);
-            return db.query(result, type).getList();
+            aopMapBefore(name, result, db.config, AopEnum.Map_List_Model);
+            data = db.query(result, type,false).getList();
+            aopMapAfter(name, result, db.config, AopEnum.Map_List_Model,data);
+            return data;
         }
-        aopMap(name, null, db.config);
-        return new ArrayList<>();
+        aopMapBefore(name, null, db.config, AopEnum.Map_List_Model);
+        aopMapAfter(name, null,db.config, AopEnum.Map_List_Model,data);
+        return data;
     }
 
     @Override
     public List<?> query(String name, Map<String, Object> param, Class<?> type, DataContext db,Boolean log) {
+        List<?> data = new ArrayList<>();
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-            aopMap(name, result, db.config);
-            return db.query(result, type).getList();
+            aopMapBefore(name, result, db.config, AopEnum.Map_List_Model);
+            data = db.query(result, type,false).getList();
+            aopMapAfter(name, result, db.config, AopEnum.Map_List_Model,data);
+            return data;
         }
-        aopMap(name, null, db.config);
-        return new ArrayList<>();
+        aopMapBefore(name, null, db.config, AopEnum.Map_List_Model);
+        aopMapAfter(name, null,db.config, AopEnum.Map_List_Model,data);
+        return data;
     }
 
     @Override
     public List<?> query(String name, Map<String, Object> param, Class<?> type) {
+        List<?> data = new ArrayList<>();
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(mapDb(name))) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                aopMap(name, result, db.config);
-                return db.query(result, type).getList();
+                aopMapBefore(name, result, db.config, AopEnum.Map_List_Model);
+                data = db.query(result, type,false).getList();
+                aopMapAfter(name, result, db.config, AopEnum.Map_List_Model,data);
+                return data;
             }
         }
-        aopMap(name, null, DataConfig.db(mapDb(name)));
-        return new ArrayList<>();
+        aopMapBefore(name, null, DataConfig.db(mapDb(name)), AopEnum.Map_List_Model);
+        aopMapAfter(name, null,DataConfig.db(mapDb(name)), AopEnum.Map_List_Model,data);
+        return data;
     }
 
     @Override
     public List<?> query(String name, Map<String, Object> param, Class<?> type,Boolean log) {
+        List<?> data = new ArrayList<>();
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(mapDb(name))) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-                aopMap(name, result, db.config);
-                return db.query(result, type).getList();
+                aopMapBefore(name, result, DataConfig.db(mapDb(name)), AopEnum.Map_List_Model);
+                data = db.query(result, type,false).getList();
+                aopMapAfter(name, result,DataConfig.db(mapDb(name)), AopEnum.Map_List_Model,data);
+                return data;
             }
         }
-        aopMap(name, null, DataConfig.db(mapDb(name)));
-        return new ArrayList<>();
+        aopMapBefore(name, null, DataConfig.db(mapDb(name)), AopEnum.Map_List_Model);
+        aopMapAfter(name, null,DataConfig.db(mapDb(name)), AopEnum.Map_List_Model,data);
+        return data;
     }
 
     @Override
     public List<FastMap<String, Object>> query(String name, Map<String, Object> param, String key) {
+        List<FastMap<String, Object>> data = new ArrayList<FastMap<String, Object>>();
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(key)) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                aopMap(name, result, db.config);
-                return db.query(result).getList();
+                aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+                data = db.query(result,false).getList();
+                aopMapAfter(name, result, db.config,AopEnum.Map_List_Dic,data);
+                return data;
             }
         }
-        aopMap(name, null, DataConfig.db(key));
-        return new ArrayList<FastMap<String, Object>>();
+        aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_List_Dic);
+        aopMapAfter(name, null, DataConfig.db(key),AopEnum.Map_List_Dic,data);
+        return data;
     }
 
     @Override
     public List<FastMap<String, Object>> query(String name, Map<String, Object> param, String key,Boolean log) {
+        List<FastMap<String, Object>> data = new ArrayList<FastMap<String, Object>>();
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(key)) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-                aopMap(name, result, db.config);
-                return db.query(result).getList();
+                aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+                data = db.query(result,false).getList();
+                aopMapAfter(name, result, db.config,AopEnum.Map_List_Dic,data);
+                return data;
             }
         }
-        aopMap(name, null, DataConfig.db(key));
-        return new ArrayList<FastMap<String, Object>>();
+        aopMapBefore(name, null,DataConfig.db(key),AopEnum.Map_List_Dic);
+        aopMapAfter(name, null, DataConfig.db(key),AopEnum.Map_List_Dic,data);
+        return data;
     }
 
     @Override
     public List<FastMap<String, Object>> query(String name, Map<String, Object> param, DataContext db) {
+        List<FastMap<String, Object>> data = new ArrayList<FastMap<String, Object>>();
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-            aopMap(name, result, db.config);
-            return db.query(result).getList();
+            aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+            data = db.query(result,false).getList();
+            aopMapAfter(name, result, db.config,AopEnum.Map_List_Dic,data);
+            return data;
         }
-        aopMap(name, null, db.config);
-        return new ArrayList<FastMap<String, Object>>();
+        aopMapBefore(name, null,db.config,AopEnum.Map_List_Dic);
+        aopMapAfter(name, null, db.config,AopEnum.Map_List_Dic,data);
+        return data;
     }
 
     @Override
     public List<FastMap<String, Object>> query(String name, Map<String, Object> param, DataContext db,Boolean log) {
+        List<FastMap<String, Object>> data = new ArrayList<FastMap<String, Object>>();
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-            aopMap(name, result, db.config);
-            return db.query(result).getList();
+            aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+            data = db.query(result,false).getList();
+            aopMapAfter(name, result, db.config,AopEnum.Map_List_Dic,data);
+            return data;
         }
-        aopMap(name, null, db.config);
-        return new ArrayList<FastMap<String, Object>>();
+        aopMapBefore(name, null, db.config,AopEnum.Map_List_Dic);
+        aopMapAfter(name, null, db.config,AopEnum.Map_List_Dic,data);
+        return data;
     }
 
     @Override
     public List<FastMap<String, Object>> query(String name, Map<String, Object> param) {
+        List<FastMap<String, Object>> data = new ArrayList<FastMap<String, Object>>();
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(mapDb(name))) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                aopMap(name, result, db.config);
-                return db.query(result).getList();
+                aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+                data = db.query(result,false).getList();
+                aopMapAfter(name, result, db.config,AopEnum.Map_List_Dic,data);
             }
         }
-        aopMap(name, null, DataConfig.db(mapDb(name)));
-        return new ArrayList<FastMap<String, Object>>();
+        aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic);
+        aopMapAfter(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic,data);
+        return data;
     }
 
     @Override
     public List<FastMap<String, Object>> query(String name, Map<String, Object> param,Boolean log) {
+        List<FastMap<String, Object>> data = new ArrayList<FastMap<String, Object>>();
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(mapDb(name))) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-                aopMap(name, result, db.config);
-                return db.query(result).getList();
+                aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+                data = db.query(result,false).getList();
+                aopMapAfter(name, result, db.config,AopEnum.Map_List_Dic,data);
+                return data;
             }
         }
-        aopMap(name, null, DataConfig.db(mapDb(name)));
-        return new ArrayList<FastMap<String, Object>>();
+        aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic);
+        aopMapAfter(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic,data);
+        return data;
     }
 
     @Override
     public PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type, String key) {
+        PageResultImpl<?> data =new PageResultImpl<>();
         if (CacheUtil.exists(name.toLowerCase())) {
             try (DataContext db = new DataContext(key)) {
                 MapResult result = MapXml.getMapSql(name, param);
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                aopMap(name, result, db.config);
-                return db.page(pModel, result, type);
+                aopMapBefore(name, result, db.config,AopEnum.Map_Page_Model);
+                data = db.page(pModel, result, type,false);
+                aopMapAfter(name, result, db.config,AopEnum.Map_Page_Model,data);
+                return data;
             }
         }
-        aopMap(name, null, DataConfig.db(key));
-        return new PageResultImpl<>();
+        aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_Page_Model);
+        aopMapAfter(name, null,DataConfig.db(key),AopEnum.Map_Page_Model,data);
+        return data;
     }
 
     @Override
     public PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type, String key,Boolean log) {
+        PageResultImpl<?> data =new PageResultImpl<>();
         if (CacheUtil.exists(name.toLowerCase())) {
             try (DataContext db = new DataContext(key)) {
                 MapResult result = MapXml.getMapSql(name, param);
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-                aopMap(name, result, db.config);
-                return db.page(pModel, result, type);
+                aopMapBefore(name, result, db.config,AopEnum.Map_Page_Model);
+                data = db.page(pModel, result, type,false);
+                aopMapAfter(name, result, db.config,AopEnum.Map_Page_Model,data);
+                return data;
             }
         }
-        aopMap(name, null, DataConfig.db(key));
-        return new PageResultImpl<>();
+        aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_Page_Model);
+        aopMapAfter(name, null, DataConfig.db(key),AopEnum.Map_Page_Model,data);
+        return data;
     }
 
     @Override
     public PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type, DataContext db) {
+        PageResultImpl<?> data =new PageResultImpl<>();
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-            aopMap(name, result, db.config);
-            return db.page(pModel, result, type);
+            aopMapBefore(name, result, db.config,AopEnum.Map_Page_Model);
+            data = db.page(pModel, result, type,false);
+            aopMapAfter(name, result, db.config,AopEnum.Map_Page_Model,data);
+            return data;
         }
-        aopMap(name, null, db.config);
-        return new PageResultImpl<>();
+        aopMapBefore(name, null, db.config,AopEnum.Map_Page_Model);
+        aopMapAfter(name, null, db.config,AopEnum.Map_Page_Model,data);
+        return data;
     }
 
     @Override
     public PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type, DataContext db,Boolean log) {
+        PageResultImpl<?> data =new PageResultImpl<>();
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-            aopMap(name, result, db.config);
-            return db.page(pModel, result, type);
+            aopMapBefore(name, result, db.config,AopEnum.Map_Page_Model);
+            data = db.page(pModel, result, type,false);
+            aopMapAfter(name, result, db.config,AopEnum.Map_Page_Model,data);
+            return data;
         }
-        aopMap(name, null, db.config);
-        return new PageResultImpl<>();
+        aopMapBefore(name, null, db.config,AopEnum.Map_Page_Model);
+        aopMapAfter(name, null, db.config,AopEnum.Map_Page_Model,data);
+        return data;
     }
 
     @Override
     public PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type) {
+        PageResultImpl<?> data =new PageResultImpl<>();
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             try (DataContext db = new DataContext(mapDb(name))) {
                 MapResult result = MapXml.getMapSql(name, param);
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                aopMap(name, result, db.config);
-                return db.page(pModel, result, type);
+                aopMapBefore(name, result, db.config,AopEnum.Map_Page_Model);
+                data = db.page(pModel, result, type,false);
+                aopMapAfter(name, result, db.config,AopEnum.Map_Page_Model,data);
+                return data;
             }
         }
-        aopMap(name, null, DataConfig.db(mapDb(name)));
-        return new PageResultImpl<>();
+        aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Page_Model);
+        aopMapAfter(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Page_Model,data);
+        return data;
     }
 
     @Override
     public PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type,Boolean log) {
+        PageResultImpl<?> data =new PageResultImpl<>();
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             try (DataContext db = new DataContext(mapDb(name))) {
                 MapResult result = MapXml.getMapSql(name, param);
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-                aopMap(name, result, db.config);
-                return db.page(pModel, result, type);
+                aopMapBefore(name, result, db.config,AopEnum.Map_Page_Model);
+                data = db.page(pModel, result, type,false);
+                aopMapAfter(name, result, db.config,AopEnum.Map_Page_Model,data);
+                return data;
             }
         }
-        aopMap(name, null, DataConfig.db(mapDb(name)));
-        return new PageResultImpl<>();
+        aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Page_Model);
+        aopMapAfter(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Page_Model,data);
+        return data;
     }
 
     @Override
     public PageResult page(PageModel pModel, String name, Map<String, Object> param, String key) {
+        PageResult data =new PageResult();
         if (CacheUtil.exists(name.toLowerCase())) {
             try (DataContext db = new DataContext(key)) {
                 MapResult result = MapXml.getMapSql(name, param);
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                aopMap(name, result, db.config);
-                return db.page(pModel, result);
+                aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+                data = db.page(pModel, result,false);
+                aopMapAfter(name,result,db.config,AopEnum.Map_List_Dic,data);
+                return data;
             }
         }
-        aopMap(name, null, DataConfig.db(key));
-        return new PageResult();
+        aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_List_Dic);
+        aopMapAfter(name,null,DataConfig.db(key),AopEnum.Map_List_Dic,data);
+        return data;
     }
 
     @Override
     public PageResult page(PageModel pModel, String name, Map<String, Object> param, String key,Boolean log) {
+        PageResult data =new PageResult();
         if (CacheUtil.exists(name.toLowerCase())) {
             try (DataContext db = new DataContext(key)) {
                 MapResult result = MapXml.getMapSql(name, param);
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-                aopMap(name, result, db.config);
-                return db.page(pModel, result);
+                aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+                data = db.page(pModel, result,false);
+                aopMapAfter(name,result,db.config,AopEnum.Map_List_Dic,data);
+                return data;
             }
         }
-        aopMap(name, null, DataConfig.db(key));
-        return new PageResult();
+        aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_List_Dic);
+        aopMapAfter(name,null,DataConfig.db(key),AopEnum.Map_List_Dic,data);
+        return data;
     }
 
     @Override
     public PageResult page(PageModel pModel, String name, Map<String, Object> param, DataContext db) {
+        PageResult data =new PageResult();
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-            aopMap(name, result, db.config);
-            return db.page(pModel, result);
+            aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+            data = db.page(pModel, result,false);
+            aopMapAfter(name,result,db.config,AopEnum.Map_List_Dic,data);
+            return data;
         }
-        aopMap(name, null, db.config);
-        return new PageResult();
+        aopMapBefore(name, null, db.config,AopEnum.Map_List_Dic);
+        aopMapAfter(name,null,db.config,AopEnum.Map_List_Dic,data);
+        return data;
     }
 
     @Override
     public PageResult page(PageModel pModel, String name, Map<String, Object> param, DataContext db,Boolean log) {
+        PageResult data =new PageResult();
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-            aopMap(name, result, db.config);
-            return db.page(pModel, result);
+            aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+            data = db.page(pModel, result,false);
+            aopMapAfter(name,result,db.config,AopEnum.Map_List_Dic,data);
+            return data;
         }
-        aopMap(name, null, db.config);
-        return new PageResult();
+        aopMapBefore(name, null, db.config,AopEnum.Map_List_Dic);
+        aopMapAfter(name,null,db.config,AopEnum.Map_List_Dic,data);
+        return data;
     }
 
     @Override
     public PageResult page(PageModel pModel, String name, Map<String, Object> param) {
+        PageResult data =new PageResult();
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             try (DataContext db = new DataContext(mapDb(name))) {
                 MapResult result = MapXml.getMapSql(name, param);
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                aopMap(name, result, db.config);
-                return db.page(pModel, result);
+                aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+                data = db.page(pModel, result,false);
+                aopMapAfter(name,result,db.config,AopEnum.Map_List_Dic,data);
+                return data;
             }
         }
-        aopMap(name, null,DataConfig.db(mapDb(name)));
-        return new PageResult();
+        aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic);
+        aopMapAfter(name,null,DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic,data);
+        return data;
     }
 
     @Override
     public PageResult page(PageModel pModel, String name, Map<String, Object> param,Boolean log) {
+        PageResult data =new PageResult();
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             try (DataContext db = new DataContext(mapDb(name))) {
                 MapResult result = MapXml.getMapSql(name, param);
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-                aopMap(name, result, db.config);
-                return db.page(pModel, result);
+                aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+                data = db.page(pModel, result,false);
+                aopMapAfter(name,result,db.config,AopEnum.Map_List_Dic,data);
+                return data;
             }
         }
-        aopMap(name, null,DataConfig.db(mapDb(name)));
-        return new PageResult();
+        aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic);
+        aopMapAfter(name,null,DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic,data);
+        return data;
     }
 
     @Override
@@ -543,100 +636,142 @@ public class FastRepository implements IFastRepository {
 
     @Override
     public WriteReturn write(String name, Map<String, Object> param, String key) {
+        WriteReturn data = null;
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
-            WriteReturn check = checkParam(result, name);
-            if (!check.getSuccess())
-                return check;
+            data = checkParam(result, name);
+            aopMapBefore(name, result,DataConfig.db(key),AopEnum.Map_Write);
+            if (!data.getSuccess()) {
+                aopMapAfter(name, result, DataConfig.db(key),AopEnum.Map_Write,data);
+                return data;
+            }
             try (DataContext db = new DataContext(key)) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                aopMap(name, result, db.config);
-                return db.execute(result).getWriteReturn();
+                data = db.execute(result,false).getWriteReturn();
+                aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
+                return data;
             }
         }
-        aopMap(name, null, DataConfig.db(key));
-        return checkName(name);
+        aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_Write);
+        data = checkName(name);
+        aopMapAfter(name, null, DataConfig.db(key),AopEnum.Map_Write,data);
+        return data;
     }
 
     @Override
     public WriteReturn write(String name, Map<String, Object> param, String key,Boolean log) {
+        WriteReturn data = null;
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
-            WriteReturn check = checkParam(result, name);
-            if (!check.getSuccess())
-                return check;
+            data = checkParam(result, name);
+            aopMapBefore(name, result,DataConfig.db(key),AopEnum.Map_Write);
+            if (!data.getSuccess()) {
+                aopMapAfter(name, result, DataConfig.db(key),AopEnum.Map_Write,data);
+                return data;
+            }
             try (DataContext db = new DataContext(key)) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-                aopMap(name, result, db.config);
-                return db.execute(result).getWriteReturn();
+                data = db.execute(result,false).getWriteReturn();
+                aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
+                return data;
             }
         }
-        aopMap(name, null, DataConfig.db(key));
-        return checkName(name);
+        aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_Write);
+        data = checkName(name);
+        aopMapAfter(name, null, DataConfig.db(key),AopEnum.Map_Write,data);
+        return data;
     }
 
     @Override
     public WriteReturn write(String name, Map<String, Object> param, DataContext db) {
+        WriteReturn data = null;
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
-            WriteReturn check = checkParam(result, name);
-            if (!check.getSuccess())
-                return check;
+            data = checkParam(result, name);
+            aopMapBefore(name, result,db.config,AopEnum.Map_Write);
+            if (!data.getSuccess()) {
+                aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
+                return data;
+            }
             db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-            aopMap(name, result, db.config);
-            return db.execute(result).getWriteReturn();
+            data = db.execute(result,false).getWriteReturn();
+            aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
+            return data;
         }
-        aopMap(name, null, db.config);
-        return checkName(name);
+        aopMapBefore(name, null, db.config,AopEnum.Map_Write);
+        data = checkName(name);
+        aopMapAfter(name, null, db.config,AopEnum.Map_Write,data);
+        return data;
     }
 
     @Override
     public WriteReturn write(String name, Map<String, Object> param, DataContext db,Boolean log) {
+        WriteReturn data = null;
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
-            WriteReturn check = checkParam(result, name);
-            if (!check.getSuccess())
-                return check;
+            data = checkParam(result, name);
+            aopMapBefore(name, result,db.config,AopEnum.Map_Write);
+            if (!data.getSuccess()) {
+                aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
+                return data;
+            }
             db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-            aopMap(name, result, db.config);
-            return db.execute(result).getWriteReturn();
+            data = db.execute(result,false).getWriteReturn();
+            aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
+            return data;
         }
-        aopMap(name, null, db.config);
-        return checkName(name);
+        aopMapBefore(name, null, db.config,AopEnum.Map_Write);
+        data = checkName(name);
+        aopMapAfter(name, null, db.config,AopEnum.Map_Write,data);
+        return data;
     }
 
     @Override
     public WriteReturn write(String name, Map<String, Object> param) {
+        WriteReturn data = null;
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
-            WriteReturn check = checkParam(result, name);
-            if (!check.getSuccess())
-                return check;
+            data = checkParam(result, name);
+            aopMapBefore(name, result,DataConfig.db(mapDb(name)),AopEnum.Map_Write);
+            if (!data.getSuccess()) {
+                aopMapAfter(name, result, DataConfig.db(mapDb(name)),AopEnum.Map_Write,data);
+                return data;
+            }
             try (DataContext db = new DataContext(mapDb(name))) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                aopMap(name, result, db.config);
-                return db.execute(result).getWriteReturn();
+                data = db.execute(result,false).getWriteReturn();
+                aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
+                return data;
             }
         }
-        aopMap(name, null, DataConfig.db(mapDb(name)));
-        return checkName(name);
+        aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Write);
+        data = checkName(name);
+        aopMapAfter(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Write,data);
+        return data;
     }
 
     @Override
     public WriteReturn write(String name, Map<String, Object> param,Boolean log) {
+        WriteReturn data = null;
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
-            WriteReturn check = checkParam(result, name);
-            if (!check.getSuccess())
-                return check;
+            data = checkParam(result, name);
+            aopMapBefore(name, result,DataConfig.db(mapDb(name)),AopEnum.Map_Write);
+            if (!data.getSuccess()) {
+                aopMapAfter(name, result, DataConfig.db(mapDb(name)),AopEnum.Map_Write,data);
+                return data;
+            }
             try (DataContext db = new DataContext(mapDb(name))) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name) || log);
-                aopMap(name, result, db.config);
-                return db.execute(result).getWriteReturn();
+                data = db.execute(result,false).getWriteReturn();
+                aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
+                return data;
             }
         }
-        aopMap(name, null, DataConfig.db(mapDb(name)));
-        return checkName(name);
+        aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Write);
+        data = checkName(name);
+        aopMapAfter(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Write,data);
+        return data;
     }
 
     @Override
@@ -824,24 +959,48 @@ public class FastRepository implements IFastRepository {
         }
     }
 
-    private void aopMap(String mapName, MapResult map, DbConfig config){
+    private void aopMapBefore(String mapName, MapResult map, DbConfig config,int aopType){
         IFastAop aop = FastDataConfig.getAop();
         if (aop != null) {
-            MapContext context = new MapContext();
+            MapBeforeContext context = new MapBeforeContext();
             context.setMapName(mapName);
+            context.setAopType(aopType);
 
             if (map != null) {
                 context.setSql(map.getSql());
                 if (map.getParam() != null)
                     context.setParam(map.getParam());
-            }
-            else {
+            } else {
                 context.setSql("");
                 context.setParam(new LinkedHashMap<String, Object>());
             }
 
-            context.setDbType(config.getDbType());
-            aop.map(context);
+            if (config != null)
+                context.setDbType(config.getDbType());
+            aop.mapBefore(context);
+        }
+    }
+
+    private void aopMapAfter(String mapName, MapResult map, DbConfig config,int aopType,Object data){
+        IFastAop aop = FastDataConfig.getAop();
+        if (aop != null) {
+            MapAfterContext context = new MapAfterContext();
+            context.setMapName(mapName);
+            context.setAopType(aopType);
+            context.setResult(data);
+
+            if (map != null) {
+                context.setSql(map.getSql());
+                if (map.getParam() != null)
+                    context.setParam(map.getParam());
+            } else {
+                context.setSql("");
+                context.setParam(new LinkedHashMap<String, Object>());
+            }
+
+            if (config != null)
+                context.setDbType(config.getDbType());
+            aop.mapAfter(context);
         }
     }
 }
