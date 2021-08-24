@@ -1,5 +1,7 @@
 package org.FastData.Spring.Aop;
 
+import org.apache.poi.ss.usermodel.RichTextString;
+
 import java.util.LinkedHashMap;
 
 public class BeforeContext {
@@ -12,6 +14,18 @@ public class BeforeContext {
     private LinkedHashMap<String,Object> param;
 
     private boolean isRead;
+
+    private boolean isWrite;
+
+    public int getAopType() {
+        return aopType;
+    }
+
+    public void setAopType(int aopType) {
+        this.aopType = aopType;
+    }
+
+    private  int aopType;
 
     public String getDbType() {
         return dbType;
@@ -60,6 +74,4 @@ public class BeforeContext {
     public void setIsWrite(boolean isWrite) {
         this.isWrite = isWrite;
     }
-
-    private boolean isWrite;
 }

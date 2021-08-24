@@ -15,6 +15,18 @@ public class AfterContext {
 
     private boolean isRead;
 
+    private boolean isWrite ;
+
+    private  int aopType;
+
+    public int getAopType() {
+        return aopType;
+    }
+
+    public void setAopType(int aopType) {
+        this.aopType = aopType;
+    }
+
     public String getDbType() {
         return dbType;
     }
@@ -70,6 +82,4 @@ public class AfterContext {
     public void setWrite(boolean write) {
         isWrite = write;
     }
-
-    private boolean isWrite ;
 }
