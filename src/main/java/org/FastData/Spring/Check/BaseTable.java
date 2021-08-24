@@ -2,6 +2,8 @@ package org.FastData.Spring.Check;
 
 import org.FastData.Spring.Annotation.Column;
 import org.FastData.Spring.Annotation.Table;
+import org.FastData.Spring.Aop.AopEnum;
+import org.FastData.Spring.Aop.ExceptionContext;
 import org.FastData.Spring.Aop.FastDataConfig;
 import org.FastData.Spring.CacheModel.DbConfig;
 import org.FastData.Spring.CheckModel.ColumnModel;
@@ -68,8 +70,13 @@ public class BaseTable {
             }
         }
         catch (Exception e) {
-            if (FastDataConfig.getAop() != null)
-                FastDataConfig.getAop().exception(e, "code first tableName:" + type.getName());
+            if (FastDataConfig.getAop() != null) {
+                ExceptionContext context =new ExceptionContext();
+                context.setAopType(AopEnum.Code_First);
+                context.setEx(e);
+                context.setName("code first tableName:" + type.getName());
+                FastDataConfig.getAop().exception(context);
+            }
             e.printStackTrace();
         }
     }
@@ -202,7 +209,7 @@ public class BaseTable {
         if (db.config.getDbType().equalsIgnoreCase(DataDbType.Oracle))
             map.setSql("select a.CONSTRAINT_NAME PK from all_constraints a inner join all_cons_columns b on a.TABLE_NAME=b.TABLE_NAME and a.CONSTRAINT_NAME=b.CONSTRAINT_NAME where a.table_name=? and a.constraint_type = 'P' and b.COLUMN_NAME=?");
 
-        List<FastMap<String,Object>> result = db.query(map).getList();
+        List<FastMap<String,Object>> result = db.query(map,false).getList();
         return result.size() == 0 ? new HashMap<>() : result.get(0);
     }
 
@@ -224,7 +231,7 @@ public class BaseTable {
         key.forEach(a -> {
             MapResult keyMap = new MapResult();
             keyMap.setSql( String.format("alter table %s add constraint pk_%s_%s primary key (%s)", table.getName(), table.getName(), a, a));
-            db.execute(keyMap);
+            db.execute(keyMap,false);
         });
 
         table.getColumn().forEach(a -> {
@@ -251,7 +258,7 @@ public class BaseTable {
                 map.setSql( String.format("execute sp_addextendedproperty N'MS_Description', '%s', N'user', N'dbo', N'table', N'%s', N'column', %s", comments, tableName, colName));
         }
 
-        db.execute(map);
+        db.execute(map,false);
     }
 
     private static void updateComments(DataContext db, TableModel table) {
@@ -271,7 +278,7 @@ public class BaseTable {
             else
                 map.setSql( String.format("execute sp_addextendedproperty N'MS_Description', '%s', N'user', N'dbo', N'table', N'%s', NULL, NULL", table.getComments(), table.getName()));
         }
-        db.execute(map);
+        db.execute(map,false);
     }
 
     private static TableModel getTable(DataContext db, String tableName) {
@@ -280,14 +287,14 @@ public class BaseTable {
         MapResult map = new MapResult();
         if (db.config.getDbType().equalsIgnoreCase(DataDbType.Oracle)) {
             map.setSql( String.format("select comments from user_tables a inner join user_tab_comments b on a.TABLE_NAME = b.TABLE_NAME  and a.table_name = '%s'", tableName.toUpperCase()));
-            DataReturn dic = db.query(map);
+            DataReturn dic = db.query(map,false);
             result.setComments(Optional.ofNullable(dic.getList().get(0).get("COMMENTS")).orElse("").toString().replace("'", ""));
 
             map.setSql( "select a.column_name,data_type,data_length,b.comments,");
             map.setSql( String.format("%s %s", map.getSql(), "(select count(0) from user_cons_columns aa, user_constraints bb where aa.constraint_name = bb.constraint_name and bb.constraint_type = 'P' and bb.table_name = '" + tableName.toUpperCase() + "' and aa.column_name = a.column_name) iskey,"));
             map.setSql( String.format("%s %s", map.getSql(), "nullable,data_precision,data_scale from user_tab_columns a inner join user_col_comments b"));
             map.setSql( String.format("%s %s", map.getSql(), "on a.table_name ='" + tableName.toUpperCase() + "' and a.table_name = b.table_name and a.column_name = b.column_name order by a.column_id asc"));
-            dic = db.query(map);
+            dic = db.query(map,false);
             dic.getList().forEach(a -> {
                 ColumnModel model = new ColumnModel();
                 model.setComments( Optional.ofNullable(a.get("COMMENTS")).orElse("").toString().replace("'", ""));
@@ -305,13 +312,13 @@ public class BaseTable {
 
         if (db.config.getDbType().equalsIgnoreCase(DataDbType.MySql)) {
             map.setSql( String.format("select table_comment count from information_schema.tables where upper(table_name)='%s'", tableName.toUpperCase()));
-            DataReturn dic = db.query(map);
+            DataReturn dic = db.query(map,false);
             result.setComments( Optional.ofNullable(dic.getList().get(0).get("COMMENTS")).orElse("").toString().replace("'", ""));
 
             map.setSql( "select column_name,data_type,character_maximum_length,column_comment,");
             map.setSql( String.format("%s %s", map.getSql(), "(select count(0) from INFORMATION_SCHEMA.KEY_COLUMN_USAGE a where upper(TABLE_NAME)='" + tableName.toUpperCase() + "' and constraint_name='PRIMARY' and c.column_name=a.column_name) iskey,"));
             map.setSql( String.format("%s %s", map.getSql(), "is_nullable,numeric_precision,numeric_scale from information_schema.columns c where upper(table_name)='" + tableName.toUpperCase() + "' order by ordinal_position asc"));
-            dic = db.query(map);
+            dic = db.query(map,false);
             dic.getList().forEach(a -> {
                 ColumnModel model = new ColumnModel();
                 model.setComments( Optional.ofNullable(a.get("column_comment")).orElse("").toString().replace("'", ""));
@@ -328,14 +335,14 @@ public class BaseTable {
 
         if (db.config.getDbType().equalsIgnoreCase(DataDbType.SqlServer)) {
             map.setSql( String.format("select name,(select top 1 value from sys.extended_properties where major_id=object_id(a.name) and minor_id=0) as value from sys.objects a where type = 'U' and upper(name) = '%s'", tableName.toUpperCase()));
-            DataReturn dic = db.query(map);
+            DataReturn dic = db.query(map,false);
             result.setComments(Optional.ofNullable(dic.getList().get(0).get("COMMENTS")).orElse("").toString().replace("'", ""));
 
             map.setSql( "select a.name,(select top 1 name from sys.systypes c where a.xtype=c.xtype) as type ,");
             map.setSql( String.format("%s %s", map.getSql(), "length,b.value,(select count(0) from INFORMATION_SCHEMA.KEY_COLUMN_USAGE where TABLE_NAME='" + tableName.toUpperCase() + "' and COLUMN_NAME=a.name) as iskey,"));
             map.setSql( String.format("%s %s", map.getSql(), "isnullable,prec,scale from syscolumns a left join sys.extended_properties b"));
             map.setSql( String.format("%s %s", map.getSql(), "on major_id = id and minor_id = colid and b.name ='MS_Description'  where a.id=object_id('" + tableName.toUpperCase() + "') order by a.colid asc"));
-            dic = db.query(map);
+            dic = db.query(map,false);
             dic.getList().forEach(a -> {
                 ColumnModel model = new ColumnModel();
                 model.setComments(Optional.ofNullable(a.get("value")).orElse("").toString().replace("'", ""));
@@ -374,7 +381,7 @@ public class BaseTable {
         if (db.config.getDbType().equalsIgnoreCase(DataDbType.MySql))
             map.setSql("select count(0) count from information_schema.tables where upper(table_name)=?");
 
-        return db.count(map) > 0;
+        return db.count(map,false) > 0;
     }
 
     private static List<ColumnModel> getColumnClass(Class<?> type) {
