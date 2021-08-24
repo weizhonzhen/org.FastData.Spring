@@ -12,16 +12,30 @@ aop
 ```csharp
 public class FastAop implements IFastAop {
     @Override
-    public void before(BeforeContext beforeContext) { }
+    public void before(BeforeContext beforeContext) {
+        System.out.println("before：" + beforeContext.getSql());
+    }
 
     @Override
-    public void after(AfterContext afterContext) {   }
+    public void after(AfterContext afterContext) {
+        System.out.println("after：" + afterContext.getSql());
+    }
 
     @Override
-    public void map(MapContext mapContext) {  }
-    
-     @Override
-    public void exception(Exception ex,String name) {  }
+    public void mapBefore(MapBeforeContext mapBeforeContext) {
+        System.out.println("mapBefore：" + mapBeforeContext.getMapName());
+    }
+
+    @Override
+    public void mapAfter(MapAfterContext mapAfterContext) {
+        System.out.println("mapAfter：" + mapAfterContext.getMapName());
+    }
+
+    @Override
+    public void exception(ExceptionContext exceptionContext) {
+        System.out.println("exception：" + exceptionContext.getName());
+
+    }
 }
 
 //in Application
