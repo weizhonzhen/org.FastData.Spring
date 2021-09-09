@@ -69,6 +69,9 @@ public class TestTable_List
 }
 
 //@NavigateType  @Navigate  导航属性
+   var model = new TestTable();
+			model.setId("1");
+   var list = ifast.queryKey(model,TestTable.class,"db");
 ```
 
 in resources add db.json
