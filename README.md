@@ -157,8 +157,8 @@ in Controller
 
    var field = new ArrayList<String>();
    field.add("Value");
-   var update = ifast.update(model, field, db);
-   var del = ifast.delete(model, db);
+   var update = ifast.updateKey(model, field, db);
+   var del = ifast.deleteKey(model, db);
    
    db.beginTrans();
    db.submitTrans();
