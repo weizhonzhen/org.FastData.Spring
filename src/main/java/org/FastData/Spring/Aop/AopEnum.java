@@ -19,7 +19,7 @@ public final class AopEnum {
     public static int Query_PrimaryKey_Dic = 11;
     public static int Query_PrimaryKey = 12;
     public static int Query_Count = 13;
-    public static int Exists_PrimaryKey=14;
+    public static int Exists_PrimaryKey = 14;
     public static int Query_Page_Dic = 15;
 
     public static int Parsing_Xml = 16;
@@ -27,4 +27,6 @@ public final class AopEnum {
 
     public static int Pool_Get = 18;
     public static int Pool_Close = 19;
+
+    public static int Query_Navigate = 20;
 }
