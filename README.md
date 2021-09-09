@@ -51,6 +51,7 @@ import Table;
 
 @Table(comments = "测试")
 @FieldNameConstants
+@Data
 public class TestTable {
     @Column(isKey = true,dataType = "NVARCHAR2",length = 15,isNull = true,comments = "id")
     private  String Id;
@@ -61,11 +62,12 @@ public class TestTable {
     private TestTable_List list;
 }
 
+@Data
 public class TestTable_List
 {
- @Navigate(Name = TestTable.Fields.Id)
- private  String Id;
- private  Number value;
+   @Navigate(Name = TestTable.Fields.Id)
+   private  String Id;
+   private  Number value;
 }
 
 //@NavigateType  @Navigate  导航属性
