@@ -262,7 +262,7 @@ public interface IFastRepository {
      field: update table field by primary Key
      db: database context
     */
-    WriteReturn update(Object model, List<String> field, DataContext db);
+    WriteReturn updateKey(Object model, List<String> field, DataContext db);
 
     /*
      model: database table
@@ -270,7 +270,7 @@ public interface IFastRepository {
      db: database context
      log:sql log
     */
-    WriteReturn update(Object model, List<String> field, DataContext db,Boolean log);
+    WriteReturn updateKey(Object model, List<String> field, DataContext db,Boolean log);
 
     /*
      update table by primary Key
@@ -278,7 +278,7 @@ public interface IFastRepository {
      field: update field
      key: database key
     */
-    WriteReturn update(Object model, List<String> field, String key);
+    WriteReturn updateKey(Object model, List<String> field, String key);
 
     /*
      update table by primary Key
@@ -287,14 +287,14 @@ public interface IFastRepository {
      key: database key
      log:sql log
     */
-    WriteReturn update(Object model, List<String> field, String key,Boolean log);
+    WriteReturn updateKey(Object model, List<String> field, String key,Boolean log);
 
     /*
      update table by primary Key
      model: database table
      key: database key
     */
-    WriteReturn update(Object model,String key);
+    WriteReturn updateKey(Object model,String key);
 
     /*
      update table by primary Key
@@ -302,14 +302,14 @@ public interface IFastRepository {
      key: database key
       log:sql log
     */
-    WriteReturn update(Object model,String key,Boolean log);
+    WriteReturn updateKey(Object model,String key,Boolean log);
 
     /*
      update table by primary Key
      model: database table
      db: database context
     */
-    WriteReturn update(Object model,DataContext db);
+    WriteReturn updateKey(Object model,DataContext db);
 
     /*
      update table by primary Key
@@ -317,14 +317,14 @@ public interface IFastRepository {
      db: database context
       log:sql log
     */
-    WriteReturn update(Object model,DataContext db,Boolean log);
+    WriteReturn updateKey(Object model,DataContext db,Boolean log);
 
     /*
      delete table by primary Key
      model: database table
      db: database context
     */
-    WriteReturn delete(Object model, DataContext db);
+    WriteReturn deleteKey(Object model, DataContext db);
 
     /*
      delete table by primary Key
@@ -332,14 +332,14 @@ public interface IFastRepository {
      db: database context
       log:sql log
     */
-    WriteReturn delete(Object model, DataContext db,Boolean log);
+    WriteReturn deleteKey(Object model, DataContext db,Boolean log);
 
     /*
      delete table by primary Key
      model: database table
      key: database key
     */
-    WriteReturn delete(Object model, String key);
+    WriteReturn deleteKey(Object model, String key);
 
     /*
      delete table by primary Key
@@ -347,14 +347,14 @@ public interface IFastRepository {
      key: database key
       log:sql log
     */
-    WriteReturn delete(Object model, String key,Boolean log);
+    WriteReturn deleteKey(Object model, String key,Boolean log);
 
     /*
      query exists by primary Key
      model: database table
      db: database context
     */
-    boolean exists(Object model, DataContext db);
+    boolean existsKey(Object model, DataContext db);
 
     /*
      query exists by primary Key
@@ -362,14 +362,14 @@ public interface IFastRepository {
      db: database context
       log:sql log
     */
-    boolean exists(Object model, DataContext db,Boolean log);
+    boolean existsKey(Object model, DataContext db,Boolean log);
 
     /*
      query exists by primary Key
      model: database table
      key: database key
     */
-    boolean exists(Object model, String key);
+    boolean existsKey(Object model, String key);
 
 
     /*
@@ -378,14 +378,14 @@ public interface IFastRepository {
      key: database key
       log:sql log
     */
-    boolean exists(Object model, String key,Boolean log);
+    boolean existsKey(Object model, String key,Boolean log);
 
     /*
      query model by primary Key
      model: database table
      key: database key
    */
-    Object query(Object model,Class<?> type, String key);
+    Object queryKey(Object model,Class<?> type, String key);
 
     /*
      query model by primary Key
@@ -393,14 +393,14 @@ public interface IFastRepository {
      key: database key
       log:sql log
    */
-    Object query(Object model,Class<?> type, String key,Boolean log);
+    Object queryKey(Object model,Class<?> type, String key,Boolean log);
 
     /*
        query model by primary Key
        model: database table
       db: database context
     */
-    Object query(Object model,Class<?> type, DataContext db);
+    Object queryKey(Object model,Class<?> type, DataContext db);
 
     /*
        query model by primary Key
@@ -408,14 +408,14 @@ public interface IFastRepository {
       db: database context
       log:sql log
     */
-    Object query(Object model,Class<?> type, DataContext db,Boolean log);
+    Object queryKey(Object model,Class<?> type, DataContext db,Boolean log);
 
     /*
       query model by primary Key
       model: database table
          key: database key
     */
-    Map<String,Object> query(Object model, String key);
+    FastMap<String,Object> queryKey(Object model, String key);
 
     /*
       query model by primary Key
@@ -423,14 +423,14 @@ public interface IFastRepository {
          key: database key
       log:sql log
     */
-    FastMap<String,Object> query(Object model, String key,Boolean log);
+    FastMap<String,Object> queryKey(Object model, String key,Boolean log);
 
     /*
       query model by primary Key
       model: database table
       db: database context
     */
-    FastMap<String,Object> query(Object model, DataContext db);
+    FastMap<String,Object> queryKey(Object model, DataContext db);
 
     /*
       query model by primary Key
@@ -438,7 +438,7 @@ public interface IFastRepository {
       db: database context
       log:sql log
     */
-    FastMap<String,Object> query(Object model, DataContext db,Boolean log);
+    FastMap<String,Object> queryKey(Object model, DataContext db,Boolean log);
 
     /*
      update,delete sql

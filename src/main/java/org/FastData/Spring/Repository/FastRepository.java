@@ -1,14 +1,13 @@
 package org.FastData.Spring.Repository;
 
 import org.FastData.Spring.Annotation.FastData;
+import org.FastData.Spring.Annotation.Navigate;
+import org.FastData.Spring.Annotation.NavigateType;
 import org.FastData.Spring.Annotation.Table;
 import org.FastData.Spring.Aop.*;
 import org.FastData.Spring.Base.DataConfig;
 import org.FastData.Spring.Base.MapXml;
-import org.FastData.Spring.CacheModel.DbConfig;
-import org.FastData.Spring.CacheModel.MapConfig;
-import org.FastData.Spring.CacheModel.MapXmlModel;
-import org.FastData.Spring.CacheModel.PropertyModel;
+import org.FastData.Spring.CacheModel.*;
 import org.FastData.Spring.Check.BaseTable;
 import org.FastData.Spring.Config.Config;
 import org.FastData.Spring.Context.DataContext;
@@ -16,6 +15,7 @@ import org.FastData.Spring.Model.*;
 import org.FastData.Spring.Util.FastUtil;
 import org.FastData.Spring.Util.ScanPackage;
 import org.FastData.Spring.Util.CacheUtil;
+import org.apache.commons.math3.distribution.CauchyDistribution;
 import org.springframework.context.annotation.ComponentScan;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -479,14 +479,14 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public WriteReturn update(Object model, List<String> field, String key) {
+    public WriteReturn updateKey(Object model, List<String> field, String key) {
         try (DataContext db = new DataContext(key)) {
             return db.update(model,field).getWriteReturn();
         }
     }
 
     @Override
-    public WriteReturn update(Object model, List<String> field, String key,Boolean log) {
+    public WriteReturn updateKey(Object model, List<String> field, String key,Boolean log) {
         try (DataContext db = new DataContext(key)) {
             db.config.setOutSql(db.config.isOutSql() ||log);
             return db.update(model,field).getWriteReturn();
@@ -494,25 +494,25 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public WriteReturn update(Object model, List<String> field, DataContext db) {
+    public WriteReturn updateKey(Object model, List<String> field, DataContext db) {
         return db.update(model,field).getWriteReturn();
     }
 
     @Override
-    public WriteReturn update(Object model, List<String> field, DataContext db,Boolean log) {
+    public WriteReturn updateKey(Object model, List<String> field, DataContext db,Boolean log) {
         db.config.setOutSql(db.config.isOutSql() || log);
         return db.update(model,field).getWriteReturn();
     }
 
     @Override
-    public WriteReturn update(Object model, String key) {
+    public WriteReturn updateKey(Object model, String key) {
         try (DataContext db = new DataContext(key)) {
             return db.update(model).getWriteReturn();
         }
     }
 
     @Override
-    public WriteReturn update(Object model, String key,Boolean log) {
+    public WriteReturn updateKey(Object model, String key,Boolean log) {
         try (DataContext db = new DataContext(key)) {
             db.config.setOutSql(db.config.isOutSql() || log);
             return db.update(model).getWriteReturn();
@@ -520,25 +520,25 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public WriteReturn update(Object model, DataContext db) {
+    public WriteReturn updateKey(Object model, DataContext db) {
         return db.update(model).getWriteReturn();
     }
 
     @Override
-    public WriteReturn update(Object model, DataContext db,Boolean log) {
+    public WriteReturn updateKey(Object model, DataContext db,Boolean log) {
         db.config.setOutSql(db.config.isOutSql() || log);
         return db.update(model).getWriteReturn();
     }
 
     @Override
-    public WriteReturn delete(Object model, String key) {
+    public WriteReturn deleteKey(Object model, String key) {
         try (DataContext db = new DataContext(key)) {
             return db.delete(model).getWriteReturn();
         }
     }
 
     @Override
-    public WriteReturn delete(Object model, String key,Boolean log) {
+    public WriteReturn deleteKey(Object model, String key,Boolean log) {
         try (DataContext db = new DataContext(key)) {
             db.config.setOutSql(db.config.isOutSql() ||log);
             return db.delete(model).getWriteReturn();
@@ -546,25 +546,25 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public WriteReturn delete(Object model, DataContext db) {
+    public WriteReturn deleteKey(Object model, DataContext db) {
         return db.delete(model).getWriteReturn();
     }
 
     @Override
-    public WriteReturn delete(Object model, DataContext db,Boolean log) {
+    public WriteReturn deleteKey(Object model, DataContext db,Boolean log) {
         db.config.setOutSql(db.config.isOutSql() || log);
         return db.delete(model).getWriteReturn();
     }
 
     @Override
-    public boolean exists(Object model, String key) {
+    public boolean existsKey(Object model, String key) {
         try (DataContext db = new DataContext(key)) {
             return db.exists(model).getCount()>0;
         }
     }
 
     @Override
-    public boolean exists(Object model, String key,Boolean log) {
+    public boolean existsKey(Object model, String key,Boolean log) {
         try (DataContext db = new DataContext(key)) {
             db.config.setOutSql(db.config.isOutSql() || log);
             return db.exists(model).getCount()>0;
@@ -572,25 +572,25 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public boolean exists(Object model, DataContext db) {
+    public boolean existsKey(Object model, DataContext db) {
         return db.exists(model).getCount()>0;
     }
 
     @Override
-    public boolean exists(Object model, DataContext db,Boolean log) {
+    public boolean existsKey(Object model, DataContext db,Boolean log) {
         db.config.setOutSql(db.config.isOutSql() ||log);
         return db.exists(model).getCount()>0;
     }
 
     @Override
-    public Object query(Object model,Class<?> type, String key) {
+    public Object queryKey(Object model,Class<?> type, String key) {
         try (DataContext db = new DataContext(key)) {
             return db.query(model,type).getItem();
         }
     }
 
     @Override
-    public Object query(Object model,Class<?> type, String key,Boolean log) {
+    public Object queryKey(Object model,Class<?> type, String key,Boolean log) {
         try (DataContext db = new DataContext(key)) {
             db.config.setOutSql(db.config.isOutSql() ||log);
             return db.query(model,type).getItem();
@@ -598,25 +598,25 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public Object query(Object model,Class<?> type, DataContext db) {
+    public Object queryKey(Object model,Class<?> type, DataContext db) {
         return db.query(model,type).getItem();
     }
 
     @Override
-    public Object query(Object model,Class<?> type, DataContext db,Boolean log) {
+    public Object queryKey(Object model,Class<?> type, DataContext db,Boolean log) {
         db.config.setOutSql(db.config.isOutSql()||log);
         return db.query(model,type).getItem();
     }
 
     @Override
-    public Map<String,Object> query(Object model, String key) {
+    public FastMap<String,Object> queryKey(Object model, String key) {
         try (DataContext db = new DataContext(key)) {
             return db.query(model).getItem();
         }
     }
 
     @Override
-    public FastMap<String,Object> query(Object model, String key,Boolean log) {
+    public FastMap<String,Object> queryKey(Object model, String key,Boolean log) {
         try (DataContext db = new DataContext(key)) {
             db.config.setOutSql(db.config.isOutSql() ||log);
             return db.query(model).getItem();
@@ -624,12 +624,12 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public FastMap<String,Object> query(Object model, DataContext db) {
+    public FastMap<String,Object> queryKey(Object model, DataContext db) {
         return db.query(model).getItem();
     }
 
     @Override
-    public FastMap<String,Object> query(Object model, DataContext db,Boolean log) {
+    public FastMap<String,Object> queryKey(Object model, DataContext db,Boolean log) {
         db.config.setOutSql(db.config.isOutSql() ||log);
         return db.query(model).getItem();
     }
@@ -928,18 +928,44 @@ public class FastRepository implements IFastRepository {
     /* model cache */
     private void instanceProperties(String packageName) {
         List<Class> list = ScanPackage.get(packageName);
+        List<FastMap<String, Object>> listtype = new ArrayList<FastMap<String, Object>>();
         list.forEach(a -> {
             List<PropertyModel> cacheList = new ArrayList<PropertyModel>();
+            List<NavigateModel> navigateList = new ArrayList<NavigateModel>();
+            String navigateKey = String.format("%s.Navigate", a.getName());
             Arrays.stream(a.getDeclaredFields()).forEach(f -> {
                 try {
-                    PropertyModel property = new PropertyModel();
-                    property.setType(f.getType());
-                    property.setName(f.getName());
-                    cacheList.add(property);
+                    NavigateType navigateType = f.getAnnotation(NavigateType.class);
+                    if (navigateType != null) {
+                        NavigateModel navigateModel = new NavigateModel();
+                        navigateModel.setPropertyType(navigateType.type());
+                        navigateModel.setMemberName(f.getName());
+                        navigateModel.setList(f.getType()== java.util.List.class);
+                        navigateModel.setMemberType(f.getType());
+
+                        Arrays.stream(navigateModel.getPropertyType().getDeclaredFields()).forEach(m -> {
+                            Navigate navigate = m.getAnnotation(Navigate.class);
+                            if (navigate != null) {
+                                navigateModel.setName(navigate.Name());
+                                navigateModel.setAppand(navigate.Appand());
+                                navigateModel.setType(m.getType());
+                            }
+                        });
+
+                        if (!FastUtil.isNullOrEmpty(navigateModel.getName()))
+                            navigateList.add(navigateModel);
+                    } else {
+                        PropertyModel property = new PropertyModel();
+                        property.setType(f.getType());
+                        property.setName(f.getName());
+                        cacheList.add(property);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
+            if (navigateList.size() > 0)
+                CacheUtil.setModel(navigateKey, navigateList);
             CacheUtil.setModel(a.getName(), cacheList);
         });
     }
