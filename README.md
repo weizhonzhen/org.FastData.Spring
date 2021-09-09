@@ -50,12 +50,25 @@ import Column;
 import Table;
 
 @Table(comments = "测试")
+@FieldNameConstants
 public class TestTable {
     @Column(isKey = true,dataType = "NVARCHAR2",length = 15,isNull = true,comments = "id")
     private  String Id;
     @Column(dataType = "NUMBER",isNull = true,comments = "value")
     private  Number value;
+    
+    @NavigateType(type = TestTable_List.class)
+    private TestTable_List list;
 }
+
+public class TestTable_List
+{
+ @Navigate(Name = TestTable.Fields.Id)
+ private  String Id;
+ private  Number value;
+}
+
+//@NavigateType  @Navigate  导航属性
 ```
 
 in resources add db.json
