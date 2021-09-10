@@ -1,13 +1,15 @@
 package org.FastData.Spring.CacheModel;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NavigateModel implements Serializable {
     private Class<?> propertyType;
-    private String name;
+    private List<String> name =new ArrayList<>();
     private Class<?> type;
     private boolean isList;
-    private String appand;
+    private List<String> appand = new ArrayList<>();
     private String memberName;
     private Class<?> memberType;
 
@@ -19,11 +21,11 @@ public class NavigateModel implements Serializable {
         this.propertyType = propertyType;
     }
 
-    public String getName() {
+    public List<String> getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(List<String> name) {
         this.name = name;
     }
 
@@ -35,11 +37,11 @@ public class NavigateModel implements Serializable {
         isList = list;
     }
 
-    public String getAppand() {
+    public List<String> getAppand() {
         return appand;
     }
 
-    public void setAppand(String appand) {
+    public void setAppand(List<String> appand) {
         this.appand = appand;
     }
 
