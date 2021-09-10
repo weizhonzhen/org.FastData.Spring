@@ -952,7 +952,11 @@ public class DataContext implements Closeable {
                 sql.append(String.format("select * from %s where 1=1 ", tableName));
                 try {
                     for (int i = 0; i < a.getName().size(); i++) {
-                        sql.append(String.format("and %s=? ", a.getName().get(i)));
+                        sql.append(String.format(" and %s=? ", a.getName().get(i)));
+                        if (!FastUtil.isNullOrEmpty(a.getAppand().get(i)) && a.getAppand().get(i).toLowerCase().trim().startsWith("and"))
+                            sql.append(a.getAppand().get(i));
+                        if (!FastUtil.isNullOrEmpty(a.getAppand().get(i)) && !a.getAppand().get(i).toLowerCase().trim().startsWith("and"))
+                            sql.append(String.format(" and %s ", a.getAppand().get(i)));
                         param.put(a.getName().get(i), ReflectUtil.get(data, a.getName().get(i), a.getType()));
                         mapResult.setParam(param);
                     }
@@ -974,7 +978,7 @@ public class DataContext implements Closeable {
 
                     if (a.isList())
                         ReflectUtil.set(data, result, a.getMemberName(), a.getMemberType());
-                    else
+                    else if(result.size()>0)
                         ReflectUtil.set(data, result.get(0), a.getMemberName(), a.getMemberType());
 
                     close(resultSet, mapResult);
