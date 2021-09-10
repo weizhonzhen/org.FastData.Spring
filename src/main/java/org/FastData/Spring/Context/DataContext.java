@@ -941,22 +941,29 @@ public class DataContext implements Closeable {
 
     private <T> void navigate(T data) {
         String key = String.format("%s.Navigate", data.getClass().getName());
-        MapResult mapResult = new MapResult();
         LinkedHashMap param = new LinkedHashMap();
         if (CacheUtil.exists(key)) {
             List<NavigateModel> list = CacheUtil.getList(key, NavigateModel.class);
             list.forEach(a -> {
+                MapResult mapResult = new MapResult();
                 List<PropertyModel> property = CacheUtil.getList(a.getPropertyType().getName(), PropertyModel.class);
                 String tableName = a.getPropertyType().getName().replace(a.getPropertyType().getPackage().getName(), "").replace(".", "");
-                String sql = String.format("select * from %s where %s=?", tableName, a.getName());
+                StringBuilder sql = new StringBuilder();
+                sql.append(String.format("select * from %s where 1=1 ", tableName));
                 try {
-                    mapResult.setSql(sql);
-                    param.put(a.getName(), ReflectUtil.get(data, a.getName(), a.getType()));
-                    mapResult.setParam(param);
+                    for (int i = 0; i < a.getName().size(); i++) {
+                        sql.append(String.format("and %s=? ", a.getName().get(i)));
+                        param.put(a.getName().get(i), ReflectUtil.get(data, a.getName().get(i), a.getType()));
+                        mapResult.setParam(param);
+                    }
+
+                    mapResult.setSql(sql.toString());
                     aopBefore(tableName, mapResult, config, true, AopEnum.Query_Navigate);
 
-                    preparedStatement = conn.prepareStatement(sql);
-                    preparedStatement.setObject(1, param.get(a.getName()));
+                    preparedStatement = conn.prepareStatement(sql.toString());
+                    for (int i = 0; i < a.getName().size(); i++) {
+                        preparedStatement.setObject(i + 1, param.get(a.getName().get(i)));
+                    }
                     ResultSet resultSet = preparedStatement.executeQuery();
 
                     List result = new ArrayList();
@@ -965,15 +972,15 @@ public class DataContext implements Closeable {
                         result.add(setModel(a.getPropertyType(), col, resultSet, property));
                     }
 
-                    if(a.isList())
-                        ReflectUtil.set(data,result,a.getMemberName(),a.getMemberType());
+                    if (a.isList())
+                        ReflectUtil.set(data, result, a.getMemberName(), a.getMemberType());
                     else
-                        ReflectUtil.set(data,result.get(0),a.getMemberName(),a.getMemberType());
+                        ReflectUtil.set(data, result.get(0), a.getMemberName(), a.getMemberType());
 
-                    close(resultSet,mapResult);
+                    close(resultSet, mapResult);
                     aopAfter(tableName, mapResult, config, true, AopEnum.Query_Navigate, data);
                 } catch (Exception ex) {
-                    aopException(ex, "navigate tableName:" +tableName, AopEnum.Query_Navigate, config);
+                    aopException(ex, "navigate tableName:" + tableName, AopEnum.Query_Navigate, config);
                     ex.printStackTrace();
                     if (config.isOutError())
                         LogUtil.error(ex);
