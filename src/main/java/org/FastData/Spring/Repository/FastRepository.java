@@ -15,7 +15,6 @@ import org.FastData.Spring.Model.*;
 import org.FastData.Spring.Util.FastUtil;
 import org.FastData.Spring.Util.ScanPackage;
 import org.FastData.Spring.Util.CacheUtil;
-import org.apache.commons.math3.distribution.CauchyDistribution;
 import org.springframework.context.annotation.ComponentScan;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -44,14 +43,14 @@ public class FastRepository implements IFastRepository {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(key)) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                aopMapBefore(name, result, db.config, AopEnum.Map_List_Model);
+                BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_List_Model);
                 data = db.query(result, type,false).getList();
-                aopMapAfter(name, result, db.config, AopEnum.Map_List_Model,data);
+                BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_List_Model,data);
                 return data;
             }
         }
-        aopMapBefore(name, null, DataConfig.db(key), AopEnum.Map_List_Model);
-        aopMapAfter(name, null, DataConfig.db(key), AopEnum.Map_List_Model,data);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(key), AopEnum.Map_List_Model);
+        BaseAop.aopMapAfter(name, null, DataConfig.db(key), AopEnum.Map_List_Model,data);
         return  data;
     }
 
@@ -62,14 +61,14 @@ public class FastRepository implements IFastRepository {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(key)) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-                aopMapBefore(name, result, db.config, AopEnum.Map_List_Model);
+                BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_List_Model);
                 data = db.query(result, type,false).getList();
-                aopMapAfter(name, result, db.config, AopEnum.Map_List_Model,data);
+                BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_List_Model,data);
                 return data;
             }
         }
-        aopMapBefore(name, null, DataConfig.db(key), AopEnum.Map_List_Model);
-        aopMapAfter(name, null, DataConfig.db(key), AopEnum.Map_List_Model,data);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(key), AopEnum.Map_List_Model);
+        BaseAop.aopMapAfter(name, null, DataConfig.db(key), AopEnum.Map_List_Model,data);
         return data;
     }
 
@@ -79,13 +78,13 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-            aopMapBefore(name, result, db.config, AopEnum.Map_List_Model);
+            BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_List_Model);
             data = db.query(result, type,false).getList();
-            aopMapAfter(name, result, db.config, AopEnum.Map_List_Model,data);
+            BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_List_Model,data);
             return data;
         }
-        aopMapBefore(name, null, db.config, AopEnum.Map_List_Model);
-        aopMapAfter(name, null,db.config, AopEnum.Map_List_Model,data);
+        BaseAop.aopMapBefore(name, null, db.config, AopEnum.Map_List_Model);
+        BaseAop.aopMapAfter(name, null,db.config, AopEnum.Map_List_Model,data);
         return data;
     }
 
@@ -95,13 +94,13 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-            aopMapBefore(name, result, db.config, AopEnum.Map_List_Model);
+            BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_List_Model);
             data = db.query(result, type,false).getList();
-            aopMapAfter(name, result, db.config, AopEnum.Map_List_Model,data);
+            BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_List_Model,data);
             return data;
         }
-        aopMapBefore(name, null, db.config, AopEnum.Map_List_Model);
-        aopMapAfter(name, null,db.config, AopEnum.Map_List_Model,data);
+        BaseAop.aopMapBefore(name, null, db.config, AopEnum.Map_List_Model);
+        BaseAop.aopMapAfter(name, null,db.config, AopEnum.Map_List_Model,data);
         return data;
     }
 
@@ -112,14 +111,14 @@ public class FastRepository implements IFastRepository {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(mapDb(name))) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                aopMapBefore(name, result, db.config, AopEnum.Map_List_Model);
+                BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_List_Model);
                 data = db.query(result, type,false).getList();
-                aopMapAfter(name, result, db.config, AopEnum.Map_List_Model,data);
+                BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_List_Model,data);
                 return data;
             }
         }
-        aopMapBefore(name, null, DataConfig.db(mapDb(name)), AopEnum.Map_List_Model);
-        aopMapAfter(name, null,DataConfig.db(mapDb(name)), AopEnum.Map_List_Model,data);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(mapDb(name)), AopEnum.Map_List_Model);
+        BaseAop.aopMapAfter(name, null,DataConfig.db(mapDb(name)), AopEnum.Map_List_Model,data);
         return data;
     }
 
@@ -130,14 +129,14 @@ public class FastRepository implements IFastRepository {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(mapDb(name))) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-                aopMapBefore(name, result, DataConfig.db(mapDb(name)), AopEnum.Map_List_Model);
+                BaseAop.aopMapBefore(name, result, DataConfig.db(mapDb(name)), AopEnum.Map_List_Model);
                 data = db.query(result, type,false).getList();
-                aopMapAfter(name, result,DataConfig.db(mapDb(name)), AopEnum.Map_List_Model,data);
+                BaseAop.aopMapAfter(name, result,DataConfig.db(mapDb(name)), AopEnum.Map_List_Model,data);
                 return data;
             }
         }
-        aopMapBefore(name, null, DataConfig.db(mapDb(name)), AopEnum.Map_List_Model);
-        aopMapAfter(name, null,DataConfig.db(mapDb(name)), AopEnum.Map_List_Model,data);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(mapDb(name)), AopEnum.Map_List_Model);
+        BaseAop.aopMapAfter(name, null,DataConfig.db(mapDb(name)), AopEnum.Map_List_Model,data);
         return data;
     }
 
@@ -148,14 +147,14 @@ public class FastRepository implements IFastRepository {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(key)) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+                BaseAop.aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
                 data = db.query(result,false).getList();
-                aopMapAfter(name, result, db.config,AopEnum.Map_List_Dic,data);
+                BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_List_Dic,data);
                 return data;
             }
         }
-        aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_List_Dic);
-        aopMapAfter(name, null, DataConfig.db(key),AopEnum.Map_List_Dic,data);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_List_Dic);
+        BaseAop.aopMapAfter(name, null, DataConfig.db(key),AopEnum.Map_List_Dic,data);
         return data;
     }
 
@@ -166,14 +165,14 @@ public class FastRepository implements IFastRepository {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(key)) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-                aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+                BaseAop.aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
                 data = db.query(result,false).getList();
-                aopMapAfter(name, result, db.config,AopEnum.Map_List_Dic,data);
+                BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_List_Dic,data);
                 return data;
             }
         }
-        aopMapBefore(name, null,DataConfig.db(key),AopEnum.Map_List_Dic);
-        aopMapAfter(name, null, DataConfig.db(key),AopEnum.Map_List_Dic,data);
+        BaseAop.aopMapBefore(name, null,DataConfig.db(key),AopEnum.Map_List_Dic);
+        BaseAop.aopMapAfter(name, null, DataConfig.db(key),AopEnum.Map_List_Dic,data);
         return data;
     }
 
@@ -183,13 +182,13 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-            aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+            BaseAop.aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
             data = db.query(result,false).getList();
-            aopMapAfter(name, result, db.config,AopEnum.Map_List_Dic,data);
+            BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_List_Dic,data);
             return data;
         }
-        aopMapBefore(name, null,db.config,AopEnum.Map_List_Dic);
-        aopMapAfter(name, null, db.config,AopEnum.Map_List_Dic,data);
+        BaseAop.aopMapBefore(name, null,db.config,AopEnum.Map_List_Dic);
+        BaseAop.aopMapAfter(name, null, db.config,AopEnum.Map_List_Dic,data);
         return data;
     }
 
@@ -199,13 +198,13 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-            aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+            BaseAop.aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
             data = db.query(result,false).getList();
-            aopMapAfter(name, result, db.config,AopEnum.Map_List_Dic,data);
+            BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_List_Dic,data);
             return data;
         }
-        aopMapBefore(name, null, db.config,AopEnum.Map_List_Dic);
-        aopMapAfter(name, null, db.config,AopEnum.Map_List_Dic,data);
+        BaseAop.aopMapBefore(name, null, db.config,AopEnum.Map_List_Dic);
+        BaseAop.aopMapAfter(name, null, db.config,AopEnum.Map_List_Dic,data);
         return data;
     }
 
@@ -216,13 +215,13 @@ public class FastRepository implements IFastRepository {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(mapDb(name))) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+                BaseAop.aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
                 data = db.query(result,false).getList();
-                aopMapAfter(name, result, db.config,AopEnum.Map_List_Dic,data);
+                BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_List_Dic,data);
             }
         }
-        aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic);
-        aopMapAfter(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic,data);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic);
+        BaseAop.aopMapAfter(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic,data);
         return data;
     }
 
@@ -233,14 +232,14 @@ public class FastRepository implements IFastRepository {
             MapResult result = MapXml.getMapSql(name, param);
             try (DataContext db = new DataContext(mapDb(name))) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-                aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+                BaseAop.aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
                 data = db.query(result,false).getList();
-                aopMapAfter(name, result, db.config,AopEnum.Map_List_Dic,data);
+                BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_List_Dic,data);
                 return data;
             }
         }
-        aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic);
-        aopMapAfter(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic,data);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic);
+        BaseAop.aopMapAfter(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic,data);
         return data;
     }
 
@@ -251,14 +250,14 @@ public class FastRepository implements IFastRepository {
             try (DataContext db = new DataContext(key)) {
                 MapResult result = MapXml.getMapSql(name, param);
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                aopMapBefore(name, result, db.config,AopEnum.Map_Page_Model);
+                BaseAop.aopMapBefore(name, result, db.config,AopEnum.Map_Page_Model);
                 data = db.page(pModel, result, type,false);
-                aopMapAfter(name, result, db.config,AopEnum.Map_Page_Model,data);
+                BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_Page_Model,data);
                 return data;
             }
         }
-        aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_Page_Model);
-        aopMapAfter(name, null,DataConfig.db(key),AopEnum.Map_Page_Model,data);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_Page_Model);
+        BaseAop.aopMapAfter(name, null,DataConfig.db(key),AopEnum.Map_Page_Model,data);
         return data;
     }
 
@@ -269,14 +268,14 @@ public class FastRepository implements IFastRepository {
             try (DataContext db = new DataContext(key)) {
                 MapResult result = MapXml.getMapSql(name, param);
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-                aopMapBefore(name, result, db.config,AopEnum.Map_Page_Model);
+                BaseAop.aopMapBefore(name, result, db.config,AopEnum.Map_Page_Model);
                 data = db.page(pModel, result, type,false);
-                aopMapAfter(name, result, db.config,AopEnum.Map_Page_Model,data);
+                BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_Page_Model,data);
                 return data;
             }
         }
-        aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_Page_Model);
-        aopMapAfter(name, null, DataConfig.db(key),AopEnum.Map_Page_Model,data);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_Page_Model);
+        BaseAop.aopMapAfter(name, null, DataConfig.db(key),AopEnum.Map_Page_Model,data);
         return data;
     }
 
@@ -286,13 +285,13 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-            aopMapBefore(name, result, db.config,AopEnum.Map_Page_Model);
+            BaseAop.aopMapBefore(name, result, db.config,AopEnum.Map_Page_Model);
             data = db.page(pModel, result, type,false);
-            aopMapAfter(name, result, db.config,AopEnum.Map_Page_Model,data);
+            BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_Page_Model,data);
             return data;
         }
-        aopMapBefore(name, null, db.config,AopEnum.Map_Page_Model);
-        aopMapAfter(name, null, db.config,AopEnum.Map_Page_Model,data);
+        BaseAop.aopMapBefore(name, null, db.config,AopEnum.Map_Page_Model);
+        BaseAop.aopMapAfter(name, null, db.config,AopEnum.Map_Page_Model,data);
         return data;
     }
 
@@ -302,13 +301,13 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-            aopMapBefore(name, result, db.config,AopEnum.Map_Page_Model);
+            BaseAop.aopMapBefore(name, result, db.config,AopEnum.Map_Page_Model);
             data = db.page(pModel, result, type,false);
-            aopMapAfter(name, result, db.config,AopEnum.Map_Page_Model,data);
+            BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_Page_Model,data);
             return data;
         }
-        aopMapBefore(name, null, db.config,AopEnum.Map_Page_Model);
-        aopMapAfter(name, null, db.config,AopEnum.Map_Page_Model,data);
+        BaseAop.aopMapBefore(name, null, db.config,AopEnum.Map_Page_Model);
+        BaseAop.aopMapAfter(name, null, db.config,AopEnum.Map_Page_Model,data);
         return data;
     }
 
@@ -319,14 +318,14 @@ public class FastRepository implements IFastRepository {
             try (DataContext db = new DataContext(mapDb(name))) {
                 MapResult result = MapXml.getMapSql(name, param);
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                aopMapBefore(name, result, db.config,AopEnum.Map_Page_Model);
+                BaseAop.aopMapBefore(name, result, db.config,AopEnum.Map_Page_Model);
                 data = db.page(pModel, result, type,false);
-                aopMapAfter(name, result, db.config,AopEnum.Map_Page_Model,data);
+                BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_Page_Model,data);
                 return data;
             }
         }
-        aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Page_Model);
-        aopMapAfter(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Page_Model,data);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Page_Model);
+        BaseAop.aopMapAfter(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Page_Model,data);
         return data;
     }
 
@@ -337,14 +336,14 @@ public class FastRepository implements IFastRepository {
             try (DataContext db = new DataContext(mapDb(name))) {
                 MapResult result = MapXml.getMapSql(name, param);
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-                aopMapBefore(name, result, db.config,AopEnum.Map_Page_Model);
+                BaseAop.aopMapBefore(name, result, db.config,AopEnum.Map_Page_Model);
                 data = db.page(pModel, result, type,false);
-                aopMapAfter(name, result, db.config,AopEnum.Map_Page_Model,data);
+                BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_Page_Model,data);
                 return data;
             }
         }
-        aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Page_Model);
-        aopMapAfter(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Page_Model,data);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Page_Model);
+        BaseAop.aopMapAfter(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Page_Model,data);
         return data;
     }
 
@@ -355,14 +354,14 @@ public class FastRepository implements IFastRepository {
             try (DataContext db = new DataContext(key)) {
                 MapResult result = MapXml.getMapSql(name, param);
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+                BaseAop.aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
                 data = db.page(pModel, result,false);
-                aopMapAfter(name,result,db.config,AopEnum.Map_List_Dic,data);
+                BaseAop.aopMapAfter(name,result,db.config,AopEnum.Map_List_Dic,data);
                 return data;
             }
         }
-        aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_List_Dic);
-        aopMapAfter(name,null,DataConfig.db(key),AopEnum.Map_List_Dic,data);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_List_Dic);
+        BaseAop.aopMapAfter(name,null,DataConfig.db(key),AopEnum.Map_List_Dic,data);
         return data;
     }
 
@@ -373,14 +372,14 @@ public class FastRepository implements IFastRepository {
             try (DataContext db = new DataContext(key)) {
                 MapResult result = MapXml.getMapSql(name, param);
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-                aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+                BaseAop.aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
                 data = db.page(pModel, result,false);
-                aopMapAfter(name,result,db.config,AopEnum.Map_List_Dic,data);
+                BaseAop.aopMapAfter(name,result,db.config,AopEnum.Map_List_Dic,data);
                 return data;
             }
         }
-        aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_List_Dic);
-        aopMapAfter(name,null,DataConfig.db(key),AopEnum.Map_List_Dic,data);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_List_Dic);
+        BaseAop.aopMapAfter(name,null,DataConfig.db(key),AopEnum.Map_List_Dic,data);
         return data;
     }
 
@@ -390,13 +389,13 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-            aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+            BaseAop.aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
             data = db.page(pModel, result,false);
-            aopMapAfter(name,result,db.config,AopEnum.Map_List_Dic,data);
+            BaseAop.aopMapAfter(name,result,db.config,AopEnum.Map_List_Dic,data);
             return data;
         }
-        aopMapBefore(name, null, db.config,AopEnum.Map_List_Dic);
-        aopMapAfter(name,null,db.config,AopEnum.Map_List_Dic,data);
+        BaseAop.aopMapBefore(name, null, db.config,AopEnum.Map_List_Dic);
+        BaseAop.aopMapAfter(name,null,db.config,AopEnum.Map_List_Dic,data);
         return data;
     }
 
@@ -406,13 +405,13 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-            aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+            BaseAop.aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
             data = db.page(pModel, result,false);
-            aopMapAfter(name,result,db.config,AopEnum.Map_List_Dic,data);
+            BaseAop.aopMapAfter(name,result,db.config,AopEnum.Map_List_Dic,data);
             return data;
         }
-        aopMapBefore(name, null, db.config,AopEnum.Map_List_Dic);
-        aopMapAfter(name,null,db.config,AopEnum.Map_List_Dic,data);
+        BaseAop.aopMapBefore(name, null, db.config,AopEnum.Map_List_Dic);
+        BaseAop.aopMapAfter(name,null,db.config,AopEnum.Map_List_Dic,data);
         return data;
     }
 
@@ -423,14 +422,14 @@ public class FastRepository implements IFastRepository {
             try (DataContext db = new DataContext(mapDb(name))) {
                 MapResult result = MapXml.getMapSql(name, param);
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+                BaseAop.aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
                 data = db.page(pModel, result,false);
-                aopMapAfter(name,result,db.config,AopEnum.Map_List_Dic,data);
+                BaseAop.aopMapAfter(name,result,db.config,AopEnum.Map_List_Dic,data);
                 return data;
             }
         }
-        aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic);
-        aopMapAfter(name,null,DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic,data);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic);
+        BaseAop.aopMapAfter(name,null,DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic,data);
         return data;
     }
 
@@ -441,14 +440,14 @@ public class FastRepository implements IFastRepository {
             try (DataContext db = new DataContext(mapDb(name))) {
                 MapResult result = MapXml.getMapSql(name, param);
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
-                aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
+                BaseAop.aopMapBefore(name, result, db.config,AopEnum.Map_List_Dic);
                 data = db.page(pModel, result,false);
-                aopMapAfter(name,result,db.config,AopEnum.Map_List_Dic,data);
+                BaseAop.aopMapAfter(name,result,db.config,AopEnum.Map_List_Dic,data);
                 return data;
             }
         }
-        aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic);
-        aopMapAfter(name,null,DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic,data);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic);
+        BaseAop.aopMapAfter(name,null,DataConfig.db(mapDb(name)),AopEnum.Map_List_Dic,data);
         return data;
     }
 
@@ -640,21 +639,21 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             data = checkParam(result, name);
-            aopMapBefore(name, result,DataConfig.db(key),AopEnum.Map_Write);
+            BaseAop.aopMapBefore(name, result,DataConfig.db(key),AopEnum.Map_Write);
             if (!data.getSuccess()) {
-                aopMapAfter(name, result, DataConfig.db(key),AopEnum.Map_Write,data);
+                BaseAop.aopMapAfter(name, result, DataConfig.db(key),AopEnum.Map_Write,data);
                 return data;
             }
             try (DataContext db = new DataContext(key)) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
                 data = db.execute(result,false).getWriteReturn();
-                aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
+                BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
                 return data;
             }
         }
-        aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_Write);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_Write);
         data = checkName(name);
-        aopMapAfter(name, null, DataConfig.db(key),AopEnum.Map_Write,data);
+        BaseAop.aopMapAfter(name, null, DataConfig.db(key),AopEnum.Map_Write,data);
         return data;
     }
 
@@ -664,21 +663,21 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             data = checkParam(result, name);
-            aopMapBefore(name, result,DataConfig.db(key),AopEnum.Map_Write);
+            BaseAop.aopMapBefore(name, result,DataConfig.db(key),AopEnum.Map_Write);
             if (!data.getSuccess()) {
-                aopMapAfter(name, result, DataConfig.db(key),AopEnum.Map_Write,data);
+                BaseAop.aopMapAfter(name, result, DataConfig.db(key),AopEnum.Map_Write,data);
                 return data;
             }
             try (DataContext db = new DataContext(key)) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
                 data = db.execute(result,false).getWriteReturn();
-                aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
+                BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
                 return data;
             }
         }
-        aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_Write);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(key),AopEnum.Map_Write);
         data = checkName(name);
-        aopMapAfter(name, null, DataConfig.db(key),AopEnum.Map_Write,data);
+        BaseAop.aopMapAfter(name, null, DataConfig.db(key),AopEnum.Map_Write,data);
         return data;
     }
 
@@ -688,19 +687,19 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             data = checkParam(result, name);
-            aopMapBefore(name, result,db.config,AopEnum.Map_Write);
+            BaseAop.aopMapBefore(name, result,db.config,AopEnum.Map_Write);
             if (!data.getSuccess()) {
-                aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
+                BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
                 return data;
             }
             db.config.setOutSql(db.config.isOutSql() || mapLog(name));
             data = db.execute(result,false).getWriteReturn();
-            aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
+            BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
             return data;
         }
-        aopMapBefore(name, null, db.config,AopEnum.Map_Write);
+        BaseAop.aopMapBefore(name, null, db.config,AopEnum.Map_Write);
         data = checkName(name);
-        aopMapAfter(name, null, db.config,AopEnum.Map_Write,data);
+        BaseAop.aopMapAfter(name, null, db.config,AopEnum.Map_Write,data);
         return data;
     }
 
@@ -710,19 +709,19 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             data = checkParam(result, name);
-            aopMapBefore(name, result,db.config,AopEnum.Map_Write);
+            BaseAop.aopMapBefore(name, result,db.config,AopEnum.Map_Write);
             if (!data.getSuccess()) {
-                aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
+                BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
                 return data;
             }
             db.config.setOutSql(db.config.isOutSql() || mapLog(name)||log);
             data = db.execute(result,false).getWriteReturn();
-            aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
+            BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
             return data;
         }
-        aopMapBefore(name, null, db.config,AopEnum.Map_Write);
+        BaseAop.aopMapBefore(name, null, db.config,AopEnum.Map_Write);
         data = checkName(name);
-        aopMapAfter(name, null, db.config,AopEnum.Map_Write,data);
+        BaseAop.aopMapAfter(name, null, db.config,AopEnum.Map_Write,data);
         return data;
     }
 
@@ -732,21 +731,21 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             data = checkParam(result, name);
-            aopMapBefore(name, result,DataConfig.db(mapDb(name)),AopEnum.Map_Write);
+            BaseAop.aopMapBefore(name, result,DataConfig.db(mapDb(name)),AopEnum.Map_Write);
             if (!data.getSuccess()) {
-                aopMapAfter(name, result, DataConfig.db(mapDb(name)),AopEnum.Map_Write,data);
+                BaseAop.aopMapAfter(name, result, DataConfig.db(mapDb(name)),AopEnum.Map_Write,data);
                 return data;
             }
             try (DataContext db = new DataContext(mapDb(name))) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
                 data = db.execute(result,false).getWriteReturn();
-                aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
+                BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
                 return data;
             }
         }
-        aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Write);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Write);
         data = checkName(name);
-        aopMapAfter(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Write,data);
+        BaseAop.aopMapAfter(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Write,data);
         return data;
     }
 
@@ -756,21 +755,21 @@ public class FastRepository implements IFastRepository {
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
             data = checkParam(result, name);
-            aopMapBefore(name, result,DataConfig.db(mapDb(name)),AopEnum.Map_Write);
+            BaseAop.aopMapBefore(name, result,DataConfig.db(mapDb(name)),AopEnum.Map_Write);
             if (!data.getSuccess()) {
-                aopMapAfter(name, result, DataConfig.db(mapDb(name)),AopEnum.Map_Write,data);
+                BaseAop.aopMapAfter(name, result, DataConfig.db(mapDb(name)),AopEnum.Map_Write,data);
                 return data;
             }
             try (DataContext db = new DataContext(mapDb(name))) {
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name) || log);
                 data = db.execute(result,false).getWriteReturn();
-                aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
+                BaseAop.aopMapAfter(name, result, db.config,AopEnum.Map_Write,data);
                 return data;
             }
         }
-        aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Write);
+        BaseAop.aopMapBefore(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Write);
         data = checkName(name);
-        aopMapAfter(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Write,data);
+        BaseAop.aopMapAfter(name, null, DataConfig.db(mapDb(name)),AopEnum.Map_Write,data);
         return data;
     }
 
@@ -982,51 +981,6 @@ public class FastRepository implements IFastRepository {
                 if (a.getAnnotation(Table.class) != null)
                     BaseTable.check(a, config);
             });
-        }
-    }
-
-    private void aopMapBefore(String mapName, MapResult map, DbConfig config,int aopType){
-        IFastAop aop = FastDataConfig.getAop();
-        if (aop != null) {
-            MapBeforeContext context = new MapBeforeContext();
-            context.setMapName(mapName);
-            context.setAopType(aopType);
-
-            if (map != null) {
-                context.setSql(map.getSql());
-                if (map.getParam() != null)
-                    context.setParam(map.getParam());
-            } else {
-                context.setSql("");
-                context.setParam(new LinkedHashMap<String, Object>());
-            }
-
-            if (config != null)
-                context.setDbType(config.getDbType());
-            aop.mapBefore(context);
-        }
-    }
-
-    private void aopMapAfter(String mapName, MapResult map, DbConfig config,int aopType,Object data){
-        IFastAop aop = FastDataConfig.getAop();
-        if (aop != null) {
-            MapAfterContext context = new MapAfterContext();
-            context.setMapName(mapName);
-            context.setAopType(aopType);
-            context.setResult(data);
-
-            if (map != null) {
-                context.setSql(map.getSql());
-                if (map.getParam() != null)
-                    context.setParam(map.getParam());
-            } else {
-                context.setSql("");
-                context.setParam(new LinkedHashMap<String, Object>());
-            }
-
-            if (config != null)
-                context.setDbType(config.getDbType());
-            aop.mapAfter(context);
         }
     }
 }
