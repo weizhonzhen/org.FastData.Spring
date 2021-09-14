@@ -4,8 +4,10 @@ import com.googlecode.aviator.AviatorEvaluator;
 import com.sun.org.apache.xerces.internal.dom.DeferredElementImpl;
 import com.sun.org.apache.xerces.internal.dom.DeferredTextImpl;
 import org.FastData.Spring.Aop.AopEnum;
+import org.FastData.Spring.Aop.BaseAop;
 import org.FastData.Spring.Aop.ExceptionContext;
 import org.FastData.Spring.Aop.FastDataConfig;
+import org.FastData.Spring.CacheModel.DbConfig;
 import org.FastData.Spring.Model.MapResult;
 import org.FastData.Spring.Model.XmlModel;
 import org.FastData.Spring.Util.CacheUtil;
@@ -374,13 +376,7 @@ public final class MapXml {
                 }
             }
         } catch (Exception e) {
-            if (FastDataConfig.getAop() != null) {
-                ExceptionContext context =new ExceptionContext();
-                context.setName("file Nme" + fileName + "  Parsing xml");
-                context.setEx(e);
-                context.setAopType(AopEnum.Parsing_Xml);
-                FastDataConfig.getAop().exception(context);
-            }
+            BaseAop.aopException(e,"file Nme" + fileName + "  Parsing xml",AopEnum.Parsing_Xml, null);
             e.printStackTrace();
             result.setSuccess(false);
         }
