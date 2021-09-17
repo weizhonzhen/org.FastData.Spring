@@ -3,6 +3,7 @@ package org.FastData.Spring.Check;
 import org.FastData.Spring.Annotation.Column;
 import org.FastData.Spring.Annotation.Table;
 import org.FastData.Spring.Aop.AopEnum;
+import org.FastData.Spring.Aop.BaseAop;
 import org.FastData.Spring.Aop.ExceptionContext;
 import org.FastData.Spring.Aop.FastDataConfig;
 import org.FastData.Spring.CacheModel.DbConfig;
@@ -70,13 +71,9 @@ public class BaseTable {
             }
         }
         catch (Exception e) {
-            if (FastDataConfig.getAop() != null) {
-                ExceptionContext context =new ExceptionContext();
-                context.setAopType(AopEnum.Code_First);
-                context.setEx(e);
-                context.setName("code first tableName:" + type.getName());
-                FastDataConfig.getAop().exception(context);
-            }
+            if (FastDataConfig.getAop() != null)
+                BaseAop.aopException(e,"code first tableName:" + type.getName(),AopEnum.Code_First,null);
+
             e.printStackTrace();
         }
     }
