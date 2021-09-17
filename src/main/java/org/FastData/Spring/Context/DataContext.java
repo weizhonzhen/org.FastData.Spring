@@ -966,16 +966,9 @@ class PoolUtil {
             }
             CacheUtil.setModel(cacheKey, pool);
         } catch (Exception ex) {
-            if (FastDataConfig.getAop() != null) {
-                ExceptionContext context = new ExceptionContext();
-                context.setEx(ex);
-                if (dbconfig != null) {
-                    context.setDbType(dbconfig.getDbType());
-                    context.setName("DataContext open key :" + dbconfig.getKey());
-                }
-                context.setAopType(AopEnum.Pool_Get);
-                FastDataConfig.getAop().exception(context);
-            }
+            if (FastDataConfig.getAop() != null)
+                BaseAop.aopException(ex,"DataContext open key :" + dbconfig.getKey(),AopEnum.Pool_Get,dbconfig);
+
             if (dbconfig.isOutError())
                 ex.printStackTrace();
             if (dbconfig.isOutError())
@@ -1003,16 +996,9 @@ class PoolUtil {
                     conn.close();
             }
         } catch (Exception ex) {
-            if (FastDataConfig.getAop() != null) {
-                ExceptionContext context = new ExceptionContext();
-                context.setEx(ex);
-                if (config != null) {
-                    context.setDbType(config.getDbType());
-                    context.setName("DataContext close key :" + config.getKey());
-                }
-                context.setAopType(AopEnum.Pool_Close);
-                FastDataConfig.getAop().exception(context);
-            }
+            if (FastDataConfig.getAop() != null)
+                BaseAop.aopException(ex,"DataContext close key :" + config.getKey(),AopEnum.Pool_Close,config);
+
             if (config.isOutError())
                 ex.printStackTrace();
             if (config.isOutError())
