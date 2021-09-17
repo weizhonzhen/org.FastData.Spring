@@ -23,7 +23,7 @@ public class AfterContext {
         return aopType;
     }
 
-    public void setAopType(int aopType) {
+    void setAopType(int aopType) {
         this.aopType = aopType;
     }
 
@@ -31,7 +31,7 @@ public class AfterContext {
         return dbType;
     }
 
-    public void setDbType(String dbType) {
+    void setDbType(String dbType) {
         this.dbType = dbType;
     }
 
@@ -39,7 +39,7 @@ public class AfterContext {
         return tableName;
     }
 
-    public void setTableName(String tableName) {
+    void setTableName(String tableName) {
         this.tableName = tableName;
     }
 
@@ -47,7 +47,7 @@ public class AfterContext {
         return sql;
     }
 
-    public void setSql(String sql) {
+    void setSql(String sql) {
         this.sql = sql;
     }
 
@@ -55,7 +55,7 @@ public class AfterContext {
         return param;
     }
 
-    public void setParam(LinkedHashMap<String, Object> param) {
+    void setParam(LinkedHashMap<String, Object> param) {
         this.param = param;
     }
 
@@ -63,7 +63,7 @@ public class AfterContext {
         return result;
     }
 
-    public void setResult(Object result) {
+    void setResult(Object result) {
         this.result = result;
     }
 
@@ -71,7 +71,7 @@ public class AfterContext {
         return isRead;
     }
 
-    public void setRead(boolean read) {
+    void setRead(boolean read) {
         isRead = read;
     }
 
@@ -79,7 +79,7 @@ public class AfterContext {
         return isWrite;
     }
 
-    public void setWrite(boolean write) {
+    void setWrite(boolean write) {
         isWrite = write;
     }
 }

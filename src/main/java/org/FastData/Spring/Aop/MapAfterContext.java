@@ -19,7 +19,7 @@ public class MapAfterContext {
         return dbType;
     }
 
-    public void setDbType(String dbType) {
+    void setDbType(String dbType) {
         this.dbType = dbType;
     }
 
@@ -27,7 +27,7 @@ public class MapAfterContext {
         return sql;
     }
 
-    public void setSql(String sql) {
+    void setSql(String sql) {
         this.sql = sql;
     }
 
@@ -35,7 +35,7 @@ public class MapAfterContext {
         return mapName;
     }
 
-    public void setMapName(String mapName) {
+    void setMapName(String mapName) {
         this.mapName = mapName;
     }
 
@@ -43,7 +43,7 @@ public class MapAfterContext {
         return param;
     }
 
-    public void setParam(LinkedHashMap<String, Object> param) {
+    void setParam(LinkedHashMap<String, Object> param) {
         this.param = param;
     }
 
@@ -51,7 +51,7 @@ public class MapAfterContext {
         return aopType;
     }
 
-    public void setAopType(int aopType) {
+    void setAopType(int aopType) {
         this.aopType = aopType;
     }
 
@@ -59,7 +59,7 @@ public class MapAfterContext {
         return result;
     }
 
-    public void setResult(Object result) {
+    void setResult(Object result) {
         this.result = result;
     }
 }

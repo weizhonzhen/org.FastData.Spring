@@ -21,7 +21,7 @@ public class BeforeContext {
         return aopType;
     }
 
-    public void setAopType(int aopType) {
+    void setAopType(int aopType) {
         this.aopType = aopType;
     }
 
@@ -31,7 +31,7 @@ public class BeforeContext {
         return dbType;
     }
 
-    public void setDbType(String dbType) {
+    void setDbType(String dbType) {
         this.dbType = dbType;
     }
 
@@ -39,7 +39,7 @@ public class BeforeContext {
         return tableName;
     }
 
-    public void setTableName(String tableName) {
+    void setTableName(String tableName) {
         this.tableName = tableName;
     }
 
@@ -47,7 +47,7 @@ public class BeforeContext {
         return sql;
     }
 
-    public void setSql(String sql) {
+    void setSql(String sql) {
         this.sql = sql;
     }
 
@@ -55,7 +55,7 @@ public class BeforeContext {
         return param;
     }
 
-    public void setParam(LinkedHashMap<String, Object> param) {
+    void setParam(LinkedHashMap<String, Object> param) {
         this.param = param;
     }
 
@@ -63,7 +63,7 @@ public class BeforeContext {
         return isRead;
     }
 
-    public void setIsRead(boolean isRead) {
+    void setIsRead(boolean isRead) {
         this.isRead = isRead;
     }
 
@@ -71,7 +71,7 @@ public class BeforeContext {
         return isWrite;
     }
 
-    public void setIsWrite(boolean isWrite) {
+    void setIsWrite(boolean isWrite) {
         this.isWrite = isWrite;
     }
 }

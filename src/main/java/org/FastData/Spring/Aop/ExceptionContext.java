@@ -13,7 +13,7 @@ public class ExceptionContext {
         return dbType;
     }
 
-    public void setDbType(String dbType) {
+    void setDbType(String dbType) {
         this.dbType = dbType;
     }
 
@@ -21,7 +21,7 @@ public class ExceptionContext {
         return aopType;
     }
 
-    public void setAopType(int aopType) {
+    void setAopType(int aopType) {
         this.aopType = aopType;
     }
 
@@ -29,7 +29,7 @@ public class ExceptionContext {
         return name;
     }
 
-    public void setName(String name) {
+    void setName(String name) {
         this.name = name;
     }
 
@@ -37,7 +37,7 @@ public class ExceptionContext {
         return ex;
     }
 
-    public void setEx(Exception ex) {
+    void setEx(Exception ex) {
         this.ex = ex;
     }
 }
