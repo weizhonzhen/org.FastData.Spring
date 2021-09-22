@@ -10,6 +10,9 @@ in Application add Annotation
 ```
 aop
 ```csharp
+//in Application
+FastDataConfig.setAop(new FastAop());
+
 public class FastAop implements IFastAop {
     @Override
     public void before(BeforeContext beforeContext) {
@@ -63,9 +66,6 @@ var map = test.map("amdin", "101");
 var listMap = test.listMap("admin", "101");
 var listModel = test.listModel("admin", "101");
 var update = test.update("管理员1", "admin", "101");
-```
-//in Application
-FastDataConfig.setAop(new FastAop());
 ```
 
 code first model
