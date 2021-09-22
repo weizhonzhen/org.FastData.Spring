@@ -4,8 +4,8 @@ java orm(db first,code frist) for sqlserver mysql etl.
 in Application add Annotation
 ```csharp
  @FastData(key = "test",cachePackageName = "com.example.Entity" ,
-  codeFirstPackageName="com.example.Entity",
-  servicePackageName = "com.example.Service")
+  codeFirstPackageName="com.example.Entity", servicePackageName = "com.example.Service")
+  
  key is database key 
  codeFirstPackageName is code first model
  cachePackageName is cache model
