@@ -37,6 +37,32 @@ public class FastAop implements IFastAop {
 
     }
 }
+```
+Annotation
+```csharp
+public interface TestService {
+    @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid")
+    Map<String,Object> map(String id,String orgid);
+
+    @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid")
+    T_XT_YHB model(String id,String orgid);
+
+    @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid")
+    List<Map<String,Object>> listMap(StringidGH,String orgid);
+
+    @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid")
+    List<T_XT_YHB> listModel(String id,String orgid);
+
+    @FastWrite(sql = "update base_user set dname=?dname where id=?id")
+    WriteReturn update(String dname,String GH);
+}
+
+var test = (TestService) iFastRepository.resolve(TestService.class, AppSeting.Key);
+var model = test.model("admin", "101");
+var map = test.map("amdin", "101");
+var listMap = test.listMap("admin", "101");
+var listModel = test.listModel("admin", "101");
+var update = test.update("管理员1", "admin", "101");
 
 //in Application
 FastDataConfig.setAop(new FastAop());
