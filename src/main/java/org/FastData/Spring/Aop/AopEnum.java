@@ -29,4 +29,6 @@ public final class AopEnum {
     public static int Pool_Close = 19;
 
     public static int Query_Navigate = 20;
+
+    public static int FastProxy = 21;
 }
