@@ -15,4 +15,6 @@ public @interface FastData {
     String cachePackageName() default "";
 
     String codeFirstPackageName() default "";
+
+    String servicePackageName() default "";
 }
