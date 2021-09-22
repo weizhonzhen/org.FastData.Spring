@@ -569,4 +569,8 @@ public interface IFastRepository {
      key: database key
    */
     DataReturn delete(Map<String,Object> map,Class<?> type,  String key);
+
+    Object resolve(Class<?> interfaces,String key);
+
+    Object resolve(Class<?> interfaces,DataContext db);
 }
