@@ -12,12 +12,17 @@ import org.FastData.Spring.Model.*;
 import org.FastData.Spring.Util.FastUtil;
 import org.FastData.Spring.Util.ScanPackage;
 import org.FastData.Spring.Util.CacheUtil;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Component;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 import java.lang.reflect.*;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @ComponentScan(basePackages = {"org.FastData.Spring.Repository","org.FastData.Spring.Handler"})
 public class FastRepository implements IFastRepository {
@@ -1005,49 +1010,67 @@ public class FastRepository implements IFastRepository {
     */
     private void instanceService(String servicePackageName) {
         List<Class> list = ScanPackage.get(servicePackageName);
+        AtomicBoolean isRegister = new AtomicBoolean(false);
         list.forEach(a -> {
             Arrays.stream(a.getMethods()).forEach(m -> {
-                LinkedHashMap<Integer, String> param = new LinkedHashMap();
-                AnnotationModel model = new AnnotationModel();
-                if (m.getAnnotation(FastRead.class) != null) {
-                    FastRead read = (FastRead) m.getAnnotation(FastRead.class);
-                    model.setSql(read.sql().toLowerCase());
-                    for (int i = 0; i < m.getParameters().length; i++) {
-                        param.put(i, m.getParameters()[i].getName().toLowerCase());
+                try {
+                    LinkedHashMap<Integer, String> param = new LinkedHashMap();
+                    AnnotationModel model = new AnnotationModel();
+                    if (m.getAnnotation(FastRead.class) != null) {
+                        FastRead read = (FastRead) m.getAnnotation(FastRead.class);
+                        model.setSql(read.sql().toLowerCase());
+                        for (int i = 0; i < m.getParameters().length; i++) {
+                            param.put(i, m.getParameters()[i].getName().toLowerCase());
+                        }
+                        model.setParam(param);
+                        model.setWrite(false);
+                        model.setDbKey(read.dbKey());
+
+                        if (m.getReturnType().isPrimitive())
+                            throw new Exception(String.format("server:%s,method:%s,return type:%s is not support",a.getName(),m.getName(),m.getReturnType()));
+
+                        if (m.getReturnType() == List.class) {
+                            model.setList(true);
+                            Type type = ((ParameterizedTypeImpl) m.getGenericReturnType()).getActualTypeArguments()[0];
+                            if (type instanceof ParameterizedTypeImpl && ((ParameterizedTypeImpl) type).getRawType() == Map.class) {
+                                model.setMap(true);
+                                model.setType(((ParameterizedTypeImpl) type).getRawType());
+                            } else
+                                model.setType((Class<?>)type);
+                        } else {
+                            if (m.getReturnType() == Map.class)
+                                model.setMap(true);
+
+                            if (m.getReturnType().getSuperclass() == HashMap.class && m.getReturnType() != Map.class)
+                                return;
+                            model.setType(m.getReturnType());
+                        }
+                        isRegister.set(true);
+                        CacheUtil.setModel(String.format("%s.%s", a.getName(), m.getName()), model);
                     }
-                    model.setParam(param);
-                    model.setWrite(false);
-
-                    if (m.getReturnType() == List.class) {
-                        model.setList(true);
-                        Type type = ((ParameterizedTypeImpl) m.getGenericReturnType()).getActualTypeArguments()[0];
-                        if (type instanceof ParameterizedTypeImpl && ((ParameterizedTypeImpl) type).getRawType() == Map.class) {
-                            model.setMap(true);
-                            model.setType(((ParameterizedTypeImpl) type).getRawType());
-                        } else
-                            model.setType((Class<?>) type);
-                    } else {
-                        if (m.getReturnType() == Map.class)
-                            model.setMap(true);
-
-                        if(m.getReturnType().getSuperclass()== HashMap.class && m.getReturnType() != Map.class)
+                    if (m.getAnnotation(FastWrite.class) != null) {
+                        FastWrite write = (FastWrite) m.getAnnotation(FastWrite.class);
+                        model.setSql(write.sql());
+                        for (int i = 0; i < m.getParameters().length; i++) {
+                            param.put(i, m.getParameters()[i].getName().toLowerCase());
+                        }
+                        model.setParam(param);
+                        model.setWrite(true);
+                        model.setDbKey(write.dbKey());
+                        isRegister.set(true);
+                        if (m.getReturnType().isPrimitive())
                             return;
-                        model.setType(m.getReturnType());
+                        CacheUtil.setModel(String.format("%s.%s", a.getName(), m.getName()), model);
                     }
-
-                    CacheUtil.setModel(String.format("%s.%s", a.getName(), m.getName()), model);
-                }
-                if (m.getAnnotation(FastWrite.class) != null) {
-                    FastWrite write = (FastWrite) m.getAnnotation(FastWrite.class);
-                    model.setSql(write.sql());
-                    for (int i = 0; i < m.getParameters().length; i++) {
-                        param.put(i, m.getParameters()[i].getName().toLowerCase());
-                    }
-                    model.setParam(param);
-                    model.setWrite(true);
-                    CacheUtil.setModel(String.format("%s.%s", a.getName(), m.getName()), model);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             });
+
+            if (isRegister.get()) {
+                ApplicationContextRegister.setBean(a);
+                isRegister.set(false);
+            }
         });
     }
 }
@@ -1071,14 +1094,17 @@ class FastProxy implements InvocationHandler {
                 if (model.isVoid() && !model.isWrite())
                     return null;
 
+                map.setSql(model.getSql());
                 for (int i = 0; i < args.length; i++) {
                     String param = model.getParam().get(i);
-                    if (model.getSql().indexOf(String.format("?%s", param)) > 0) {
+                    if (map.getSql().indexOf(String.format("?%s", param)) > 0) {
                         map.getParam().put(param, args[i]);
-                        model.setSql(model.getSql().replace(String.format("?%s", param), "?"));
+                        map.setSql(map.getSql().replace(String.format("?%s", param), "?"));
                     }
                 }
-                map.setSql(model.getSql());
+
+                if (db == null && !FastUtil.isNullOrEmpty(model.getDbKey()))
+                    this.db = new DataContext(model.getDbKey());
 
                 if (model.isWrite())
                     return db.execute(map, true).getWriteReturn();
@@ -1089,14 +1115,26 @@ class FastProxy implements InvocationHandler {
                 if (model.isList() && !model.isMap())
                     return db.query(map, model.getType(), true).getList();
 
-                if (!model.isList() && model.isMap())
-                    return db.query(map, true).getList().get(0);
-
-                if (!model.isList() && !model.isMap())
-                    return db.query(map, model.getType(), true).getList().get(0);
+                if (!model.isList() && model.isMap()) {
+                    List<FastMap<String, Object>> data = db.query(map, true).getList();
+                    if (data.size() > 0)
+                        return data.get(0);
+                    else
+                        return new FastMap<String, Object>();
+                }
+                if (!model.isList() && !model.isMap()) {
+                    List<?> data = db.query(map, model.getType(), true).getList();
+                    if (data.size() > 0)
+                        return data.get(0);
+                    else
+                        return model.getType().newInstance();
+                }
+                if (db == null && !FastUtil.isNullOrEmpty(model.getDbKey()))
+                    this.db = new DataContext(model.getDbKey());
 
                 return result;
             }
+
             return null;
         } catch (Exception ex) {
             BaseAop.aopException(ex, "FastProxy", AopEnum.FastProxy, db.config);
@@ -1106,5 +1144,22 @@ class FastProxy implements InvocationHandler {
 
     public Object instance(Class<?> interfaces) {
         return Proxy.newProxyInstance(FastProxy.class.getClassLoader(), new Class[]{interfaces}, new FastProxy(this.db));
+    }
+}
+
+@Component
+class ApplicationContextRegister implements BeanFactoryPostProcessor {
+    private static ConfigurableListableBeanFactory beanFactory;
+
+    public static void setBean(Class<?> type) {
+        if (type != null && beanFactory != null) {
+            FastProxy fastProxy = new FastProxy(null);
+            beanFactory.registerSingleton(type.getName(), type.cast( fastProxy.instance(type)));
+        }
+    }
+
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
     }
 }
