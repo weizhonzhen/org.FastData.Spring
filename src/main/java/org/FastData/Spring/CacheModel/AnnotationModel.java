@@ -9,6 +9,15 @@ public class AnnotationModel {
     private boolean isList;
     private Class<?> type;
     private boolean isMap;
+    private String dbKey;
+
+    public String getDbKey() {
+        return dbKey;
+    }
+
+    public void setDbKey(String dbKey) {
+        this.dbKey = dbKey;
+    }
 
     public boolean isList() {
         return isList;
