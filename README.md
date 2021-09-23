@@ -9,6 +9,7 @@ in Application add Annotation
  key is database key 
  codeFirstPackageName is code first model
  cachePackageName is cache model
+ servicePackageName is interface Service
 ```
 aop
 ```csharp
