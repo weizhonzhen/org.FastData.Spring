@@ -46,19 +46,19 @@ public class FastAop implements IFastAop {
 Annotation
 ```csharp
 public interface TestService {
-    @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid")
+    @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid",dbKey = "db")
     Map<String,Object> map(String id,String orgid);
 
-    @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid")
+    @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid",dbKey = "db")
     T_XT_YHB model(String id,String orgid);
 
-    @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid")
+    @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid",dbKey = "db")
     List<Map<String,Object>> listMap(StringidGH,String orgid);
 
-    @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid")
+    @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid",dbKey = "db")
     List<T_XT_YHB> listModel(String id,String orgid);
 
-    @FastWrite(sql = "update base_user set name=?name where id=?id")
+    @FastWrite(sql = "update base_user set name=?name where id=?id",dbKey = "db")
     WriteReturn update(String name,String id);
 }
 
