@@ -62,7 +62,12 @@ public interface TestService {
     WriteReturn update(String name,String id);
 }
 
+@Resource
+TestService test;
+//or
 var test = (TestService) iFastRepository.resolve(TestService.class, AppSeting.Key);
+
+
 var model = test.model("admin", "101");
 var map = test.map("amdin", "101");
 var listMap = test.listMap("admin", "101");
