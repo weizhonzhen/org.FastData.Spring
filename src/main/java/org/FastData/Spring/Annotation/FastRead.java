@@ -6,4 +6,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FastRead {
     String sql() default "";
+
+    String dbKey() default "";
 }
