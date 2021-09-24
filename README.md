@@ -51,13 +51,13 @@ public interface TestService {
     Map<String,Object> map(String id,String orgid);
 
     @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid",dbKey = "test")
-    T_XT_YHB model(String id,String orgid);
+    TestTable model(String id,String orgid);
 
     @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid",dbKey = "test")
     List<Map<String,Object>> listMap(StringidGH,String orgid);
 
     @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid",dbKey = "test")
-    List<T_XT_YHB> listModel(String id,String orgid);
+    List<TestTable> listModel(String id,String orgid);
 
     @FastWrite(sql = "update base_user set name=?name where id=?id",dbKey = "db")
     WriteReturn update(String name,String id);
