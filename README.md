@@ -59,7 +59,7 @@ public interface TestService {
     @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid",dbKey = "test")
     List<TestTable> listModel(String id,String orgid);
 
-    @FastWrite(sql = "update base_user set name=?name where id=?id",dbKey = "db")
+    @FastWrite(sql = "update base_user set name=?name where id=?id",dbKey = "test")
     WriteReturn update(String name,String id);
 }
 
