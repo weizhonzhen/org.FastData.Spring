@@ -1027,7 +1027,7 @@ public class FastRepository implements IFastRepository {
                         model.setDbKey(read.dbKey());
 
                         if (m.getReturnType().isPrimitive())
-                            throw new Exception(String.format("server:%s,method:%s,return type:%s is not support",a.getName(),m.getName(),m.getReturnType()));
+                            throw new Exception(String.format("service:%s,method:%s,return type:%s is not support",a.getName(),m.getName(),m.getReturnType()));
 
                         if (m.getReturnType() == List.class) {
                             model.setList(true);
@@ -1058,8 +1058,9 @@ public class FastRepository implements IFastRepository {
                         model.setWrite(true);
                         model.setDbKey(write.dbKey());
                         isRegister.set(true);
-                        if (m.getReturnType().isPrimitive())
-                            return;
+                        if (m.getReturnType() != WriteReturn.class)
+                            throw new Exception(String.format("FastWrite return type only WriteReturn,service:%s,method:%s,return type:%s is not support",a.getName(),m.getName(),m.getReturnType()));
+
                         CacheUtil.setModel(String.format("%s.%s", a.getName(), m.getName()), model);
                     }
                 } catch (Exception e) {
