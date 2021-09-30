@@ -54,23 +54,23 @@ public interface TestService {
 
     @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid",dbKey = "test")
     TestTable model(String id,String orgid);
-    // or Map<String,Object> map(base_user model);
-    // or Map<String,Object> map(Map<String,Object> map);
+    // or TestTable map(base_user model);
+    // or TestTable map(Map<String,Object> map);
 
     @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid",dbKey = "test")
     List<Map<String,Object>> listMap(StringidGH,String orgid);
-    // or Map<String,Object> listMap(base_user model);
-    // or Map<String,Object> listMap(Map<String,Object> map);
+    // or List<Map<String,Object>> listMap(base_user model);
+    // or List<Map<String,Object>> listMap(Map<String,Object> map);
 
     @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid",dbKey = "test")
     List<TestTable> listModel(String id,String orgid);
-    // or Map<String,Object> listModel(base_user model);
-    // or Map<String,Object> listModel(Map<String,Object> map);
+    // or List<TestTable> listModel(base_user model);
+    // or List<TestTable> listModel(Map<String,Object> map);
 
     @FastWrite(sql = "update base_user set name=?name where id=?id",dbKey = "test")
     WriteReturn update(String name,String id);
-    // or Map<String,Object> update(base_user model);
-    // or Map<String,Object> update(Map<String,Object> map);
+    // or WriteReturn update(base_user model);
+    // or WriteReturn update(Map<String,Object> map);
 }
 
 @Resource
