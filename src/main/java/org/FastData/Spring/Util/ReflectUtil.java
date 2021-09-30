@@ -1,6 +1,8 @@
 package org.FastData.Spring.Util;
 
 import com.esotericsoftware.reflectasm.MethodAccess;
+
+import java.lang.invoke.ConstantCallSite;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,6 +45,28 @@ public final class ReflectUtil {
             String key = String.format("%s.get%s", model.getClass().getName(), name);
             if (cache.get(key) == null) {
                 if (type == Boolean.TYPE)
+                    method = Arrays.stream(model.getClass().getMethods()).filter(a -> a.getName().contains(name)).findFirst().get();
+                else
+                    method =  Arrays.stream(model.getClass().getMethods()).filter(a->a.getName().equalsIgnoreCase(String.format("get%s", name))).findFirst().get();
+                cache.put(key, method);
+            } else
+                method = cache.get(key);
+
+            MethodAccess methodAccess = MethodAccess.get(model.getClass());
+            result = methodAccess.invoke(model, method.getName());
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static Object get(Object model,String name) {
+        Object result = null;
+        try {
+            Method method = null;
+            String key = String.format("%s.get%s", model.getClass().getName(), name);
+            if (cache.get(key) == null) {
+                if (model.getClass() == Boolean.TYPE)
                     method = Arrays.stream(model.getClass().getMethods()).filter(a -> a.getName().contains(name)).findFirst().get();
                 else
                     method =  Arrays.stream(model.getClass().getMethods()).filter(a->a.getName().equalsIgnoreCase(String.format("get%s", name))).findFirst().get();
