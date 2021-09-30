@@ -10,6 +10,15 @@ public class AnnotationModel {
     private Class<?> type;
     private boolean isMap;
     private String dbKey;
+    private boolean paramIsMap;
+
+    public boolean isParamIsMap() {
+        return paramIsMap;
+    }
+
+    public void setParamIsMap(boolean paramIsMap) {
+        this.paramIsMap = paramIsMap;
+    }
 
     public String getDbKey() {
         return dbKey;
