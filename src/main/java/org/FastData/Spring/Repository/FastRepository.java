@@ -10,6 +10,7 @@ import org.FastData.Spring.Config.Config;
 import org.FastData.Spring.Context.DataContext;
 import org.FastData.Spring.Model.*;
 import org.FastData.Spring.Util.FastUtil;
+import org.FastData.Spring.Util.ReflectUtil;
 import org.FastData.Spring.Util.ScanPackage;
 import org.FastData.Spring.Util.CacheUtil;
 import org.springframework.beans.BeansException;
@@ -1014,20 +1015,16 @@ public class FastRepository implements IFastRepository {
         list.forEach(a -> {
             Arrays.stream(a.getMethods()).forEach(m -> {
                 try {
-                    LinkedHashMap<Integer, String> param = new LinkedHashMap();
                     AnnotationModel model = new AnnotationModel();
                     if (m.getAnnotation(FastRead.class) != null) {
                         FastRead read = (FastRead) m.getAnnotation(FastRead.class);
                         model.setSql(read.sql().toLowerCase());
-                        for (int i = 0; i < m.getParameters().length; i++) {
-                            param.put(i, m.getParameters()[i].getName().toLowerCase());
-                        }
-                        model.setParam(param);
+                        serviceParam(model, m);
                         model.setWrite(false);
                         model.setDbKey(read.dbKey());
 
-                        if (m.getReturnType().isPrimitive())
-                            throw new Exception(String.format("service:%s,method:%s,return type:%s is not support",a.getName(),m.getName(),m.getReturnType()));
+                        if (m.getReturnType().isPrimitive() || m.getReturnType() == String.class || m.getReturnType() == Date.class || m.getReturnType() == java.lang.Long.class)
+                            throw new Exception(String.format("service:%s,method:%s,return type:%s is not support", a.getName(), m.getName(), m.getReturnType()));
 
                         if (m.getReturnType() == List.class) {
                             model.setList(true);
@@ -1036,7 +1033,7 @@ public class FastRepository implements IFastRepository {
                                 model.setMap(true);
                                 model.setType(((ParameterizedTypeImpl) type).getRawType());
                             } else
-                                model.setType((Class<?>)type);
+                                model.setType((Class<?>) type);
                         } else {
                             if (m.getReturnType() == Map.class)
                                 model.setMap(true);
@@ -1051,15 +1048,12 @@ public class FastRepository implements IFastRepository {
                     if (m.getAnnotation(FastWrite.class) != null) {
                         FastWrite write = (FastWrite) m.getAnnotation(FastWrite.class);
                         model.setSql(write.sql());
-                        for (int i = 0; i < m.getParameters().length; i++) {
-                            param.put(i, m.getParameters()[i].getName().toLowerCase());
-                        }
-                        model.setParam(param);
+                        serviceParam(model, m);
                         model.setWrite(true);
                         model.setDbKey(write.dbKey());
                         isRegister.set(true);
                         if (m.getReturnType() != WriteReturn.class)
-                            throw new Exception(String.format("FastWrite return type only WriteReturn,service:%s,method:%s,return type:%s is not support",a.getName(),m.getName(),m.getReturnType()));
+                            throw new Exception(String.format("FastWrite return type only WriteReturn,service:%s,method:%s,return type:%s is not support", a.getName(), m.getName(), m.getReturnType()));
 
                         CacheUtil.setModel(String.format("%s.%s", a.getName(), m.getName()), model);
                     }
@@ -1073,6 +1067,38 @@ public class FastRepository implements IFastRepository {
                 isRegister.set(false);
             }
         });
+    }
+
+    private void serviceParam(AnnotationModel model, Method m) {
+        LinkedHashMap<Integer, String> param = new LinkedHashMap<>();
+        HashMap<Integer, String> temp = new HashMap<>();
+        if (m.getParameters().length == 1 && m.getParameters()[0].getType() == Map.class) {
+            model.setParamIsMap(true);
+        }
+        else if (m.getParameters().length == 1 && !m.getParameters()[0].getType().isPrimitive()) {
+            for (Field field : m.getParameters()[0].getType().getDeclaredFields()) {
+                String key = String.format("?%s", field.getName()).toLowerCase();
+                if (model.getSql().indexOf(key) > 0) {
+                    temp.put(model.getSql().indexOf(key), field.getName().toLowerCase());
+                }
+            }
+        } else {
+            for (Parameter parameter : m.getParameters()) {
+                String key = String.format("?%s", parameter.getName()).toLowerCase();
+                if (model.getSql().indexOf(key) > 0) {
+                    temp.put(model.getSql().indexOf(key), parameter.getName().toLowerCase());
+                }
+            }
+        }
+
+        Arrays.sort(temp.keySet().toArray());
+
+        int i = 0;
+        for (Integer integer : temp.keySet()) {
+            param.put(i, temp.get(integer));
+            i++;
+        }
+        model.setParam(param);
     }
 }
 
@@ -1096,11 +1122,36 @@ class FastProxy implements InvocationHandler {
                     return null;
 
                 map.setSql(model.getSql());
-                for (int i = 0; i < args.length; i++) {
-                    String param = model.getParam().get(i);
-                    if (map.getSql().indexOf(String.format("?%s", param)) > 0) {
-                        map.getParam().put(param, args[i]);
-                        map.setSql(map.getSql().replace(String.format("?%s", param), "?"));
+
+                if (model.isParamIsMap()) {
+                    HashMap<Integer, String> hashKey = new HashMap<>();
+                    HashMap<Integer, String> hashValue = new HashMap<>();
+                    HashMap hashMap = (HashMap) args[0];
+                    for (Object set : hashMap.keySet()) {
+                        String key = String.format("?%s", set).toLowerCase();
+                        if (map.getSql().indexOf(key) > 0) {
+                            hashValue.put(model.getSql().indexOf(key), hashMap.get(set).toString());
+                            hashKey.put(model.getSql().indexOf(key), set.toString());
+                        }
+                    }
+                    Arrays.sort(hashKey.keySet().toArray());
+                    for (Integer integer : hashKey.keySet()) {
+                        String key = String.format("?%s", hashKey.get(integer)).toLowerCase();
+                        map.getParam().put(hashKey.get(integer), hashValue.get(integer));
+                        map.setSql(map.getSql().replace(key, "?"));
+                    }
+                } else {
+                    for (int i = 0; i < model.getParam().size(); i++) {
+                        String param = model.getParam().get(i);
+                        if (map.getSql().indexOf(String.format("?%s", param)) > 0) {
+                            Object value;
+                            if (args.length == 1 && !args[0].getClass().isPrimitive())
+                                value = ReflectUtil.get(args[0], param);
+                            else
+                                value = args[i];
+                            map.getParam().put(param, value);
+                            map.setSql(map.getSql().replace(String.format("?%s", param), "?"));
+                        }
                     }
                 }
 
