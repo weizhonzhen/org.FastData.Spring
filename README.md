@@ -85,11 +85,21 @@ TestService test;
 var test = (TestService) iFastRepository.resolve(TestService.class, AppSeting.Key);
 
 
+var param =new HashMap<String,Object>();
+param.put("gh","admin");
+param.put("kid",101);
+
+var page=new PageModel();
+page.setPageSize(10);
+
 var model = test.model("admin", "101");
 var map = test.map("amdin", "101");
 var listMap = test.listMap("admin", "101");
 var listModel = test.listModel("admin", "101");
 var update = test.update("管理员", "admin", "101");
+var page1 = (PageResultImpl<TestTable>)test.page1(page,param);
+var page2 = test.page2(page,param);
+
 ```
 
 code first model
