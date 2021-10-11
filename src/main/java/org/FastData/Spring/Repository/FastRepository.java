@@ -24,6 +24,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 @ComponentScan(basePackages = {"org.FastData.Spring.Repository","org.FastData.Spring.Handler"})
 public class FastRepository implements IFastRepository {
@@ -1022,9 +1023,20 @@ public class FastRepository implements IFastRepository {
                         serviceParam(model, m);
                         model.setWrite(false);
                         model.setDbKey(read.dbKey());
+                        model.setPage(read.isPage());
+                        model.setPageType(read.pageType());
 
                         if (m.getReturnType().isPrimitive() || m.getReturnType() == String.class || m.getReturnType() == Date.class || m.getReturnType() == java.lang.Long.class)
                             throw new Exception(String.format("service:%s,method:%s,return type:%s is not support", a.getName(), m.getName(), m.getReturnType()));
+
+                        if (model.isPage() && !(m.getReturnType() == PageResult.class || m.getReturnType() == PageResultImpl.class))
+                            throw new Exception(String.format("read data by page,service:%s,method:%s,return type:%s is not support", a.getName(), m.getName(), m.getReturnType()));
+
+                        if (model.isPage() && m.getReturnType() == PageResultImpl.class && model.getPageType()==PageResultImpl.class)
+                            throw new Exception(String.format("read data by page,service:%s,method:%s,return type:%s is not support", a.getName(), m.getName(), m.getReturnType()));
+
+                        if (model.isPage() && Arrays.stream(m.getParameters()).noneMatch(p -> p.getType() == PageModel.class))
+                            throw new Exception(String.format("read data by page,service:%s,method:%s,FastReadAnnotation type is not support", a.getName(), m.getName()));
 
                         if (m.getReturnType() == List.class) {
                             model.setList(true);
@@ -1042,6 +1054,12 @@ public class FastRepository implements IFastRepository {
                                 return;
                             model.setType(m.getReturnType());
                         }
+
+                        if(model.isPage() && m.getReturnType() == PageResultImpl.class)
+                            model.setType(model.getPageType());
+                        else if(model.isPage())
+                            model.setType(null);
+
                         isRegister.set(true);
                         CacheUtil.setModel(String.format("%s.%s", a.getName(), m.getName()), model);
                     }
@@ -1072,25 +1090,25 @@ public class FastRepository implements IFastRepository {
     private void serviceParam(AnnotationModel model, Method m) {
         LinkedHashMap<Integer, String> param = new LinkedHashMap<>();
         HashMap<Integer, String> temp = new HashMap<>();
-        if (m.getParameters().length == 1 && m.getParameters()[0].getType() == Map.class) {
+
+        if (Arrays.stream(m.getParameters()).anyMatch(a -> a.getType() == Map.class))
             model.setParamIsMap(true);
-        }
-        else if (m.getParameters().length == 1 && !m.getParameters()[0].getType().isPrimitive()) {
-            for (Field field : m.getParameters()[0].getType().getDeclaredFields()) {
+        else if (Arrays.stream(m.getParameters()).noneMatch(a -> a.getType().isPrimitive())) {
+            Class<?> type = Arrays.stream(m.getParameters()).filter(a -> a.getType() != PageModel.class).collect(Collectors.toList()).get(0).getType();
+            for (Field field : type.getDeclaredFields()) {
                 String key = String.format("?%s", field.getName()).toLowerCase();
-                if (model.getSql().indexOf(key) > 0) {
+                if (model.getSql().indexOf(key) > 0)
                     temp.put(model.getSql().indexOf(key), field.getName().toLowerCase());
-                }
             }
         } else {
             for (Parameter parameter : m.getParameters()) {
+                if (parameter.getType() == PageModel.class)
+                    continue;
                 String key = String.format("?%s", parameter.getName()).toLowerCase();
-                if (model.getSql().indexOf(key) > 0) {
+                if (model.getSql().indexOf(key) > 0)
                     temp.put(model.getSql().indexOf(key), parameter.getName().toLowerCase());
-                }
             }
         }
-
         Arrays.sort(temp.keySet().toArray());
 
         int i = 0;
@@ -1111,22 +1129,30 @@ class FastProxy implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        AnnotationModel model = new AnnotationModel();
         Object result = null;
         MapResult map = new MapResult();
         try {
             String cachekey = String.format("%s.%s", method.getDeclaringClass().getName(), method.getName());
             if (CacheUtil.exists(cachekey)) {
-                model = CacheUtil.getModel(cachekey, AnnotationModel.class);
+                PageModel pageModel =new PageModel();
+                AnnotationModel model = CacheUtil.getModel(cachekey, AnnotationModel.class);
+
                 if (model.isVoid() && !model.isWrite())
                     return null;
+
+                if (model.isPage())
+                    pageModel = (PageModel) Arrays.stream(args).filter(a -> a.getClass() == PageModel.class).collect(Collectors.toList()).get(0);
 
                 map.setSql(model.getSql());
 
                 if (model.isParamIsMap()) {
+                    if (Arrays.stream(args).noneMatch(a -> a.getClass() == HashMap.class))
+                        throw new Exception(String.format("service:%s,method:%s,return type:%s is not support", method.getDeclaringClass().getName(), method.getName(), args[0].getClass().getName()));
+
                     HashMap<Integer, String> hashKey = new HashMap<>();
                     HashMap<Integer, String> hashValue = new HashMap<>();
-                    HashMap hashMap = (HashMap) args[0];
+
+                    HashMap hashMap = (HashMap)Arrays.stream(args).filter(a->a.getClass() == HashMap.class).collect(Collectors.toList()).get(0);
                     for (Object set : hashMap.keySet()) {
                         String key = String.format("?%s", set).toLowerCase();
                         if (map.getSql().indexOf(key) > 0) {
@@ -1160,6 +1186,12 @@ class FastProxy implements InvocationHandler {
 
                 if (model.isWrite())
                     return db.execute(map, true).getWriteReturn();
+
+                if(model.isPage() && model.getType() == null)
+                    return db.page(pageModel,map,true);
+
+                if(model.isPage() && model.getType() != null)
+                    return db.page(pageModel,map,model.getType(),true);
 
                 if (model.isList() && model.isMap())
                     return db.query(map, true).getList();
