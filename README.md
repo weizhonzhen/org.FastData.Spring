@@ -71,6 +71,12 @@ public interface TestService {
     WriteReturn update(String name,String id);
     // or WriteReturn update(base_user model);
     // or WriteReturn update(Map<String,Object> map);
+    
+    @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid",dbKey = "test",isPage = true,pageType = TestTable.class)
+    PageResultImpl page1(PageModel pageModel, Map<String,Object> map);
+    
+    @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid",dbKey = "test",isPage = true)
+    PageResult page2(PageModel pageModel, Map<String,Object> map);
 }
 
 @Resource
