@@ -11,6 +11,24 @@ public class AnnotationModel {
     private boolean isMap;
     private String dbKey;
     private boolean paramIsMap;
+    private boolean isPage;
+    public Class<?> pageType;
+
+    public Class<?> getPageType() {
+        return pageType;
+    }
+
+    public void setPageType(Class<?> pageType) {
+        this.pageType = pageType;
+    }
+
+    public boolean isPage() {
+        return isPage;
+    }
+
+    public void setPage(boolean page) {
+        isPage = page;
+    }
 
     public boolean isParamIsMap() {
         return paramIsMap;
