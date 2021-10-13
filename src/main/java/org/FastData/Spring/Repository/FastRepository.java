@@ -1016,65 +1016,39 @@ public class FastRepository implements IFastRepository {
         list.forEach(a -> {
             Arrays.stream(a.getMethods()).forEach(m -> {
                 try {
+                    FastWrite write = m.getAnnotation(FastWrite.class);
+                    FastRead read = m.getAnnotation(FastRead.class);
+                    FastXml xml = m.getAnnotation(FastXml.class);
                     AnnotationModel model = new AnnotationModel();
-                    if (m.getAnnotation(FastRead.class) != null) {
-                        FastRead read = (FastRead) m.getAnnotation(FastRead.class);
+                    if (read != null) {
                         model.setSql(read.sql().toLowerCase());
-                        serviceParam(model, m);
                         model.setWrite(false);
                         model.setDbKey(read.dbKey());
                         model.setPage(read.isPage());
                         model.setPageType(read.pageType());
-
-                        if (m.getReturnType().isPrimitive() || m.getReturnType() == String.class || m.getReturnType() == Date.class || m.getReturnType() == java.lang.Long.class)
-                            throw new Exception(String.format("service:%s,method:%s,return type:%s is not support", a.getName(), m.getName(), m.getReturnType()));
-
-                        if (model.isPage() && !(m.getReturnType() == PageResult.class || m.getReturnType() == PageResultImpl.class))
-                            throw new Exception(String.format("read data by page,service:%s,method:%s,return type:%s is not support", a.getName(), m.getName(), m.getReturnType()));
-
-                        if (model.isPage() && m.getReturnType() == PageResultImpl.class && model.getPageType()==PageResultImpl.class)
-                            throw new Exception(String.format("read data by page,service:%s,method:%s,return type:%s is not support", a.getName(), m.getName(), m.getReturnType()));
-
-                        if (model.isPage() && Arrays.stream(m.getParameters()).noneMatch(p -> p.getType() == PageModel.class))
-                            throw new Exception(String.format("read data by page,service:%s,method:%s,FastReadAnnotation type is not support", a.getName(), m.getName()));
-
-                        if (m.getReturnType() == List.class) {
-                            model.setList(true);
-                            Type type = ((ParameterizedTypeImpl) m.getGenericReturnType()).getActualTypeArguments()[0];
-                            if (type instanceof ParameterizedTypeImpl && ((ParameterizedTypeImpl) type).getRawType() == Map.class) {
-                                model.setMap(true);
-                                model.setType(((ParameterizedTypeImpl) type).getRawType());
-                            } else
-                                model.setType((Class<?>) type);
-                        } else {
-                            if (m.getReturnType() == Map.class)
-                                model.setMap(true);
-
-                            if (m.getReturnType().getSuperclass() == HashMap.class && m.getReturnType() != Map.class)
-                                return;
-                            model.setType(m.getReturnType());
-                        }
-
-                        if(model.isPage() && m.getReturnType() == PageResultImpl.class)
-                            model.setType(model.getPageType());
-                        else if(model.isPage())
-                            model.setType(null);
-
                         isRegister.set(true);
-                        CacheUtil.setModel(String.format("%s.%s", a.getName(), m.getName()), model);
-                    }
-                    if (m.getAnnotation(FastWrite.class) != null) {
-                        FastWrite write = (FastWrite) m.getAnnotation(FastWrite.class);
-                        model.setSql(write.sql());
                         serviceParam(model, m);
+                    }
+                    if (write != null) {
+                        model.setSql(write.sql());
                         model.setWrite(true);
                         model.setDbKey(write.dbKey());
                         isRegister.set(true);
-                        if (m.getReturnType() != WriteReturn.class)
-                            throw new Exception(String.format("FastWrite return type only WriteReturn,service:%s,method:%s,return type:%s is not support", a.getName(), m.getName(), m.getReturnType()));
-
-                        CacheUtil.setModel(String.format("%s.%s", a.getName(), m.getName()), model);
+                        serviceParam(model, m);
                     }
+                    if (xml != null) {
+                        model.setWrite(false);
+                        model.setPage(xml.isPage());
+                        model.setDbKey(xml.dbKey());
+                        model.setXml(true);
+                        isRegister.set(true);
+                        model.setPageType(xml.pageType());
+                        serviceParam(model, m);
+                        MapXml.readFastXml(xml.xml(),m);
+                    }
+
+                    if (isRegister.get())
+                        CacheUtil.setModel(String.format("%s.%s", a.getName(), m.getName()), model);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -1087,7 +1061,50 @@ public class FastRepository implements IFastRepository {
         });
     }
 
-    private void serviceParam(AnnotationModel model, Method m) {
+    private void serviceParam(AnnotationModel model, Method m) throws Exception {
+        if (m.getReturnType().isPrimitive() || m.getReturnType() == String.class || m.getReturnType() == Date.class || m.getReturnType() == java.lang.Long.class)
+            throw new Exception(String.format("service:%s,method:%s,return type:%s is not support", m.getDeclaringClass().getName(), m.getName(), m.getReturnType()));
+
+        if (model.isPage() && !(m.getReturnType() == PageResult.class || m.getReturnType() == PageResultImpl.class))
+            throw new Exception(String.format("read data by page,service:%s,method:%s,return type:%s is not support", m.getDeclaringClass().getName(), m.getName(), m.getReturnType()));
+
+        if (model.isPage() && m.getReturnType() == PageResultImpl.class && model.getPageType()==PageResultImpl.class)
+            throw new Exception(String.format("read data by page,service:%s,method:%s,return type:%s is not support", m.getDeclaringClass().getName(), m.getName(), m.getReturnType()));
+
+        if (model.isPage() && Arrays.stream(m.getParameters()).noneMatch(p -> p.getType() == PageModel.class))
+            throw new Exception(String.format("read data by page,service:%s,method:%s,FastReadAnnotation type is not support", m.getDeclaringClass().getName(), m.getName()));
+
+        if (m.getReturnType() != WriteReturn.class && model.isWrite())
+            throw new Exception(String.format("FastWrite return type only WriteReturn,service:%s,method:%s,return type:%s is not support", m.getDeclaringClass().getName(), m.getName(), m.getReturnType()));
+
+        if(FastUtil.isNullOrEmpty(model.getDbKey()))
+            throw new Exception(String.format("service:%s,method:%s,dbkey is not null", m.getDeclaringClass().getName(), m.getName()));
+
+        if(!model.isXml && FastUtil.isNullOrEmpty(model.getSql()))
+            throw new Exception(String.format("service:%s,method:%s,sql is not null", m.getDeclaringClass().getName(), m.getName()));
+
+        if (m.getReturnType() == List.class) {
+            model.setList(true);
+            Type type = ((ParameterizedTypeImpl) m.getGenericReturnType()).getActualTypeArguments()[0];
+            if (type instanceof ParameterizedTypeImpl && ((ParameterizedTypeImpl) type).getRawType() == Map.class) {
+                model.setMap(true);
+                model.setType(((ParameterizedTypeImpl) type).getRawType());
+            } else
+                model.setType((Class<?>) type);
+        } else {
+            if (m.getReturnType() == Map.class)
+                model.setMap(true);
+
+            if (m.getReturnType().getSuperclass() == HashMap.class && m.getReturnType() != Map.class)
+                return;
+            model.setType(m.getReturnType());
+        }
+
+        if(model.isPage() && m.getReturnType() == PageResultImpl.class)
+            model.setType(model.getPageType());
+        else if(model.isPage())
+            model.setType(null);
+
         LinkedHashMap<Integer, String> param = new LinkedHashMap<>();
         HashMap<Integer, String> temp = new HashMap<>();
 
@@ -1097,7 +1114,7 @@ public class FastRepository implements IFastRepository {
             Class<?> type = Arrays.stream(m.getParameters()).filter(a -> a.getType() != PageModel.class).collect(Collectors.toList()).get(0).getType();
             for (Field field : type.getDeclaredFields()) {
                 String key = String.format("?%s", field.getName()).toLowerCase();
-                if (model.getSql().indexOf(key) > 0)
+                if (!model.isXml && model.getSql().indexOf(key) > 0)
                     temp.put(model.getSql().indexOf(key), field.getName().toLowerCase());
             }
         } else {
@@ -1105,7 +1122,7 @@ public class FastRepository implements IFastRepository {
                 if (parameter.getType() == PageModel.class)
                     continue;
                 String key = String.format("?%s", parameter.getName()).toLowerCase();
-                if (model.getSql().indexOf(key) > 0)
+                if (!model.isXml && model.getSql().indexOf(key) > 0)
                     temp.put(model.getSql().indexOf(key), parameter.getName().toLowerCase());
             }
         }
@@ -1181,6 +1198,9 @@ class FastProxy implements InvocationHandler {
                     }
                 }
 
+                if(model.isXml)
+                    map = MapXml.getFastXmlSql(method,map.getParam());
+
                 if (db == null && !FastUtil.isNullOrEmpty(model.getDbKey()))
                     this.db = new DataContext(model.getDbKey());
 
@@ -1213,8 +1233,6 @@ class FastProxy implements InvocationHandler {
                     else
                         return model.getType().newInstance();
                 }
-                if (db == null && !FastUtil.isNullOrEmpty(model.getDbKey()))
-                    this.db = new DataContext(model.getDbKey());
 
                 return result;
             }
