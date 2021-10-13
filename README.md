@@ -78,20 +78,20 @@ public interface TestService {
     @FastRead(sql = "select * from base_user where id=?id and orgid=?orgid",dbKey = "test",isPage = true)
     PageResult page2(PageModel pageModel, Map<String,Object> map);
     
-    [FastMapAttribute(dbKey = "test", xml = @"<select>select a.DNAME, a.GH, a.DID from TestResult a where rownum &lt;= 15
-                            <dynamic prepend=' '>
-                                <isNotNullOrEmpty prepend=' and ' property='userName'>userName=:userName'</isNotNullOrEmpty>
-                                <isNotNullOrEmpty prepend=' and ' property='userId'>userId=:userId</isNotNullOrEmpty>
-                            </dynamic>
-                            order by a.REGISTDATE</select>",isPage =true)]
+    FastXml(dbKey = "test", xml = {"<select>select a.DNAME, a.GH, a.DID from TestResult a where rownum &lt;= 15",
+                            "<dynamic prepend=' '>",
+                                "<isNotNullOrEmpty prepend=' and ' property='userName'>userName=?userName'</isNotNullOrEmpty>",
+                                "<isNotNullOrEmpty prepend=' and ' property='userId'>userId=?userId</isNotNullOrEmpty>",
+                            "</dynamic>",
+                            "order by a.REGISTDATE</select>"},isPage =true)
     PageResult read_MapPage(PageModel page ,Map<String, Object> item);
         
-    [FastMapAttribute(dbKey = "test", xml = @"<select>select a.DNAME, a.GH, a.DID from TestResult a where rownum &lt;= 15
-                            <dynamic prepend=' '>
-                                <isNotNullOrEmpty prepend=' and ' property='userName'>userName=:userName'</isNotNullOrEmpty>
-                                <isNotNullOrEmpty prepend=' and ' property='userId'>userId=:userId</isNotNullOrEmpty>
-                            </dynamic>
-                            order by a.REGISTDATE</select>")]
+    @FastXml(dbKey = "test", xml = xml = {"<select>select a.DNAME, a.GH, a.DID from TestResult a where rownum &lt;= 15",
+                            "<dynamic prepend=' '>",
+                                "<isNotNullOrEmpty prepend=' and ' property='userName'>userName=?userName'</isNotNullOrEmpty>",
+                                "<isNotNullOrEmpty prepend=' and ' property='userId'>userId=?userId</isNotNullOrEmpty>",
+                            "</dynamic>",
+                            "order by a.REGISTDATE</select>"})
     List<TestResult> read_Map(Map<String, Object> item);
 }
 
