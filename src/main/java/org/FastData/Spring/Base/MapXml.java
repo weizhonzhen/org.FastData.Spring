@@ -5,9 +5,6 @@ import com.sun.org.apache.xerces.internal.dom.DeferredElementImpl;
 import com.sun.org.apache.xerces.internal.dom.DeferredTextImpl;
 import org.FastData.Spring.Aop.AopEnum;
 import org.FastData.Spring.Aop.BaseAop;
-import org.FastData.Spring.Aop.ExceptionContext;
-import org.FastData.Spring.Aop.FastDataConfig;
-import org.FastData.Spring.CacheModel.DbConfig;
 import org.FastData.Spring.Model.MapResult;
 import org.FastData.Spring.Model.XmlModel;
 import org.FastData.Spring.Util.CacheUtil;
@@ -18,13 +15,14 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import java.io.StringReader;
+import java.lang.reflect.Method;
 import java.util.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 public final class MapXml {
     public static List<String> readXml(String xml,String fileName) {
-        XmlModel result = getXmlList(xml, "sqlMap",fileName);
+        XmlModel result = getXmlList(xml, "sqlMap",fileName,null);
         for (int i = 0; i < result.getKey().size(); i++) {
             CacheUtil.set(result.getKey().get(i).toLowerCase(), result.getSql().get(i));
         }
@@ -49,6 +47,26 @@ public final class MapXml {
         });
 
         return result.getKey();
+    }
+
+    public static void readFastXml(String[] xml, Method method){
+        StringBuffer sb = new StringBuffer();
+        sb.append("<sqlMap>");
+        for (String s : xml) {
+            sb.append(s);
+            sb.append(" ");
+        }
+        sb.append("</sqlMap>");
+
+        String key = String.format("%s.%s", method.getDeclaringClass().getName(), method.getName()).toLowerCase();
+        XmlModel result = getXmlList(sb.toString(), "sqlMap",key,key);
+        for (int i = 0; i < result.getKey().size(); i++) {
+            CacheUtil.set(result.getKey().get(i).toLowerCase(), result.getSql().get(i));
+        }
+        result.getParam().forEach((k, v) -> {
+            CacheUtil.setModel(String.format("%s.param", k.toLowerCase()), v);
+            result.getKey().add(String.format("%s.param", k.toLowerCase()));
+        });
     }
 
     public static MapResult getMapSql(String name, Map<String, Object> param) {
@@ -225,7 +243,12 @@ public final class MapXml {
         return result;
     }
 
-    private static XmlModel getXmlList(String xml, String xmlNode,String fileName) {
+    public static MapResult getFastXmlSql(Method method,Map<String, Object> param) {
+        String key = String.format("%s.%s", method.getDeclaringClass().getName(), method.getName()).toLowerCase();
+        return getMapSql(key, param);
+    }
+
+    private static XmlModel getXmlList(String xml, String xmlNode,String fileName,String id) {
         XmlModel result = new XmlModel();
         result.setSuccess(true);
         try {
@@ -248,9 +271,14 @@ public final class MapXml {
                         || node.getNodeName().equalsIgnoreCase("delete")) {
                     int i = 0;
                     List<String> param = new ArrayList<String>();
-                    String key = node.getAttributes().getNamedItem("id").getNodeValue().toLowerCase();
+                    String key = "";
+                    if (FastUtil.isNullOrEmpty(id))
+                       key = node.getAttributes().getNamedItem("id").getNodeValue().toLowerCase();
+                    else
+                        key = id;
 
-                    if (result.getKey().stream().anyMatch(t -> t.equals(key))) {
+                    String finalKey = key;
+                    if (result.getKey().stream().anyMatch(t -> t.equals(finalKey))) {
                         result.setSuccess(false);
                         throw new Exception(String.format("key:%s已经存在", key));
                     }
@@ -376,7 +404,7 @@ public final class MapXml {
                 }
             }
         } catch (Exception e) {
-            BaseAop.aopException(e,"file Nme" + fileName + "  Parsing xml",AopEnum.Parsing_Xml, null);
+            BaseAop.aopException(e, "file Nme" + fileName + "  Parsing xml", AopEnum.Parsing_Xml, null);
             e.printStackTrace();
             result.setSuccess(false);
         }
