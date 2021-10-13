@@ -13,6 +13,15 @@ public class AnnotationModel {
     private boolean paramIsMap;
     private boolean isPage;
     public Class<?> pageType;
+    public boolean isXml;
+
+    public boolean isXml() {
+        return isXml;
+    }
+
+    public void setXml(boolean xml) {
+        isXml = xml;
+    }
 
     public Class<?> getPageType() {
         return pageType;
