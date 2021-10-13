@@ -86,7 +86,7 @@ public interface TestService {
                             "order by a.REGISTDATE</select>"},isPage =true)
     PageResult read_MapPage(PageModel page ,Map<String, Object> item);
         
-    @FastXml(dbKey = "test", xml = xml = {"<select>select a.DNAME, a.GH, a.DID from TestResult a where rownum &lt;= 15",
+    @FastXml(dbKey = "test", xml = {"<select>select a.DNAME, a.GH, a.DID from TestResult a where rownum &lt;= 15",
                             "<dynamic prepend=' '>",
                                 "<isNotNullOrEmpty prepend=' and ' property='userName'>userName=?userName'</isNotNullOrEmpty>",
                                 "<isNotNullOrEmpty prepend=' and ' property='userId'>userId=?userId</isNotNullOrEmpty>",
