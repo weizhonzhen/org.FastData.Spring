@@ -15,6 +15,16 @@ public class BeforeContext {
 
     private boolean isWrite;
 
+    public Object getModel() {
+        return model;
+    }
+
+    public void setModel(Object model) {
+        this.model = model;
+    }
+
+    private Object model;
+
     public int getAopType() {
         return aopType;
     }

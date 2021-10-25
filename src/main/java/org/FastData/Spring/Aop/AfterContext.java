@@ -19,6 +19,16 @@ public class AfterContext {
 
     private  int aopType;
 
+    private Object model;
+
+    public Object getModel() {
+        return model;
+    }
+
+    public void setModel(Object model) {
+        this.model = model;
+    }
+
     public int getAopType() {
         return aopType;
     }

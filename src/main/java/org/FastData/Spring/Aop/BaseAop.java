@@ -7,7 +7,7 @@ import org.FastData.Spring.Util.FastUtil;
 import java.util.LinkedHashMap;
 
 public final class BaseAop {
-    public static void aopBefore(String tableName, MapResult result, DbConfig config, boolean isRead, int aopType) {
+    public static void aopBefore(String tableName, MapResult result, DbConfig config, boolean isRead, int aopType,Object model) {
         IFastAop aop = FastDataConfig.getAop();
         if (aop != null) {
             BeforeContext context = new BeforeContext();
@@ -29,12 +29,13 @@ public final class BaseAop {
             context.setIsRead(isRead);
             context.setIsWrite(!isRead);
             context.setAopType(aopType);
+            context.setModel(model);
 
             aop.before(context);
         }
     }
-
-    public static void aopAfter(String tableName, MapResult result, DbConfig config, boolean isRead, int aopType, Object data) {
+    
+    public static void aopAfter(String tableName, MapResult result, DbConfig config, boolean isRead, int aopType, Object data,Object model) {
         IFastAop aop = FastDataConfig.getAop();
         if (aop != null) {
             AfterContext context = new AfterContext();
@@ -56,17 +57,19 @@ public final class BaseAop {
             context.setRead(isRead);
             context.setWrite(!isRead);
             context.setResult(data);
+            context.setModel(model);
 
             aop.after(context);
         }
     }
 
-    public static void aopException(Exception ex, String name, int aopType, DbConfig config) {
+    public static void aopException(Exception ex, String name, int aopType, DbConfig config,Object model) {
         if (FastDataConfig.getAop() != null) {
             ExceptionContext context = new ExceptionContext();
             context.setAopType(aopType);
             context.setEx(ex);
             context.setName(name);
+            context.setModel(model);
             if (config != null)
                 context.setDbType(config.getDbType());
             FastDataConfig.getAop().exception(context);
