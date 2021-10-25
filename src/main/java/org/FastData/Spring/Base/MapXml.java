@@ -404,7 +404,7 @@ public final class MapXml {
                 }
             }
         } catch (Exception e) {
-            BaseAop.aopException(e, "file Nme" + fileName + "  Parsing xml", AopEnum.Parsing_Xml, null);
+            BaseAop.aopException(e, "file Nme" + fileName + "  Parsing xml", AopEnum.Parsing_Xml, null,null);
             e.printStackTrace();
             result.setSuccess(false);
         }
