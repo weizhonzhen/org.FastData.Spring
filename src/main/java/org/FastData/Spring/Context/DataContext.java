@@ -14,6 +14,7 @@ import org.FastData.Spring.Util.FastUtil;
 import org.FastData.Spring.Util.LogUtil;
 import org.FastData.Spring.Util.ReflectUtil;
 import java.io.Closeable;
+import java.lang.invoke.MutableCallSite;
 import java.sql.*;
 import java.util.*;
 
@@ -55,7 +56,7 @@ public class DataContext implements Closeable {
                 result.setSql(map.getSql());
 
             if (isAop)
-                BaseAop.aopBefore(type.getName(), map, config, true, AopEnum.Query_List);
+                BaseAop.aopBefore(type.getName(), map, config, true, AopEnum.Query_List,null);
             if (map.getParam().size() != 0) {
                 preparedStatement = conn.prepareStatement(map.getSql());
                 Object[] param = map.getParam().keySet().toArray();
@@ -76,13 +77,13 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + result.getSql() + "\033[0m");
         } catch (Exception ex) {
-            BaseAop.aopException(ex, "to list tableName:" + type.getName(), AopEnum.Query_List, config);
+            BaseAop.aopException(ex, "to list tableName:" + type.getName(), AopEnum.Query_List, config,null);
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
         }
         if (isAop)
-            BaseAop.aopAfter(type.getName(), map, config, true, AopEnum.Query_List, result);
+            BaseAop.aopAfter(type.getName(), map, config, true, AopEnum.Query_List, result,null);
         return result;
     }
 
@@ -102,7 +103,7 @@ public class DataContext implements Closeable {
             else
                 result.setSql(map.getSql());
             if (isAop)
-                BaseAop.aopBefore(null, map, config, true, AopEnum.Query_Dic);
+                BaseAop.aopBefore(null, map, config, true, AopEnum.Query_Dic,null);
             if (map.getParam().size() != 0) {
                 preparedStatement = conn.prepareStatement(map.getSql());
                 Object[] param = map.getParam().keySet().toArray();
@@ -126,13 +127,13 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + result.getSql() + "\033[0m");
         } catch (Exception ex) {
-            BaseAop.aopException(ex, "to List<map>", AopEnum.Query_Dic, config);
+            BaseAop.aopException(ex, "to List<map>", AopEnum.Query_Dic, config,null);
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
         }
         if (isAop)
-            BaseAop.aopAfter(null, map, config, true, AopEnum.Query_Dic, result.getList());
+            BaseAop.aopAfter(null, map, config, true, AopEnum.Query_Dic, result.getList(),null);
         return result;
     }
 
@@ -229,7 +230,7 @@ public class DataContext implements Closeable {
             pModel.setTotalRecord(pageCount(map));
 
             if (isAop)
-                BaseAop.aopBefore(type.getName(), map, config, true, AopEnum.Map_Page_Model);
+                BaseAop.aopBefore(type.getName(), map, config, true, AopEnum.Map_Page_Model,null);
 
             if (pModel.getTotalRecord() > 0) {
                 if ((pModel.getTotalRecord() % pModel.getPageSize()) == 0)
@@ -253,13 +254,13 @@ public class DataContext implements Closeable {
             } else
                 return result;
         } catch (Exception ex) {
-            BaseAop.aopException(ex, "tp page tableName:" + type.getName(), AopEnum.Map_Page_Model, config);
+            BaseAop.aopException(ex, "tp page tableName:" + type.getName(), AopEnum.Map_Page_Model, config,null);
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
         }
         if (isAop)
-            BaseAop.aopAfter(type.getName(), map, config, true, AopEnum.Map_Page_Model, result);
+            BaseAop.aopAfter(type.getName(), map, config, true, AopEnum.Map_Page_Model, result,null);
         return result;
     }
 
@@ -286,7 +287,7 @@ public class DataContext implements Closeable {
                     pModel.setPageId(pModel.getTotalPage());
 
                 if (isAop)
-                    BaseAop.aopBefore(null, map, config, true, AopEnum.Query_Page_Dic);
+                    BaseAop.aopBefore(null, map, config, true, AopEnum.Query_Page_Dic,null);
 
                 ResultSet resultSet = pageResult(pModel, map);
                 if (resultSet != null) {
@@ -302,13 +303,13 @@ public class DataContext implements Closeable {
             } else
                 return result;
         } catch (Exception ex) {
-            BaseAop.aopException(ex, "to page", AopEnum.Query_Page_Dic, config);
+            BaseAop.aopException(ex, "to page", AopEnum.Query_Page_Dic, config,null);
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
         }
         if (isAop)
-            BaseAop.aopAfter(null, map, config, true, AopEnum.Query_Page_Dic, result);
+            BaseAop.aopAfter(null, map, config, true, AopEnum.Query_Page_Dic, result,null);
         return result;
     }
 
@@ -321,7 +322,7 @@ public class DataContext implements Closeable {
         MapResult insert = new MapResult();
         try {
             insert = BaseModel.insert(model);
-            BaseAop.aopBefore(model.getClass().getName(), insert, config, false, AopEnum.Add);
+            BaseAop.aopBefore(model.getClass().getName(), insert, config, false, AopEnum.Add,model);
             if (!insert.isSuccess()) {
                 result.getWriteReturn().setSuccess(false);
                 result.getWriteReturn().setMessage(insert.getMessage());
@@ -341,7 +342,7 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(insert) + "\033[0m");
         } catch (Exception ex) {
-            BaseAop.aopException(ex, "add tableName:" + model.getClass().getName(), AopEnum.Add, config);
+            BaseAop.aopException(ex, "add tableName:" + model.getClass().getName(), AopEnum.Add, config,model);
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
@@ -349,7 +350,7 @@ public class DataContext implements Closeable {
             result.getWriteReturn().setMessage(ex.getMessage());
         }
 
-        BaseAop.aopAfter(model.getClass().getName(), insert, config, false, AopEnum.Add, result.getWriteReturn().getSuccess());
+        BaseAop.aopAfter(model.getClass().getName(), insert, config, false, AopEnum.Add, result.getWriteReturn(),model);
         return result;
     }
 
@@ -362,7 +363,7 @@ public class DataContext implements Closeable {
         MapResult delete = new MapResult();
         try {
             delete = BaseModel.delete(model, config, conn);
-            BaseAop.aopBefore(model.getClass().getName(), delete, config, false, AopEnum.Delete_PrimaryKey);
+            BaseAop.aopBefore(model.getClass().getName(), delete, config, false, AopEnum.Delete_PrimaryKey,model);
 
             if (!delete.isSuccess()) {
                 result.getWriteReturn().setSuccess(false);
@@ -381,14 +382,14 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(delete) + "\033[0m");
         } catch (Exception ex) {
-            BaseAop.aopException(ex, "delete by Primary Key tableName:" + model.getClass().getName(), AopEnum.Delete_PrimaryKey, config);
+            BaseAop.aopException(ex, "delete by Primary Key tableName:" + model.getClass().getName(), AopEnum.Delete_PrimaryKey, config,model);
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
             result.getWriteReturn().setSuccess(false);
             result.getWriteReturn().setMessage(ex.getMessage());
         }
-        BaseAop.aopAfter(model.getClass().getName(), delete, config, false, AopEnum.Delete_PrimaryKey, result.getWriteReturn().getSuccess());
+        BaseAop.aopAfter(model.getClass().getName(), delete, config, false, AopEnum.Delete_PrimaryKey, result.getWriteReturn(),model);
         return result;
     }
 
@@ -427,7 +428,7 @@ public class DataContext implements Closeable {
         MapResult update = new MapResult();
         try {
             update = BaseModel.update(model, field, config, conn);
-            BaseAop.aopBefore(model.getClass().getName(), update, config, false, AopEnum.Update_PrimaryKey);
+            BaseAop.aopBefore(model.getClass().getName(), update, config, false, AopEnum.Update_PrimaryKey,model);
 
             if (!update.isSuccess()) {
                 result.getWriteReturn().setSuccess(false);
@@ -445,14 +446,14 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(update) + "\033[0m");
         } catch (Exception ex) {
-            BaseAop.aopException(ex, "update by Primary Key tableName " + model.getClass().getName(), AopEnum.Update_PrimaryKey, config);
+            BaseAop.aopException(ex, "update by Primary Key tableName " + model.getClass().getName(), AopEnum.Update_PrimaryKey, config,model);
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
             result.getWriteReturn().setSuccess(false);
             result.getWriteReturn().setMessage(ex.getMessage());
         }
-        BaseAop.aopAfter(model.getClass().getName(), update, config, false, AopEnum.Update_PrimaryKey, result.getWriteReturn().getSuccess());
+        BaseAop.aopAfter(model.getClass().getName(), update, config, false, AopEnum.Update_PrimaryKey, result.getWriteReturn(),model);
         return result;
     }
 
@@ -465,7 +466,7 @@ public class DataContext implements Closeable {
         MapResult update = new MapResult();
         try {
             update = BaseModel.update(model, null, config, conn);
-            BaseAop.aopBefore(model.getClass().getName(), update, config, false, AopEnum.Update_PrimaryKey);
+            BaseAop.aopBefore(model.getClass().getName(), update, config, false, AopEnum.Update_PrimaryKey,model);
 
             if (!update.isSuccess()) {
                 result.getWriteReturn().setSuccess(false);
@@ -483,14 +484,14 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(update) + "\033[0m");
         } catch (Exception ex) {
-            BaseAop.aopException(ex, "update by Primary Key tableName " + model.getClass().getName(), AopEnum.Update_PrimaryKey, config);
+            BaseAop.aopException(ex, "update by Primary Key tableName " + model.getClass().getName(), AopEnum.Update_PrimaryKey, config,model);
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
             result.getWriteReturn().setSuccess(false);
             result.getWriteReturn().setMessage(ex.getMessage());
         }
-        BaseAop.aopAfter(model.getClass().getName(), update, config, false, AopEnum.Update_PrimaryKey, result.getWriteReturn().getSuccess());
+        BaseAop.aopAfter(model.getClass().getName(), update, config, false, AopEnum.Update_PrimaryKey, result.getWriteReturn(),model);
         return result;
     }
 
@@ -504,7 +505,7 @@ public class DataContext implements Closeable {
         try {
             ResultSet resultSet;
             exists = BaseModel.exists(model, config, conn);
-            BaseAop.aopBefore(model.getClass().getName(), exists, config, true, AopEnum.Exists_PrimaryKey);
+            BaseAop.aopBefore(model.getClass().getName(), exists, config, true, AopEnum.Exists_PrimaryKey,model);
 
             if (!exists.isSuccess()) {
                 result.getWriteReturn().setSuccess(false);
@@ -526,14 +527,14 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(exists) + "\033[0m");
         } catch (Exception ex) {
-            BaseAop.aopException(ex, "exists tableName by Primary Key" + model.getClass().getName(), AopEnum.Exists_PrimaryKey, config);
+            BaseAop.aopException(ex, "exists tableName by Primary Key" + model.getClass().getName(), AopEnum.Exists_PrimaryKey, config,model);
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
             result.getWriteReturn().setSuccess(false);
             result.getWriteReturn().setMessage(ex.getMessage());
         }
-        BaseAop.aopAfter(model.getClass().getName(), exists, config, true, AopEnum.Exists_PrimaryKey, result.getWriteReturn().getSuccess());
+        BaseAop.aopAfter(model.getClass().getName(), exists, config, true, AopEnum.Exists_PrimaryKey, result.getWriteReturn(),model);
         return result;
     }
 
@@ -549,7 +550,7 @@ public class DataContext implements Closeable {
         try {
             ResultSet resultSet;
             query = BaseModel.query(model, config, conn);
-            BaseAop.aopBefore(model.getClass().getName(), query, config, true, AopEnum.Query_PrimaryKey_Dic);
+            BaseAop.aopBefore(model.getClass().getName(), query, config, true, AopEnum.Query_PrimaryKey_Dic,model);
             if (!query.isSuccess()) {
                 result.getWriteReturn().setSuccess(false);
                 result.getWriteReturn().setMessage(query.getMessage());
@@ -584,12 +585,12 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(query) + "\033[0m");
         } catch (Exception ex) {
-            BaseAop.aopException(ex, "query by Primary Key tableName " + model.getClass().getName(), AopEnum.Query_PrimaryKey_Dic, config);
+            BaseAop.aopException(ex, "query by Primary Key tableName " + model.getClass().getName(), AopEnum.Query_PrimaryKey_Dic, config,model);
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
         }
-        BaseAop.aopAfter(model.getClass().getName(), query, config, true, AopEnum.Query_PrimaryKey_Dic, result.getItem());
+        BaseAop.aopAfter(model.getClass().getName(), query, config, true, AopEnum.Query_PrimaryKey_Dic, result.getItem(),model);
         return result;
     }
 
@@ -605,7 +606,7 @@ public class DataContext implements Closeable {
         try {
             ResultSet resultSet;
             query = BaseModel.query(model, config, conn);
-            BaseAop.aopBefore(model.getClass().getName(), query, config, true, AopEnum.Query_PrimaryKey);
+            BaseAop.aopBefore(model.getClass().getName(), query, config, true, AopEnum.Query_PrimaryKey,model);
 
             if (!query.isSuccess()) {
                 result.getWriteReturn().setSuccess(false);
@@ -639,12 +640,12 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(query) + "\033[0m");
         } catch (Exception ex) {
-            BaseAop.aopException(ex, "query by Primary Key tableName " + model.getClass().getName(), AopEnum.Query_PrimaryKey, config);
+            BaseAop.aopException(ex, "query by Primary Key tableName " + model.getClass().getName(), AopEnum.Query_PrimaryKey, config,model);
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
         }
-        BaseAop.aopAfter(model.getClass().getName(), query, config, true, AopEnum.Query_PrimaryKey, result.getItem());
+        BaseAop.aopAfter(model.getClass().getName(), query, config, true, AopEnum.Query_PrimaryKey, result.getItem(),model);
         return result;
     }
 
@@ -657,7 +658,7 @@ public class DataContext implements Closeable {
     */
     public int count(MapResult map, boolean isAop) {
         if (isAop)
-            BaseAop.aopBefore(null, map, config, true, AopEnum.Query_Count);
+            BaseAop.aopBefore(null, map, config, true, AopEnum.Query_Count,null);
         int count = 0;
         try {
             ResultSet resultSet;
@@ -681,13 +682,13 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(map) + "\033[0m");
         } catch (Exception ex) {
-            BaseAop.aopException(ex, "query count ", AopEnum.Query_Count, config);
+            BaseAop.aopException(ex, "query count ", AopEnum.Query_Count, config,null);
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
         }
         if (isAop)
-            BaseAop.aopAfter(null, map, config, true, AopEnum.Query_Count, count);
+            BaseAop.aopAfter(null, map, config, true, AopEnum.Query_Count, count,null);
         return count;
     }
 
@@ -705,9 +706,9 @@ public class DataContext implements Closeable {
         });
 
         param.setParam(linkMap);
-        BaseAop.aopBefore(null, param, config, true, AopEnum.Query_Count);
+        BaseAop.aopBefore(null, param, config, true, AopEnum.Query_Count,null);
         int result = count(param);
-        BaseAop.aopAfter(null, param, config, true, AopEnum.Query_Count, result);
+        BaseAop.aopAfter(null, param, config, true, AopEnum.Query_Count, result,null);
         return result;
     }
 
@@ -721,7 +722,7 @@ public class DataContext implements Closeable {
     public DataReturn execute(MapResult map, boolean isAop) {
         DataReturn result = new DataReturn();
         if (isAop)
-            BaseAop.aopBefore(null, map, config, false, AopEnum.Execute_Sql_Bool);
+            BaseAop.aopBefore(null, map, config, false, AopEnum.Execute_Sql_Bool,null);
         try {
             if (map.getParam().size() != 0) {
                 preparedStatement = conn.prepareStatement(map.getSql());
@@ -738,19 +739,19 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(map) + "\033[0m");
         } catch (Exception ex) {
-            BaseAop.aopException(ex, "execute sql", AopEnum.Execute_Sql_Bool, config);
+            BaseAop.aopException(ex, "execute sql", AopEnum.Execute_Sql_Bool, config,null);
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
         }
         if (isAop)
-            BaseAop.aopAfter(null, map, config, false, AopEnum.Execute_Sql_Bool, result.getWriteReturn().getSuccess());
+            BaseAop.aopAfter(null, map, config, false, AopEnum.Execute_Sql_Bool, result.getWriteReturn(),null);
         return result;
     }
 
     public WriteReturn executeParam(MapResult map) {
         WriteReturn result = new WriteReturn();
-        BaseAop.aopBefore(null, map, config, false, AopEnum.Execute_Sql_Bool);
+        BaseAop.aopBefore(null, map, config, false, AopEnum.Execute_Sql_Bool,null);
         try {
             if (map.getParam().size() != 0) {
                 Object[] param = map.getParam().keySet().toArray();
@@ -782,12 +783,12 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(map) + "\033[0m");
         } catch (Exception ex) {
-            BaseAop.aopException(ex, "execute sql", AopEnum.Execute_Sql_Bool, config);
+            BaseAop.aopException(ex, "execute sql", AopEnum.Execute_Sql_Bool, config,null);
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
         }
-        BaseAop.aopAfter(null, map, config, false, AopEnum.Execute_Sql_Bool, result.getSuccess());
+        BaseAop.aopAfter(null, map, config, false, AopEnum.Execute_Sql_Bool, result,null);
         return result;
     }
 
@@ -896,7 +897,7 @@ public class DataContext implements Closeable {
                     }
 
                     mapResult.setSql(sql.toString());
-                    BaseAop.aopBefore(tableName, mapResult, config, true, AopEnum.Query_Navigate);
+                    BaseAop.aopBefore(tableName, mapResult, config, true, AopEnum.Query_Navigate,null);
 
                     preparedStatement = conn.prepareStatement(sql.toString());
                     for (int i = 0; i < a.getName().size(); i++) {
@@ -916,9 +917,9 @@ public class DataContext implements Closeable {
                         ReflectUtil.set(data, result.get(0), a.getMemberName(), a.getMemberType());
 
                     close(resultSet, mapResult);
-                    BaseAop.aopAfter(tableName, mapResult, config, true, AopEnum.Query_Navigate, data);
+                    BaseAop.aopAfter(tableName, mapResult, config, true, AopEnum.Query_Navigate, data,null);
                 } catch (Exception ex) {
-                    BaseAop.aopException(ex, "navigate tableName:" + tableName, AopEnum.Query_Navigate, config);
+                    BaseAop.aopException(ex, "navigate tableName:" + tableName, AopEnum.Query_Navigate, config,null);
                     ex.printStackTrace();
                     if (config.isOutError())
                         LogUtil.error(ex);
@@ -967,7 +968,7 @@ class PoolUtil {
             CacheUtil.setModel(cacheKey, pool);
         } catch (Exception ex) {
             if (FastDataConfig.getAop() != null)
-                BaseAop.aopException(ex,"DataContext open key :" + dbconfig.getKey(),AopEnum.Pool_Get,dbconfig);
+                BaseAop.aopException(ex,"DataContext open key :" + dbconfig.getKey(),AopEnum.Pool_Get,dbconfig,null);
 
             if (dbconfig.isOutError())
                 ex.printStackTrace();
@@ -997,7 +998,7 @@ class PoolUtil {
             }
         } catch (Exception ex) {
             if (FastDataConfig.getAop() != null)
-                BaseAop.aopException(ex,"DataContext close key :" + config.getKey(),AopEnum.Pool_Close,config);
+                BaseAop.aopException(ex,"DataContext close key :" + config.getKey(),AopEnum.Pool_Close,config,null);
 
             if (config.isOutError())
                 ex.printStackTrace();
