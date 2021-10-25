@@ -1239,7 +1239,7 @@ class FastProxy implements InvocationHandler {
 
             return null;
         } catch (Exception ex) {
-            BaseAop.aopException(ex, "FastProxy", AopEnum.FastProxy, db.config);
+            BaseAop.aopException(ex, "FastProxy", AopEnum.FastProxy, db.config,null);
             return null;
         }
     }
