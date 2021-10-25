@@ -72,7 +72,7 @@ public class BaseTable {
         }
         catch (Exception e) {
             if (FastDataConfig.getAop() != null)
-                BaseAop.aopException(e,"code first tableName:" + type.getName(),AopEnum.Code_First,null);
+                BaseAop.aopException(e,"code first tableName:" + type.getName(),AopEnum.Code_First,null,null);
 
             e.printStackTrace();
         }
