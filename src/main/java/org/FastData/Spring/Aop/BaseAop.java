@@ -2,13 +2,13 @@ package org.FastData.Spring.Aop;
 
 import org.FastData.Spring.CacheModel.DbConfig;
 import org.FastData.Spring.Model.MapResult;
+import org.FastData.Spring.Util.CacheUtil;
 import org.FastData.Spring.Util.FastUtil;
-
 import java.util.LinkedHashMap;
 
 public final class BaseAop {
     public static void aopBefore(String tableName, MapResult result, DbConfig config, boolean isRead, int aopType,Object model) {
-        IFastAop aop = FastDataConfig.getAop();
+        IFastAop aop =  CacheUtil.getModel("FastAop",IFastAop.class);
         if (aop != null) {
             BeforeContext context = new BeforeContext();
 
@@ -36,7 +36,7 @@ public final class BaseAop {
     }
     
     public static void aopAfter(String tableName, MapResult result, DbConfig config, boolean isRead, int aopType, Object data,Object model) {
-        IFastAop aop = FastDataConfig.getAop();
+        IFastAop aop = CacheUtil.getModel("FastAop",IFastAop.class);
         if (aop != null) {
             AfterContext context = new AfterContext();
 
@@ -64,7 +64,8 @@ public final class BaseAop {
     }
 
     public static void aopException(Exception ex, String name, int aopType, DbConfig config,Object model) {
-        if (FastDataConfig.getAop() != null) {
+        IFastAop aop = CacheUtil.getModel("FastAop",IFastAop.class);
+        if (aop != null) {
             ExceptionContext context = new ExceptionContext();
             context.setAopType(aopType);
             context.setEx(ex);
@@ -72,12 +73,12 @@ public final class BaseAop {
             context.setModel(model);
             if (config != null)
                 context.setDbType(config.getDbType());
-            FastDataConfig.getAop().exception(context);
+            aop.exception(context);
         }
     }
 
     public static void aopMapBefore(String mapName, MapResult map, DbConfig config,int aopType){
-        IFastAop aop = FastDataConfig.getAop();
+        IFastAop aop = CacheUtil.getModel("FastAop",IFastAop.class);
         if (aop != null) {
             MapBeforeContext context = new MapBeforeContext();
             context.setMapName(mapName);
@@ -99,7 +100,7 @@ public final class BaseAop {
     }
 
     public static void aopMapAfter(String mapName, MapResult map, DbConfig config,int aopType,Object data){
-        IFastAop aop = FastDataConfig.getAop();
+        IFastAop aop = CacheUtil.getModel("FastAop",IFastAop.class);
         if (aop != null) {
             MapAfterContext context = new MapAfterContext();
             context.setMapName(mapName);
