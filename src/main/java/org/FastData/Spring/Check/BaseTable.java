@@ -5,7 +5,7 @@ import org.FastData.Spring.Annotation.Table;
 import org.FastData.Spring.Aop.AopEnum;
 import org.FastData.Spring.Aop.BaseAop;
 import org.FastData.Spring.Aop.ExceptionContext;
-import org.FastData.Spring.Aop.FastDataConfig;
+import org.FastData.Spring.Aop.IFastAop;
 import org.FastData.Spring.CacheModel.DbConfig;
 import org.FastData.Spring.CheckModel.ColumnModel;
 import org.FastData.Spring.CheckModel.ColumnType;
@@ -17,6 +17,8 @@ import org.FastData.Spring.Context.DataContext;
 import org.FastData.Spring.Model.DataReturn;
 import org.FastData.Spring.Model.FastMap;
 import org.FastData.Spring.Model.MapResult;
+import org.FastData.Spring.Util.CacheUtil;
+
 import java.util.*;
 
 public class BaseTable {
@@ -71,7 +73,8 @@ public class BaseTable {
             }
         }
         catch (Exception e) {
-            if (FastDataConfig.getAop() != null)
+            IFastAop aop =  CacheUtil.getModel("FastAop",IFastAop.class);
+            if (aop != null)
                 BaseAop.aopException(e,"code first tableName:" + type.getName(),AopEnum.Code_First,null,null);
 
             e.printStackTrace();
