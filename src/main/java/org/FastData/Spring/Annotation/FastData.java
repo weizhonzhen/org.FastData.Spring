@@ -1,5 +1,7 @@
 package org.FastData.Spring.Annotation;
 
+import org.FastData.Spring.Aop.IFastAop;
+import org.FastData.Spring.Model.PageResultImpl;
 import org.FastData.Spring.Repository.FastRepository;
 import org.springframework.context.annotation.Import;
 import java.lang.annotation.*;
@@ -17,4 +19,6 @@ public @interface FastData {
     String codeFirstPackageName() default "";
 
     String servicePackageName() default "";
+
+    Class<?> aopType() default IFastAop.class;
 }
