@@ -967,7 +967,8 @@ class PoolUtil {
             }
             CacheUtil.setModel(cacheKey, pool);
         } catch (Exception ex) {
-            if (FastDataConfig.getAop() != null)
+            IFastAop aop =  CacheUtil.getModel("FastAop",IFastAop.class);
+            if (aop != null)
                 BaseAop.aopException(ex,"DataContext open key :" + dbconfig.getKey(),AopEnum.Pool_Get,dbconfig,null);
 
             if (dbconfig.isOutError())
@@ -997,7 +998,8 @@ class PoolUtil {
                     conn.close();
             }
         } catch (Exception ex) {
-            if (FastDataConfig.getAop() != null)
+            IFastAop aop =  CacheUtil.getModel("FastAop",IFastAop.class);
+            if (aop != null)
                 BaseAop.aopException(ex,"DataContext close key :" + config.getKey(),AopEnum.Pool_Close,config,null);
 
             if (config.isOutError())
