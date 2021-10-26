@@ -33,6 +33,10 @@ public class FastRepository implements IFastRepository {
             for (StackTraceElement item : Thread.currentThread().getStackTrace()) {
                 FastData annotation = Thread.currentThread().getContextClassLoader().loadClass(item.getClassName()).getAnnotation(FastData.class);
                 if (annotation != null) {
+                    if (annotation.aopType().isInterface() || Arrays.stream(annotation.aopType().getInterfaces()).noneMatch(a->a == IFastAop.class))
+                        CacheUtil.setModel("FastAop", null);
+                    else
+                        CacheUtil.setModel("FastAop", annotation.aopType().newInstance());
                     init(annotation.cachePackageName(), annotation.codeFirstPackageName(), annotation.key(), annotation.servicePackageName());
                     break;
                 }
