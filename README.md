@@ -4,7 +4,7 @@ java orm(db first,code frist) for sqlserver mysql etl.
 in Application add Annotation
 ```csharp
  @FastData(key = "test",cachePackageName = "com.example.Entity" ,
-  codeFirstPackageName="com.example.Entity", servicePackageName = "com.example.Service",aopType=FastAop.class)
+  codeFirstPackageName="com.example.Entity", servicePackageName = "com.example.Service",aopType=FastDataAop.class)
   
  key is database key 
  codeFirstPackageName is code first model
@@ -13,7 +13,7 @@ in Application add Annotation
 ```
 aop
 ```csharp
-public class FastAop implements IFastAop {
+public class FastDataAop implements IFastDataAop {
     @Override
     public void before(BeforeContext beforeContext) {
         System.out.println("before：" + beforeContext.getSql());
