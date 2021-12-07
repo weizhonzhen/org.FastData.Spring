@@ -1,6 +1,6 @@
 package org.FastData.Spring.Context;
 
-import org.FastData.Spring.Aop.*;
+import org.FastData.Spring.FastDataAop.*;
 import org.FastData.Spring.Base.BaseModel;
 import org.FastData.Spring.Base.DataConfig;
 import org.FastData.Spring.CacheModel.DbConfig;
@@ -14,7 +14,6 @@ import org.FastData.Spring.Util.FastUtil;
 import org.FastData.Spring.Util.LogUtil;
 import org.FastData.Spring.Util.ReflectUtil;
 import java.io.Closeable;
-import java.lang.invoke.MutableCallSite;
 import java.sql.*;
 import java.util.*;
 
@@ -967,7 +966,7 @@ class PoolUtil {
             }
             CacheUtil.setModel(cacheKey, pool);
         } catch (Exception ex) {
-            IFastAop aop =  CacheUtil.getModel("FastAop",IFastAop.class);
+            IFastDataAop aop =  CacheUtil.getModel("FastAop", IFastDataAop.class);
             if (aop != null)
                 BaseAop.aopException(ex,"DataContext open key :" + dbconfig.getKey(),AopEnum.Pool_Get,dbconfig,null);
 
@@ -998,7 +997,7 @@ class PoolUtil {
                     conn.close();
             }
         } catch (Exception ex) {
-            IFastAop aop =  CacheUtil.getModel("FastAop",IFastAop.class);
+            IFastDataAop aop =  CacheUtil.getModel("FastAop", IFastDataAop.class);
             if (aop != null)
                 BaseAop.aopException(ex,"DataContext close key :" + config.getKey(),AopEnum.Pool_Close,config,null);
 
