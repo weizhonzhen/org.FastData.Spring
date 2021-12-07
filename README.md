@@ -3,9 +3,11 @@ java orm(db first,code frist) for sqlserver mysql etl.
 
 in Application add Annotation
 ```csharp
+ //service aop
+ @FastServiceAop(aopType = emr.doctor.Handler.FastServiceAop.class)  
+
  @FastData(key = "test",cachePackageName = "com.example.Entity" ,
   codeFirstPackageName="com.example.Entity", servicePackageName = "com.example.Service",aopType=FastDataAop.class)
-@FastServiceAop(aopType = emr.doctor.Handler.FastServiceAop.class)  
  key is database key 
  codeFirstPackageName is code first model
  cachePackageName is cache model
