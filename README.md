@@ -61,6 +61,12 @@ public class FastServiceAop implements IFastServiceAop {
 
     }
 }
+
+//service aop
+public interface IUserService {}
+public class UserService implements IUserService{}
+IUserService userService = (IUserService)new FastServiceProxy().invoke(UserService.class);
+
 ```
 Annotation
 ```csharp
