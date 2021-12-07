@@ -5,7 +5,7 @@ in Application add Annotation
 ```csharp
  @FastData(key = "test",cachePackageName = "com.example.Entity" ,
   codeFirstPackageName="com.example.Entity", servicePackageName = "com.example.Service",aopType=FastDataAop.class)
-  
+@FastServiceAop(aopType = emr.doctor.Handler.FastServiceAop.class)  
  key is database key 
  codeFirstPackageName is code first model
  cachePackageName is cache model
@@ -37,6 +37,23 @@ public class FastDataAop implements IFastDataAop {
     @Override
     public void exception(ExceptionContext exceptionContext) {
         System.out.println("exception：" + exceptionContext.getName());
+
+    }
+}
+
+public class FastServiceAop implements IFastServiceAop {
+    @Override
+    public void before(BeforeContext beforeContext) {
+
+    }
+
+    @Override
+    public void after(AfterContext afterContext) {
+
+    }
+
+    @Override
+    public void exception(ExceptionContext exceptionContext) {
 
     }
 }
