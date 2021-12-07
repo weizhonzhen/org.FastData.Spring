@@ -2,10 +2,9 @@ package org.FastData.Spring.Check;
 
 import org.FastData.Spring.Annotation.Column;
 import org.FastData.Spring.Annotation.Table;
-import org.FastData.Spring.Aop.AopEnum;
-import org.FastData.Spring.Aop.BaseAop;
-import org.FastData.Spring.Aop.ExceptionContext;
-import org.FastData.Spring.Aop.IFastAop;
+import org.FastData.Spring.FastDataAop.AopEnum;
+import org.FastData.Spring.FastDataAop.BaseAop;
+import org.FastData.Spring.FastDataAop.IFastDataAop;
 import org.FastData.Spring.CacheModel.DbConfig;
 import org.FastData.Spring.CheckModel.ColumnModel;
 import org.FastData.Spring.CheckModel.ColumnType;
@@ -73,7 +72,7 @@ public class BaseTable {
             }
         }
         catch (Exception e) {
-            IFastAop aop =  CacheUtil.getModel("FastAop",IFastAop.class);
+            IFastDataAop aop =  CacheUtil.getModel("FastAop", IFastDataAop.class);
             if (aop != null)
                 BaseAop.aopException(e,"code first tableName:" + type.getName(),AopEnum.Code_First,null,null);
 
