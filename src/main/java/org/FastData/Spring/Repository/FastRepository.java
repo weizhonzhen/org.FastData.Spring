@@ -1,13 +1,14 @@
 package org.FastData.Spring.Repository;
 
 import org.FastData.Spring.Annotation.*;
-import org.FastData.Spring.Aop.*;
+import org.FastData.Spring.FastDataAop.*;
 import org.FastData.Spring.Base.DataConfig;
 import org.FastData.Spring.Base.MapXml;
 import org.FastData.Spring.CacheModel.*;
 import org.FastData.Spring.Check.BaseTable;
 import org.FastData.Spring.Config.Config;
 import org.FastData.Spring.Context.DataContext;
+import org.FastData.Spring.FastServiceAop.IFastServiceAop;
 import org.FastData.Spring.Model.*;
 import org.FastData.Spring.Util.FastUtil;
 import org.FastData.Spring.Util.ReflectUtil;
@@ -31,14 +32,18 @@ public class FastRepository implements IFastRepository {
     public FastRepository() {
         try {
             for (StackTraceElement item : Thread.currentThread().getStackTrace()) {
-                FastData annotation = Thread.currentThread().getContextClassLoader().loadClass(item.getClassName()).getAnnotation(FastData.class);
-                if (annotation != null) {
-                    if (annotation.aopType().isInterface() || Arrays.stream(annotation.aopType().getInterfaces()).noneMatch(a->a == IFastAop.class))
-                        CacheUtil.setModel("FastAop", null);
+                FastData fastData = Thread.currentThread().getContextClassLoader().loadClass(item.getClassName()).getAnnotation(FastData.class);
+                FastServiceAop fastServiceAop = Thread.currentThread().getContextClassLoader().loadClass(item.getClassName()).getAnnotation(FastServiceAop.class);
+
+                if (fastServiceAop != null && Arrays.stream(fastServiceAop.aopType().getInterfaces()).anyMatch(a -> a == IFastServiceAop.class))
+                    CacheUtil.setModel("FastServiceAop", fastServiceAop.aopType().newInstance());
+
+                if (fastData != null) {
+                    if (fastData.aopType().isInterface() || Arrays.stream(fastData.aopType().getInterfaces()).noneMatch(a -> a == IFastDataAop.class))
+                        CacheUtil.setModel("FastDataAop", null);
                     else
-                        CacheUtil.setModel("FastAop", annotation.aopType().newInstance());
-                    init(annotation.cachePackageName(), annotation.codeFirstPackageName(), annotation.key(), annotation.servicePackageName());
-                    break;
+                        CacheUtil.setModel("FastDataAop", fastData.aopType().newInstance());
+                    init(fastData.cachePackageName(), fastData.codeFirstPackageName(), fastData.key(), fastData.servicePackageName());
                 }
             }
         } catch (Exception e) {
@@ -1266,6 +1271,7 @@ class ApplicationContextRegister implements BeanFactoryPostProcessor {
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        this.beanFactory = beanFactory;
+        ApplicationContextRegister.beanFactory = beanFactory;
+        CacheUtil.setModel("beanFactory", beanFactory);
     }
 }
