@@ -161,7 +161,7 @@ public class TestTable {
     @Column(dataType = "NUMBER",isNull = true,comments = "value")
     private  Number value;
     
-    @NavigateType(type = TestTable_List.class)
+    @NavigateType(type = TestTable_List.class,isAdd = true,isDelete = true,isUpdate = true)
     private TestTable_List list;
 }
 
