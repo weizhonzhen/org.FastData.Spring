@@ -973,6 +973,9 @@ public class FastRepository implements IFastRepository {
                         navigateModel.setMemberName(f.getName());
                         navigateModel.setList(f.getType() == java.util.List.class);
                         navigateModel.setMemberType(f.getType());
+                        navigateModel.setAdd(navigateType.isAdd());
+                        navigateModel.setUpdate(navigateType.isUpdate());
+                        navigateModel.setDelete(navigateType.isDelete());
 
                         Arrays.stream(navigateModel.getPropertyType().getDeclaredFields()).forEach(m -> {
                             Navigate navigate = m.getAnnotation(Navigate.class);
