@@ -161,7 +161,7 @@ public class TestTable {
     @Column(dataType = "NUMBER",isNull = true,comments = "value")
     private  Number value;
     
-    @NavigateType(type = TestTable_List.class,isAdd = true,isDelete = true,isUpdate = true)
+    @NavigateType(type = TestTable_List.class,isAdd = true,isDelete = true,isUpdate = true) //add,update by PrimaryKey,delete by PrimaryKey
     private TestTable_List list;
 }
 
@@ -177,6 +177,9 @@ public class TestTable_List
    var model = new TestTable();
    model.setId("1");
    var list = (TestTable)ifast.queryKey(model,TestTable.class,"db");
+   ifast.add(model,"db");//add table TestTable and TestTable_List
+   ifast.updateKey(model,"db"); //update by key  table TestTable and TestTable_List
+   ifast.deleteKey(model,"db"); //delete by key table TestTable and TestTable_List
 ```
 
 in resources add db.json
