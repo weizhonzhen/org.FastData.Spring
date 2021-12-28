@@ -16,6 +16,7 @@ public final class BaseModel {
     public static MapResult insert(Object model) {
         Class<?> type = model.getClass();
         MapResult result = new MapResult();
+        result.setSuccess(true);
         String cacheKey = type.getName();
         List<PropertyModel> property = CacheUtil.getList(cacheKey, PropertyModel.class);
         StringBuilder name = new StringBuilder();
@@ -135,8 +136,11 @@ public final class BaseModel {
         result.setSql(String.format("update %s set ", tableName));;
 
         for (PropertyModel item : property) {
+            if (list.stream().anyMatch(a -> a.equalsIgnoreCase(item.getName())))
+                continue;
+
             result.setSql(String.format("%s %s=?,", result.getSql(), item.getName()));
-            result.getParam().put(item.getName(), ReflectUtil.get(model, item.getName(),item.getType()));
+            result.getParam().put(item.getName(), ReflectUtil.get(model, item.getName(), item.getType()));
         }
 
         result.setSql(result.getSql().substring(0, result.getSql().length() - 1));
