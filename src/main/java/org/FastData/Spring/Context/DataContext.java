@@ -114,7 +114,6 @@ public class DataContext implements Closeable {
             } else {
                 statement = conn.createStatement();
                 resultSet = statement.executeQuery(map.getSql());
-
             }
             ResultSetMetaData col = resultSet.getMetaData();
             while (resultSet.next()) {
@@ -317,23 +316,43 @@ public class DataContext implements Closeable {
      model: database table
    */
     public DataReturn add(Object model) {
+        boolean isTrans = false;
         DataReturn result = new DataReturn();
         MapResult insert = new MapResult();
         try {
             insert = BaseModel.insert(model);
-            BaseAop.aopBefore(model.getClass().getName(), insert, config, false, AopEnum.Add,model);
+            BaseAop.aopBefore(model.getClass().getName(), insert, config, false, AopEnum.Add, model);
             if (!insert.isSuccess()) {
                 result.getWriteReturn().setSuccess(false);
                 result.getWriteReturn().setMessage(insert.getMessage());
             } else {
+                List<Map<String, Object>> navigate = checkNavigate(model, AopEnum.Add_Navigate);
+                List<DataReturn> dataReturns = new ArrayList<>();
+                if (navigate.size() > 0) {
+                    isTrans = true;
+                    beginTrans();
+                    dataReturns = addNavigate(model, navigate);
+                    if (dataReturns.stream().anyMatch(a -> !a.getWriteReturn().getSuccess())) {
+                        rollbackTrans();
+                        result.getWriteReturn().setSuccess(false);
+                        result.getWriteReturn().setMessage(dataReturns.stream().filter(a -> !a.getWriteReturn().getSuccess()).findFirst().get().getWriteReturn().getMessage());
+                        BaseAop.aopAfter(model.getClass().getName(), insert, config, false, AopEnum.Add, result.getWriteReturn(), model);
+                        close(null, insert);
+                        return result;
+                    }
+                }
                 if (insert.getParam().size() != 0) {
+                    close(null, insert);
                     preparedStatement = conn.prepareStatement(insert.getSql());
                     Object[] param = insert.getParam().keySet().toArray();
                     for (int i = 0; i < param.length; i++) {
                         preparedStatement.setObject(i + 1, insert.getParam().get(param[i]));
                     }
-                    preparedStatement.execute();
-                    result.getWriteReturn().setSuccess(true);
+
+                    result.getWriteReturn().setSuccess(preparedStatement.executeUpdate() > 0);
+
+                    if (isTrans&& result.getWriteReturn().getSuccess())
+                        submitTrans();
                 }
             }
             close(null, insert);
@@ -341,7 +360,9 @@ public class DataContext implements Closeable {
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(insert) + "\033[0m");
         } catch (Exception ex) {
-            BaseAop.aopException(ex, "add tableName:" + model.getClass().getName(), AopEnum.Add, config,model);
+            if (isTrans)
+                rollbackTrans();
+            BaseAop.aopException(ex, "add tableName:" + model.getClass().getName(), AopEnum.Add, config, model);
             ex.printStackTrace();
             if (config.isOutError())
                 LogUtil.error(ex);
@@ -349,7 +370,7 @@ public class DataContext implements Closeable {
             result.getWriteReturn().setMessage(ex.getMessage());
         }
 
-        BaseAop.aopAfter(model.getClass().getName(), insert, config, false, AopEnum.Add, result.getWriteReturn(),model);
+        BaseAop.aopAfter(model.getClass().getName(), insert, config, false, AopEnum.Add, result.getWriteReturn(), model);
         return result;
     }
 
@@ -358,6 +379,7 @@ public class DataContext implements Closeable {
      model: database table
     */
     public DataReturn delete(Object model) {
+        boolean isTrans = false;
         DataReturn result = new DataReturn();
         MapResult delete = new MapResult();
         try {
@@ -368,19 +390,40 @@ public class DataContext implements Closeable {
                 result.getWriteReturn().setSuccess(false);
                 result.getWriteReturn().setMessage(delete.getMessage());
             } else {
-                preparedStatement = conn.prepareStatement(delete.getSql());
-                Object[] param = delete.getParam().keySet().toArray();
-                for (int i = 0; i < param.length; i++) {
-                    preparedStatement.setObject(i + 1, delete.getParam().get(param[i]));
+                List<Map<String, Object>> navigate = checkNavigate(model, AopEnum.Delete_Navigate);
+                List<DataReturn> dataReturns = new ArrayList<>();
+                if (navigate.size() > 0) {
+                    isTrans = true;
+                    beginTrans();
+                    dataReturns = deleteNavigate(model, navigate);
+                    if (dataReturns.stream().anyMatch(a -> !a.getWriteReturn().getSuccess())) {
+                        rollbackTrans();
+                        result.getWriteReturn().setSuccess(false);
+                        result.getWriteReturn().setMessage(dataReturns.stream().filter(a -> !a.getWriteReturn().getSuccess()).findFirst().get().getWriteReturn().getMessage());
+                        BaseAop.aopAfter(model.getClass().getName(), delete, config, false, AopEnum.Delete_PrimaryKey, result.getWriteReturn(), model);
+                        close(null, delete);
+                        return result;
+                    }
                 }
 
-                result.getWriteReturn().setSuccess(preparedStatement.executeUpdate() > 0);
+                if(delete.getParam().size()>0) {
+                    preparedStatement = conn.prepareStatement(delete.getSql());
+                    Object[] param = delete.getParam().keySet().toArray();
+                    for (int i = 0; i < param.length; i++) {
+                        preparedStatement.setObject(i + 1, delete.getParam().get(param[i]));
+                    }
+                    result.getWriteReturn().setSuccess(preparedStatement.executeUpdate() > 0);
+                    if (isTrans&& result.getWriteReturn().getSuccess())
+                        submitTrans();
+                }
             }
             close(null, delete);
 
             if (config.isOutSql())
                 System.out.println("\033[35;4m" + getSql(delete) + "\033[0m");
         } catch (Exception ex) {
+            if(isTrans)
+                rollbackTrans();
             BaseAop.aopException(ex, "delete by Primary Key tableName:" + model.getClass().getName(), AopEnum.Delete_PrimaryKey, config,model);
             ex.printStackTrace();
             if (config.isOutError())
@@ -423,6 +466,7 @@ public class DataContext implements Closeable {
      field: update field
     */
     public DataReturn update(Object model, List<String> field) {
+        boolean isTrans =false;
         DataReturn result = new DataReturn();
         MapResult update = new MapResult();
         try {
@@ -433,12 +477,32 @@ public class DataContext implements Closeable {
                 result.getWriteReturn().setSuccess(false);
                 result.getWriteReturn().setMessage(update.getMessage());
             } else {
-                preparedStatement = conn.prepareStatement(update.getSql());
-                Object[] param = update.getParam().keySet().toArray();
-                for (int i = 0; i < param.length; i++) {
-                    preparedStatement.setObject(i + 1, update.getParam().get(param[i]));
+                List<Map<String, Object>> navigate = checkNavigate(model, AopEnum.Update_Navigate);
+                List<DataReturn> dataReturns = new ArrayList<>();
+                if (navigate.size() > 0) {
+                    isTrans = true;
+                    beginTrans();
+                    dataReturns = updateNavigate(model, navigate);
+                    if (dataReturns.stream().anyMatch(a -> !a.getWriteReturn().getSuccess())) {
+                        rollbackTrans();
+                        result.getWriteReturn().setSuccess(false);
+                        result.getWriteReturn().setMessage(dataReturns.stream().filter(a -> !a.getWriteReturn().getSuccess()).findFirst().get().getWriteReturn().getMessage());
+                        BaseAop.aopAfter(model.getClass().getName(), update, config, false, AopEnum.Update_PrimaryKey, result.getWriteReturn(), model);
+                        close(null, update);
+                        return result;
+                    }
                 }
-                result.getWriteReturn().setSuccess(preparedStatement.executeUpdate() > 0);
+
+                if(update.getParam().size()>0) {
+                    preparedStatement = conn.prepareStatement(update.getSql());
+                    Object[] param = update.getParam().keySet().toArray();
+                    for (int i = 0; i < param.length; i++) {
+                        preparedStatement.setObject(i + 1, update.getParam().get(param[i]));
+                    }
+                    result.getWriteReturn().setSuccess(preparedStatement.executeUpdate() > 0);
+                    if (isTrans&& result.getWriteReturn().getSuccess())
+                        submitTrans();
+                }
             }
             close(null, update);
 
@@ -461,22 +525,43 @@ public class DataContext implements Closeable {
      model: database table
     */
     public DataReturn update(Object model) {
+        boolean isTrans =false;
         DataReturn result = new DataReturn();
         MapResult update = new MapResult();
         try {
-            update = BaseModel.update(model, null, config, conn);
+            update = BaseModel.update(model, config, conn);
             BaseAop.aopBefore(model.getClass().getName(), update, config, false, AopEnum.Update_PrimaryKey,model);
 
             if (!update.isSuccess()) {
                 result.getWriteReturn().setSuccess(false);
                 result.getWriteReturn().setMessage(update.getMessage());
             } else {
-                preparedStatement = conn.prepareStatement(update.getSql());
-                Object[] param = update.getParam().keySet().toArray();
-                for (int i = 0; i < param.length; i++) {
-                    preparedStatement.setObject(i + 1, update.getParam().get(param[i]));
+                List<Map<String, Object>> navigate = checkNavigate(model, AopEnum.Update_Navigate);
+                List<DataReturn> dataReturns = new ArrayList<>();
+                if (navigate.size() > 0) {
+                    isTrans = true;
+                    beginTrans();
+                    dataReturns = updateNavigate(model, navigate);
+                    if (dataReturns.stream().anyMatch(a -> !a.getWriteReturn().getSuccess())) {
+                        rollbackTrans();
+                        result.getWriteReturn().setSuccess(false);
+                        result.getWriteReturn().setMessage(dataReturns.stream().filter(a -> !a.getWriteReturn().getSuccess()).findFirst().get().getWriteReturn().getMessage());
+                        BaseAop.aopAfter(model.getClass().getName(), update, config, false, AopEnum.Update_PrimaryKey, result.getWriteReturn(), model);
+                        close(null, update);
+                        return result;
+                    }
                 }
-                result.getWriteReturn().setSuccess(preparedStatement.executeUpdate() > 0);
+
+                if(update.getParam().size()>0) {
+                    preparedStatement = conn.prepareStatement(update.getSql());
+                    Object[] param = update.getParam().keySet().toArray();
+                    for (int i = 0; i < param.length; i++) {
+                        preparedStatement.setObject(i + 1, update.getParam().get(param[i]));
+                    }
+                    result.getWriteReturn().setSuccess(preparedStatement.executeUpdate() > 0);
+                    if (isTrans&& result.getWriteReturn().getSuccess())
+                        submitTrans();
+                }
             }
             close(null, update);
 
@@ -832,10 +917,17 @@ public class DataContext implements Closeable {
         try {
             if (resultSet != null)
                 resultSet.close();
-            if (map.getParam().size() != 0)
+            if (map.getParam().size() != 0) {
+                preparedStatement.clearWarnings();
+                preparedStatement.clearBatch();
+                preparedStatement.clearParameters();
                 preparedStatement.close();
-            else
+            }
+            else {
+                statement.clearWarnings();
+                statement.clearBatch();
                 statement.close();
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -925,6 +1017,199 @@ public class DataContext implements Closeable {
                 }
             });
         }
+    }
+
+    private List<Map<String,Object>> checkNavigate(Object model,int type) {
+        List<Map<String, Object>> result = new ArrayList<>();
+        String navigateKey = String.format("%s.Navigate", model.getClass().getName());
+        if (CacheUtil.exists(navigateKey)) {
+            List<NavigateModel> list = CacheUtil.getList(navigateKey, NavigateModel.class);
+            list.forEach(a -> {
+                try {
+                    boolean check = false;
+                    if (type == AopEnum.Add_Navigate) check = a.isAdd();
+                    if (type == AopEnum.Delete_Navigate) check = a.isDelete();
+                    if (type == AopEnum.Update_Navigate) check = a.isUpdate();
+                    if (check && a.getMemberType() != Map.class && !a.isList()) {
+                        Object item = ReflectUtil.get(model,a.getMemberName());
+                        if (item != null) {
+                            Map<String, Object> dic = new HashMap<>();
+                            dic.put("model", item);
+                            dic.put("navigate", a);
+                            result.add(dic);
+                        }
+                    }
+
+                    if (check && a.getMemberType() == List.class && a.isList()) {
+                        Object item = ReflectUtil.get(model,a.getMemberName());
+                        if (item != null) {
+                            Map<String, Object> dic = new HashMap<>();
+                            dic.put("model", item);
+                            dic.put("navigate", a);
+                            result.add(dic);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+        return result;
+    }
+
+    private List<DataReturn> addNavigate(Object model,List<Map<String,Object>> list) {
+        List<DataReturn> result = new ArrayList<>();
+        list.forEach(a -> {
+            Object item = a.get("model");
+            NavigateModel navigateModel = (NavigateModel) a.get("navigate");
+            if (navigateModel.isAdd() && navigateModel.isList())
+                ((ArrayList) item).forEach(i -> {
+                    result.add(add(i,navigateModel));
+                });
+
+            if (navigateModel.isAdd() && !navigateModel.isList())
+                result.add(add(item,navigateModel));
+        });
+        return result;
+    }
+
+    private List<DataReturn> deleteNavigate(Object model,List<Map<String,Object>> list){
+        List<DataReturn> result = new ArrayList<>();
+        list.forEach(a -> {
+            Object item = a.get("model");
+            NavigateModel navigateModel = (NavigateModel) a.get("navigate");
+            if (navigateModel.isAdd() && navigateModel.isList())
+                ((ArrayList) item).forEach(i -> {
+                    result.add(delete(i,navigateModel));
+                });
+
+            if (navigateModel.isAdd() && !navigateModel.isList())
+                result.add(delete(item,navigateModel));
+        });
+        return result;
+    }
+
+    private List<DataReturn> updateNavigate(Object model,List<Map<String,Object>> list){
+        List<DataReturn> result = new ArrayList<>();
+        list.forEach(a -> {
+            Object item = a.get("model");
+            NavigateModel navigateModel = (NavigateModel) a.get("navigate");
+            if (navigateModel.isAdd() && navigateModel.isList())
+                ((ArrayList) item).forEach(i -> {
+                    result.add(update(i,navigateModel));
+                });
+
+            if (navigateModel.isAdd() && !navigateModel.isList())
+                result.add(update(item,navigateModel));
+        });
+        return result;
+    }
+
+    private DataReturn add(Object model,NavigateModel navigateModel) {
+        DataReturn result = new DataReturn();
+        MapResult insert = new MapResult();
+        try {
+            insert = BaseModel.insert(model);
+            BaseAop.aopBefore(model.getClass().getName(), insert, config, false, AopEnum.Add_Navigate, model);
+            if (!insert.isSuccess()) {
+                result.getWriteReturn().setSuccess(false);
+                result.getWriteReturn().setMessage(insert.getMessage());
+            } else if (insert.getParam().size() != 0) {
+                preparedStatement = conn.prepareStatement(insert.getSql());
+                Object[] param = insert.getParam().keySet().toArray();
+                for (int i = 0; i < param.length; i++) {
+                    preparedStatement.setObject(i + 1, insert.getParam().get(param[i]));
+                }
+
+                result.getWriteReturn().setSuccess(preparedStatement.executeUpdate()>0);
+            }
+
+            if (config.isOutSql())
+                System.out.println("\033[35;4m" + getSql(insert) + "\033[0m");
+        } catch (Exception ex) {
+            BaseAop.aopException(ex, String.format("add tableName:%s,NavigateAdd:%s,MemberName:%s", model.getClass().getName(),ex.getMessage(),navigateModel.getMemberName()), AopEnum.Add_Navigate, config, model);
+            ex.printStackTrace();
+            if (config.isOutError())
+                LogUtil.error(ex);
+            result.getWriteReturn().setSuccess(false);
+            result.getWriteReturn().setMessage(String.format("add tableName:%s,NavigateAdd:%s,MemberName:%s", model.getClass().getName(),ex.getMessage(),navigateModel.getMemberName()));
+        }
+
+        close(null, insert);
+        BaseAop.aopAfter(model.getClass().getName(), insert, config, false, AopEnum.Add_Navigate, result.getWriteReturn(), model);
+        return result;
+    }
+
+    private DataReturn delete(Object model,NavigateModel navigateModel) {
+        DataReturn result = new DataReturn();
+        MapResult delete = new MapResult();
+
+        try {
+            delete = BaseModel.delete(model,config,conn);
+            BaseAop.aopBefore(model.getClass().getName(), delete, config, false, AopEnum.Delete_Navigate, model);
+            if (!delete.isSuccess()) {
+                result.getWriteReturn().setSuccess(false);
+                result.getWriteReturn().setMessage(delete.getMessage());
+            } else if (delete.getParam().size() != 0) {
+                preparedStatement = conn.prepareStatement(delete.getSql());
+                Object[] param = delete.getParam().keySet().toArray();
+                for (int i = 0; i < param.length; i++) {
+                    preparedStatement.setObject(i + 1, delete.getParam().get(param[i]));
+                }
+
+                result.getWriteReturn().setSuccess(preparedStatement.executeUpdate()>0);
+            }
+
+            if (config.isOutSql())
+                System.out.println("\033[35;4m" + getSql(delete) + "\033[0m");
+        } catch (Exception ex) {
+            BaseAop.aopException(ex, String.format("delete tableName:%s,NavigateDelete:%s,MemberName:%s", model.getClass().getName(),ex.getMessage(),navigateModel.getMemberName()), AopEnum.Delete_Navigate, config, model);
+            ex.printStackTrace();
+            if (config.isOutError())
+                LogUtil.error(ex);
+            result.getWriteReturn().setSuccess(false);
+            result.getWriteReturn().setMessage(String.format("delete tableName:%s,NavigateDelete:%s,MemberName:%s", model.getClass().getName(),ex.getMessage(),navigateModel.getMemberName()));
+        }
+
+        close(null, delete);
+        BaseAop.aopAfter(model.getClass().getName(), delete, config, false, AopEnum.Delete_Navigate, result.getWriteReturn(), model);
+        return result;
+    }
+
+    private DataReturn update(Object model,NavigateModel navigateModel) {
+        DataReturn result = new DataReturn();
+        MapResult update = new MapResult();
+
+        try {
+            update = BaseModel.update(model,config,conn);
+            BaseAop.aopBefore(model.getClass().getName(), update, config, false, AopEnum.Update_Navigate, model);
+            if (!update.isSuccess()) {
+                result.getWriteReturn().setSuccess(false);
+                result.getWriteReturn().setMessage(update.getMessage());
+            } else if (update.getParam().size() != 0) {
+                preparedStatement = conn.prepareStatement(update.getSql());
+                Object[] param = update.getParam().keySet().toArray();
+                for (int i = 0; i < param.length; i++) {
+                    preparedStatement.setObject(i + 1, update.getParam().get(param[i]));
+                }
+
+                result.getWriteReturn().setSuccess(preparedStatement.executeUpdate()>0);
+            }
+
+            if (config.isOutSql())
+                System.out.println("\033[35;4m" + getSql(update) + "\033[0m");
+        } catch (Exception ex) {
+            BaseAop.aopException(ex, String.format("update tableName:%s,NavigateUpdate:%s,MemberName:%s", model.getClass().getName(),ex.getMessage(),navigateModel.getMemberName()), AopEnum.Update_Navigate, config, model);
+            ex.printStackTrace();
+            if (config.isOutError())
+                LogUtil.error(ex);
+            result.getWriteReturn().setSuccess(false);
+            result.getWriteReturn().setMessage(String.format("update tableName:%s,NavigateUpdate:%s,MemberName:%s", model.getClass().getName(),ex.getMessage(),navigateModel.getMemberName()));
+        }
+
+        close(null, update);
+        BaseAop.aopAfter(model.getClass().getName(), update, config, false, AopEnum.Update_Navigate, result.getWriteReturn(), model);
+        return result;
     }
 
     private <T> T setModel(Class<?> type,ResultSetMetaData col,ResultSet resultSet, List<PropertyModel> property ) throws InstantiationException, IllegalAccessException, SQLException {
