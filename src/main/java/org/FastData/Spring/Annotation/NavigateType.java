@@ -9,4 +9,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NavigateType {
     Class<?> type();
+
+    boolean isAdd() default false;
+
+    boolean isUpdate() default false;
+
+    boolean isDelete() default false;
 }
