@@ -31,4 +31,8 @@ public final class AopEnum {
     public static int Query_Navigate = 20;
 
     public static int FastProxy = 21;
+
+    public static int Add_Navigate = 22;
+    public static int Update_Navigate = 23;
+    public static int Delete_Navigate = 24;
 }
