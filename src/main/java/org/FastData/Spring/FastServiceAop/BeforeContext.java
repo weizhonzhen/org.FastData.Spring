@@ -5,6 +5,24 @@ import java.lang.reflect.Method;
 public class BeforeContext {
    private Method method;
     private Object[] args;
+    private Object Result;
+    private  boolean IsReturn;
+
+    public boolean isReturn() {
+        return IsReturn;
+    }
+
+    public void setReturn(boolean aReturn) {
+        IsReturn = aReturn;
+    }
+
+    public Object getResult() {
+        return Result;
+    }
+
+    public void setResult(Object result) {
+        Result = result;
+    }
 
     public Method getMethod() {
         return method;

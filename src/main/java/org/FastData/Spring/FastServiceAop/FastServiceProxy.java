@@ -25,7 +25,7 @@ public class FastServiceProxy {
             ExceptionContext exception = new ExceptionContext();
             exception.setException(ex);
             iFastServiceAop.exception(exception);
-            return null;
+            return exception.getResult();
         }
     }
 
@@ -38,6 +38,9 @@ public class FastServiceProxy {
                 before.setMethod(method);
                 iFastServiceAop.before(before);
 
+                if(before.isReturn())
+                    return before.getResult();
+
                 Object ret = method.invoke(object, args);
 
                 AfterContext after = new AfterContext();
@@ -46,14 +49,14 @@ public class FastServiceProxy {
                 after.setResult(ret);
                 iFastServiceAop.after(after);
 
-                return ret;
+                return after.getResult();
             } catch (Exception ex) {
                 ExceptionContext exception = new ExceptionContext();
                 exception.setException(ex);
                 exception.setArgs(args);
                 exception.setMethod(method);
                 iFastServiceAop.exception(exception);
-                return null;
+                return exception.getResult();
             }
         }
     }

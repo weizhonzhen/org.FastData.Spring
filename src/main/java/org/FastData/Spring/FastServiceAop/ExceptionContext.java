@@ -6,6 +6,15 @@ public class ExceptionContext {
     private Exception exception;
     private Method method;
     private Object[] args;
+    private Object Result;
+
+    public Object getResult() {
+        return Result;
+    }
+
+    public void setResult(Object result) {
+        Result = result;
+    }
 
     public Exception getException() {
         return exception;
