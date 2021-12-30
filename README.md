@@ -47,18 +47,19 @@ public class FastDataAop implements IFastDataAop {
 //service aop
 public class FastServiceAop implements IFastServiceAop {
     @Override
-    public void before(BeforeContext beforeContext) {
-
+    public void before(BeforeContext beforeContext) {     
+        beforeContext.setReturn(true);
+        beforeContext.setResult("test");
     }
 
     @Override
     public void after(AfterContext afterContext) {
-
+        afterContext.setResult("test");
     }
 
     @Override
     public void exception(ExceptionContext exceptionContext) {
-
+        afterContext.setResult("test");
     }
 }
 
