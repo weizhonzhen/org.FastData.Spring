@@ -66,7 +66,12 @@ public class FastServiceAop implements IFastServiceAop {
 //service aop
 public interface IUserService {}
 public class UserService implements IUserService{}
+
 IUserService userService = (IUserService)new FastServiceProxy().invoke(UserService.class);
+or
+@Resource
+IUserService userService;  
+FastServiceProxy.init("packageName"); //in Application  
 
 ```
 Annotation
