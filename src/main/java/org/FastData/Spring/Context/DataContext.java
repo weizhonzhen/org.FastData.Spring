@@ -342,7 +342,6 @@ public class DataContext implements Closeable {
                     }
                 }
                 if (insert.getParam().size() != 0) {
-                    close(null, insert);
                     preparedStatement = conn.prepareStatement(insert.getSql());
                     Object[] param = insert.getParam().keySet().toArray();
                     for (int i = 0; i < param.length; i++) {
