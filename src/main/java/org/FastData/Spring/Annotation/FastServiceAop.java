@@ -8,4 +8,5 @@ import java.lang.annotation.*;
 @Documented
 public @interface FastServiceAop {
     Class<?> aopType() default IFastServiceAop.class;
+    String packageName() default "";
 }
