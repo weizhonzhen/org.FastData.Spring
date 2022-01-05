@@ -298,12 +298,12 @@ public final class MapXml {
                     for (int child = 0; child < node.getChildNodes().getLength(); child++) {
                         Node childNode = node.getChildNodes().item(child);
 
-                        if (childNode instanceof DeferredTextImpl) {
+                        if (childNode instanceof org.apache.xerces.dom.DeferredTextImpl) {
                             result.getKey().add(String.format("%s.%s", key, i));
-                            result.getSql().add(((DeferredTextImpl) childNode).getNodeValue());
+                            result.getSql().add(((org.apache.xerces.dom.DeferredTextImpl) childNode).getNodeValue());
                         }
 
-                        if (childNode instanceof DeferredElementImpl) {
+                        if (childNode instanceof org.apache.xerces.dom.DeferredElementImpl) {
                             NodeList tempNode = childNode.getChildNodes();
 
                             if (childNode.getAttributes().getNamedItem("prepend") != null) {
@@ -327,7 +327,7 @@ public final class MapXml {
                             for (int condtion = 0; condtion < tempNode.getLength(); condtion++) {
                                 Node condtionNode = tempNode.item(condtion);
 
-                                if (condtionNode instanceof DeferredTextImpl)
+                                if (condtionNode instanceof org.apache.xerces.dom.DeferredTextImpl)
                                     continue;
 
                                 NamedNodeMap attribute = condtionNode.getAttributes();
