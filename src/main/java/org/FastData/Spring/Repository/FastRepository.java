@@ -1,25 +1,22 @@
 package org.FastData.Spring.Repository;
 
 import org.FastData.Spring.Annotation.*;
-import org.FastData.Spring.FastDataAop.*;
 import org.FastData.Spring.Base.DataConfig;
 import org.FastData.Spring.Base.MapXml;
 import org.FastData.Spring.CacheModel.*;
 import org.FastData.Spring.Check.BaseTable;
 import org.FastData.Spring.Config.Config;
 import org.FastData.Spring.Context.DataContext;
-import org.FastData.Spring.FastServiceAop.FastServiceProxy;
+import org.FastData.Spring.FastDataAop.AopEnum;
+import org.FastData.Spring.FastDataAop.BaseAop;
+import org.FastData.Spring.FastDataAop.IFastDataAop;
 import org.FastData.Spring.FastServiceAop.IFastServiceAop;
 import org.FastData.Spring.Model.*;
+import org.FastData.Spring.Util.CacheUtil;
 import org.FastData.Spring.Util.FastUtil;
 import org.FastData.Spring.Util.ReflectUtil;
 import org.FastData.Spring.Util.ScanPackage;
-import org.FastData.Spring.Util.CacheUtil;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Component;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 import java.lang.reflect.*;
 import java.math.BigInteger;
@@ -36,11 +33,8 @@ public class FastRepository implements IFastRepository {
                 FastData fastData = Thread.currentThread().getContextClassLoader().loadClass(item.getClassName()).getAnnotation(FastData.class);
                 FastServiceAop fastServiceAop = Thread.currentThread().getContextClassLoader().loadClass(item.getClassName()).getAnnotation(FastServiceAop.class);
 
-                if (fastServiceAop != null && Arrays.stream(fastServiceAop.aopType().getInterfaces()).anyMatch(a -> a == IFastServiceAop.class)) {
+                if (fastServiceAop != null && Arrays.stream(fastServiceAop.aopType().getInterfaces()).anyMatch(a -> a == IFastServiceAop.class))
                     CacheUtil.setModel("FastServiceAop", fastServiceAop.aopType().newInstance());
-                    if (!FastUtil.isNullOrEmpty(fastServiceAop.packageName()))
-                        FastServiceProxy.init(fastServiceAop.packageName());
-                }
 
                 if (fastData != null) {
                     if (fastData.aopType().isInterface() || Arrays.stream(fastData.aopType().getInterfaces()).noneMatch(a -> a == IFastDataAop.class))
