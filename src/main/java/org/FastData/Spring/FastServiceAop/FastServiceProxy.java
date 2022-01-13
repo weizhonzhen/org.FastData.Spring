@@ -5,11 +5,13 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 
 public class FastServiceProxy {
     private ConfigurableListableBeanFactory beanFactory = CacheUtil.getModel("beanFactory", ConfigurableListableBeanFactory.class);
     private IFastServiceAop iFastServiceAop = CacheUtil.getModel("FastServiceAop", IFastServiceAop.class);
     private Object object;
+    private Class<?> aClass;
 
     public Object invoke(Class<?> object) {
         try {
@@ -19,6 +21,7 @@ public class FastServiceProxy {
             else
                 this.object = object.newInstance();
 
+            this.aClass = object;
             Class<?> interfaces = object.getInterfaces()[0];
             return Proxy.newProxyInstance(this.object.getClass().getClassLoader(), new Class[]{interfaces}, new AopHandle());
         } catch (Exception ex) {
@@ -31,11 +34,13 @@ public class FastServiceProxy {
 
     class AopHandle implements InvocationHandler {
         @Override
-        public Object invoke(Object proxy, Method method, Object[] args) {
+        public Object invoke(Object proxy, Method method, Object[] args) throws NoSuchMethodException {
+            Method temp = aClass.getMethod(method.getName(),method.getParameterTypes());
             try {
                 BeforeContext before = new BeforeContext();
                 before.setArgs(args);
-                before.setMethod(method);
+                before.setAnnotations(temp.getAnnotations());
+                before.setMethod(temp);
                 iFastServiceAop.before(before);
 
                 if(before.isReturn())
@@ -44,8 +49,9 @@ public class FastServiceProxy {
                 Object ret = method.invoke(object, args);
 
                 AfterContext after = new AfterContext();
+                after.setAnnotations(temp.getAnnotations());
                 after.setArgs(args);
-                after.setMethod(method);
+                after.setMethod(temp);
                 after.setResult(ret);
                 iFastServiceAop.after(after);
 
@@ -54,7 +60,8 @@ public class FastServiceProxy {
                 ExceptionContext exception = new ExceptionContext();
                 exception.setException(ex);
                 exception.setArgs(args);
-                exception.setMethod(method);
+                exception.setAnnotations(temp.getAnnotations());
+                exception.setMethod(temp);
                 iFastServiceAop.exception(exception);
                 return exception.getResult();
             }

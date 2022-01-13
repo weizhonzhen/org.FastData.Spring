@@ -1,11 +1,21 @@
 package org.FastData.Spring.FastServiceAop;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 public class AfterContext {
     private Method method;
     private Object[] args;
     private Object result;
+    private Annotation[] annotations;
+
+    public Annotation[] getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(Annotation[] annotations) {
+        this.annotations = annotations;
+    }
 
     public Method getMethod() {
         return method;
