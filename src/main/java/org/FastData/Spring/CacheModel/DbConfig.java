@@ -24,6 +24,8 @@ public class DbConfig implements Serializable {
 
     private int poolSize = 50;
 
+    private int timeOut = 3;
+
     public String getProviderName() {
         return providerName;
     }
@@ -102,5 +104,12 @@ public class DbConfig implements Serializable {
 
     public void setPoolSize(int poolSize) {
         this.poolSize = poolSize;
+    }
+
+    public int getTimeout() {
+        return timeOut;
+    }
+
+    public void setTimeout(int timeOut) { this.timeOut = timeOut;
     }
 }

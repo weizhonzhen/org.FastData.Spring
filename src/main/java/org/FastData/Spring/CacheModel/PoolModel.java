@@ -2,12 +2,22 @@ package org.FastData.Spring.CacheModel;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.time.LocalDateTime;
 
 public class PoolModel implements Serializable {
     private String key;
     private Connection conn;
     private boolean isUse;
     private String id;
+    private LocalDateTime date;
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
 
     public String getKey() {
         return key;
