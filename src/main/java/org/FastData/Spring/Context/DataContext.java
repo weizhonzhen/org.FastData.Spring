@@ -1,20 +1,23 @@
 package org.FastData.Spring.Context;
 
-import org.FastData.Spring.FastDataAop.*;
 import org.FastData.Spring.Base.BaseModel;
 import org.FastData.Spring.Base.DataConfig;
 import org.FastData.Spring.CacheModel.DbConfig;
 import org.FastData.Spring.CacheModel.NavigateModel;
 import org.FastData.Spring.CacheModel.PoolModel;
 import org.FastData.Spring.CacheModel.PropertyModel;
-import org.FastData.Spring.Model.*;
 import org.FastData.Spring.Config.DataDbType;
+import org.FastData.Spring.FastDataAop.AopEnum;
+import org.FastData.Spring.FastDataAop.BaseAop;
+import org.FastData.Spring.FastDataAop.IFastDataAop;
+import org.FastData.Spring.Model.*;
 import org.FastData.Spring.Util.CacheUtil;
 import org.FastData.Spring.Util.FastUtil;
 import org.FastData.Spring.Util.LogUtil;
 import org.FastData.Spring.Util.ReflectUtil;
 import java.io.Closeable;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class DataContext implements Closeable {
@@ -1228,35 +1231,37 @@ public class DataContext implements Closeable {
 }
 
 class PoolUtil {
-    public static synchronized PoolModel getConnection(DbConfig dbconfig, String cacheKey) {
+    public static synchronized PoolModel getConnection(DbConfig config, String cacheKey) {
         PoolModel model = new PoolModel();
         try {
-            dbconfig = DataConfig.db(dbconfig.getKey());
-            Class.forName(dbconfig.getProviderName());
+            config = DataConfig.db(config.getKey());
+            Class.forName(config.getProviderName());
             List<PoolModel> pool = CacheUtil.getList(cacheKey, PoolModel.class);
-            pool = pool == null ? new ArrayList<PoolModel>() : pool;
+            pool = pool == null ? new ArrayList<>() : pool;
 
             if (pool.stream().filter(a -> !a.isUse()).count() < 1) {
-                Connection conn = DriverManager.getConnection(dbconfig.getConnStr(), dbconfig.getUser(), dbconfig.getPassWord());
+                Connection conn = DriverManager.getConnection(config.getConnStr(), config.getUser(), config.getPassWord());
                 model.setUse(true);
                 model.setConn(conn);
                 model.setId(UUID.randomUUID().toString());
-                model.setKey(dbconfig.getKey());
+                model.setKey(config.getKey());
+                model.setDate(LocalDateTime.now());
                 pool.add(model);
-
             } else if (pool.stream().anyMatch(a -> !a.isUse())) {
                 model = pool.stream().filter(a -> !a.isUse()).findFirst().get();
                 model.setUse(true);
+                model.setDate(LocalDateTime.now());
             }
+
             CacheUtil.setModel(cacheKey, pool);
         } catch (Exception ex) {
-            IFastDataAop aop =  CacheUtil.getModel("FastAop", IFastDataAop.class);
+            IFastDataAop aop = CacheUtil.getModel("FastAop", IFastDataAop.class);
             if (aop != null)
-                BaseAop.aopException(ex,"DataContext open key :" + dbconfig.getKey(),AopEnum.Pool_Get,dbconfig,null);
+                BaseAop.aopException(ex, "DataContext open key :" + config.getKey(), AopEnum.Pool_Get, config, null);
 
-            if (dbconfig.isOutError())
+            if (config.isOutError())
                 ex.printStackTrace();
-            if (dbconfig.isOutError())
+            if (config.isOutError())
                 LogUtil.error(ex);
         }
         return model;
@@ -1272,18 +1277,27 @@ class PoolUtil {
                     pool.remove(model);
                     if (pool.size() > config.getPoolSize())
                         model.getConn().close();
+                    else if (model.getDate().compareTo(LocalDateTime.now().plusSeconds(config.getTimeout())) > 0)
+                        model.getConn().close();
                     else {
                         model.setUse(false);
                         pool.add(model);
                     }
-                    CacheUtil.setModel(cacheKey, pool);
                 } else
                     conn.close();
+
+                for (PoolModel model : pool) {
+                    if (model.getDate().compareTo(LocalDateTime.now().plusSeconds(config.getTimeout())) > 0 && !model.isUse()) {
+                        model.getConn().close();
+                        pool.remove(model);
+                    }
+                }
+                CacheUtil.setModel(cacheKey, pool);
             }
         } catch (Exception ex) {
-            IFastDataAop aop =  CacheUtil.getModel("FastAop", IFastDataAop.class);
+            IFastDataAop aop = CacheUtil.getModel("FastAop", IFastDataAop.class);
             if (aop != null)
-                BaseAop.aopException(ex,"DataContext close key :" + config.getKey(),AopEnum.Pool_Close,config,null);
+                BaseAop.aopException(ex, "DataContext close key :" + config.getKey(), AopEnum.Pool_Close, config, null);
 
             if (config.isOutError())
                 ex.printStackTrace();
