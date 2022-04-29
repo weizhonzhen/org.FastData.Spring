@@ -8,6 +8,7 @@ public class ExceptionContext {
     private Method method;
     private Object[] args;
     private Object Result;
+    private  boolean IsReturn;
     private Annotation[] annotations;
 
     public Annotation[] getAnnotations() {
@@ -40,6 +41,14 @@ public class ExceptionContext {
 
     public void setMethod(Method method) {
         this.method = method;
+    }
+
+    public boolean isReturn() {
+        return IsReturn;
+    }
+
+    public void setReturn(boolean aReturn) {
+        IsReturn = aReturn;
     }
 
     public Object[] getArgs() {

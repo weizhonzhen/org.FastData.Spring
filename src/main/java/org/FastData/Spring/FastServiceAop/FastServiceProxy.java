@@ -63,7 +63,11 @@ public class FastServiceProxy {
                 exception.setAnnotations(temp.getAnnotations());
                 exception.setMethod(temp);
                 iFastServiceAop.exception(exception);
-                return exception.getResult();
+
+                if(exception.isReturn())
+                    return exception.getResult();
+                else
+                 return null;
             }
         }
     }
