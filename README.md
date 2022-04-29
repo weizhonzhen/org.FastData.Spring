@@ -275,12 +275,13 @@ in Controller
    var data2 = ifast.query("table.info", query, TestTable.class, db);
 
    var pmodel = new PageModel();
-   var pageList1 = ifast.page(pmodel, "TestTable.info", query, db);
-   var pageList2 = ifast.page(pmodel, "TestTable.info", query, TestTable.class, db);
+   var pageList1 = ifast.pageMap(pmodel, "TestTable.info", query, db);
+   var pageList2 = ifast.pageMap(pmodel, "TestTable.info", query, TestTable.class, db);
 
-   var model = new TestTable();
-   model.setId("1");
-   var exists = ifast.exists(model, db);
+  var count = (new FastQuery<BASE_USER>(BASE_USER.class)).eq(BASE_USER::getKID,1224).orderBy(BASE_USER::getKID,true).toCount("db");
+  var item = (new FastQuery<BASE_USER>(BASE_USER.class)).eq(BASE_USER::getKID,1224).orderBy(BASE_USER::getKID,true).toItem("db");
+  var list = (new FastQuery<BASE_USER>(BASE_USER.class)).eq(BASE_USER::getKID,1224).orderBy(BASE_USER::getKID,true).toList("db");
+  var page = (new FastQuery<BASE_USER>(BASE_USER.class)).eq(BASE_USER::getKID,1224).orderBy(BASE_USER::getKID,true).toPage(pmodel,"db");   
 
    var field = new ArrayList<String>();
    field.add("Value");
