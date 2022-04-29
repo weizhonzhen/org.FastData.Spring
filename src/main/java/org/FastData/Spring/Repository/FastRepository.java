@@ -50,7 +50,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public List<?> query(String name, Map<String, Object> param, Class<?> type, String key) {
+    public List<?> queryMap(String name, Map<String, Object> param, Class<?> type, String key) {
         List<?> data = new ArrayList<>();
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
@@ -68,25 +68,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public List<?> query(String name, Map<String, Object> param, Class<?> type, String key, Boolean log) {
-        List<?> data = new ArrayList<>();
-        if (CacheUtil.exists(name.toLowerCase())) {
-            MapResult result = MapXml.getMapSql(name, param);
-            try (DataContext db = new DataContext(key)) {
-                db.config.setOutSql(db.config.isOutSql() || mapLog(name) || log);
-                BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_List_Model);
-                data = db.query(result, type, false).getList();
-                BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_List_Model, data);
-                return data;
-            }
-        }
-        BaseAop.aopMapBefore(name, null, DataConfig.db(key), AopEnum.Map_List_Model);
-        BaseAop.aopMapAfter(name, null, DataConfig.db(key), AopEnum.Map_List_Model, data);
-        return data;
-    }
-
-    @Override
-    public List<?> query(String name, Map<String, Object> param, Class<?> type, DataContext db) {
+    public List<?> queryMap(String name, Map<String, Object> param, Class<?> type, DataContext db) {
         List<?> data = new ArrayList<>();
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
@@ -102,23 +84,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public List<?> query(String name, Map<String, Object> param, Class<?> type, DataContext db, Boolean log) {
-        List<?> data = new ArrayList<>();
-        if (CacheUtil.exists(name.toLowerCase())) {
-            MapResult result = MapXml.getMapSql(name, param);
-            db.config.setOutSql(db.config.isOutSql() || mapLog(name) || log);
-            BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_List_Model);
-            data = db.query(result, type, false).getList();
-            BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_List_Model, data);
-            return data;
-        }
-        BaseAop.aopMapBefore(name, null, db.config, AopEnum.Map_List_Model);
-        BaseAop.aopMapAfter(name, null, db.config, AopEnum.Map_List_Model, data);
-        return data;
-    }
-
-    @Override
-    public List<?> query(String name, Map<String, Object> param, Class<?> type) {
+    public List<?> queryMap(String name, Map<String, Object> param, Class<?> type) {
         List<?> data = new ArrayList<>();
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             MapResult result = MapXml.getMapSql(name, param);
@@ -136,25 +102,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public List<?> query(String name, Map<String, Object> param, Class<?> type, Boolean log) {
-        List<?> data = new ArrayList<>();
-        if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
-            MapResult result = MapXml.getMapSql(name, param);
-            try (DataContext db = new DataContext(mapDb(name))) {
-                db.config.setOutSql(db.config.isOutSql() || mapLog(name) || log);
-                BaseAop.aopMapBefore(name, result, DataConfig.db(mapDb(name)), AopEnum.Map_List_Model);
-                data = db.query(result, type, false).getList();
-                BaseAop.aopMapAfter(name, result, DataConfig.db(mapDb(name)), AopEnum.Map_List_Model, data);
-                return data;
-            }
-        }
-        BaseAop.aopMapBefore(name, null, DataConfig.db(mapDb(name)), AopEnum.Map_List_Model);
-        BaseAop.aopMapAfter(name, null, DataConfig.db(mapDb(name)), AopEnum.Map_List_Model, data);
-        return data;
-    }
-
-    @Override
-    public List<FastMap<String, Object>> query(String name, Map<String, Object> param, String key) {
+    public List<FastMap<String, Object>> queryMap(String name, Map<String, Object> param, String key) {
         List<FastMap<String, Object>> data = new ArrayList<FastMap<String, Object>>();
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
@@ -172,25 +120,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public List<FastMap<String, Object>> query(String name, Map<String, Object> param, String key, Boolean log) {
-        List<FastMap<String, Object>> data = new ArrayList<FastMap<String, Object>>();
-        if (CacheUtil.exists(name.toLowerCase())) {
-            MapResult result = MapXml.getMapSql(name, param);
-            try (DataContext db = new DataContext(key)) {
-                db.config.setOutSql(db.config.isOutSql() || mapLog(name) || log);
-                BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_List_Dic);
-                data = db.query(result, false).getList();
-                BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_List_Dic, data);
-                return data;
-            }
-        }
-        BaseAop.aopMapBefore(name, null, DataConfig.db(key), AopEnum.Map_List_Dic);
-        BaseAop.aopMapAfter(name, null, DataConfig.db(key), AopEnum.Map_List_Dic, data);
-        return data;
-    }
-
-    @Override
-    public List<FastMap<String, Object>> query(String name, Map<String, Object> param, DataContext db) {
+    public List<FastMap<String, Object>> queryMap(String name, Map<String, Object> param, DataContext db) {
         List<FastMap<String, Object>> data = new ArrayList<FastMap<String, Object>>();
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
@@ -206,23 +136,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public List<FastMap<String, Object>> query(String name, Map<String, Object> param, DataContext db, Boolean log) {
-        List<FastMap<String, Object>> data = new ArrayList<FastMap<String, Object>>();
-        if (CacheUtil.exists(name.toLowerCase())) {
-            MapResult result = MapXml.getMapSql(name, param);
-            db.config.setOutSql(db.config.isOutSql() || mapLog(name) || log);
-            BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_List_Dic);
-            data = db.query(result, false).getList();
-            BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_List_Dic, data);
-            return data;
-        }
-        BaseAop.aopMapBefore(name, null, db.config, AopEnum.Map_List_Dic);
-        BaseAop.aopMapAfter(name, null, db.config, AopEnum.Map_List_Dic, data);
-        return data;
-    }
-
-    @Override
-    public List<FastMap<String, Object>> query(String name, Map<String, Object> param) {
+    public List<FastMap<String, Object>> queryMap(String name, Map<String, Object> param) {
         List<FastMap<String, Object>> data = new ArrayList<FastMap<String, Object>>();
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             MapResult result = MapXml.getMapSql(name, param);
@@ -239,25 +153,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public List<FastMap<String, Object>> query(String name, Map<String, Object> param, Boolean log) {
-        List<FastMap<String, Object>> data = new ArrayList<FastMap<String, Object>>();
-        if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
-            MapResult result = MapXml.getMapSql(name, param);
-            try (DataContext db = new DataContext(mapDb(name))) {
-                db.config.setOutSql(db.config.isOutSql() || mapLog(name) || log);
-                BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_List_Dic);
-                data = db.query(result, false).getList();
-                BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_List_Dic, data);
-                return data;
-            }
-        }
-        BaseAop.aopMapBefore(name, null, DataConfig.db(mapDb(name)), AopEnum.Map_List_Dic);
-        BaseAop.aopMapAfter(name, null, DataConfig.db(mapDb(name)), AopEnum.Map_List_Dic, data);
-        return data;
-    }
-
-    @Override
-    public PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type, String key) {
+    public PageResultImpl<?> pageMap(PageModel pModel, String name, Map<String, Object> param, Class<?> type, String key) {
         PageResultImpl<?> data = new PageResultImpl<>();
         if (CacheUtil.exists(name.toLowerCase())) {
             try (DataContext db = new DataContext(key)) {
@@ -275,25 +171,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type, String key, Boolean log) {
-        PageResultImpl<?> data = new PageResultImpl<>();
-        if (CacheUtil.exists(name.toLowerCase())) {
-            try (DataContext db = new DataContext(key)) {
-                MapResult result = MapXml.getMapSql(name, param);
-                db.config.setOutSql(db.config.isOutSql() || mapLog(name) || log);
-                BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_Page_Model);
-                data = db.page(pModel, result, type, false);
-                BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_Page_Model, data);
-                return data;
-            }
-        }
-        BaseAop.aopMapBefore(name, null, DataConfig.db(key), AopEnum.Map_Page_Model);
-        BaseAop.aopMapAfter(name, null, DataConfig.db(key), AopEnum.Map_Page_Model, data);
-        return data;
-    }
-
-    @Override
-    public PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type, DataContext db) {
+    public PageResultImpl<?> pageMap(PageModel pModel, String name, Map<String, Object> param, Class<?> type, DataContext db) {
         PageResultImpl<?> data = new PageResultImpl<>();
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
@@ -309,23 +187,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type, DataContext db, Boolean log) {
-        PageResultImpl<?> data = new PageResultImpl<>();
-        if (CacheUtil.exists(name.toLowerCase())) {
-            MapResult result = MapXml.getMapSql(name, param);
-            db.config.setOutSql(db.config.isOutSql() || mapLog(name) || log);
-            BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_Page_Model);
-            data = db.page(pModel, result, type, false);
-            BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_Page_Model, data);
-            return data;
-        }
-        BaseAop.aopMapBefore(name, null, db.config, AopEnum.Map_Page_Model);
-        BaseAop.aopMapAfter(name, null, db.config, AopEnum.Map_Page_Model, data);
-        return data;
-    }
-
-    @Override
-    public PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type) {
+    public PageResultImpl<?> pageMap(PageModel pModel, String name, Map<String, Object> param, Class<?> type) {
         PageResultImpl<?> data = new PageResultImpl<>();
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             try (DataContext db = new DataContext(mapDb(name))) {
@@ -343,25 +205,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public PageResultImpl<?> page(PageModel pModel, String name, Map<String, Object> param, Class<?> type, Boolean log) {
-        PageResultImpl<?> data = new PageResultImpl<>();
-        if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
-            try (DataContext db = new DataContext(mapDb(name))) {
-                MapResult result = MapXml.getMapSql(name, param);
-                db.config.setOutSql(db.config.isOutSql() || mapLog(name) || log);
-                BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_Page_Model);
-                data = db.page(pModel, result, type, false);
-                BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_Page_Model, data);
-                return data;
-            }
-        }
-        BaseAop.aopMapBefore(name, null, DataConfig.db(mapDb(name)), AopEnum.Map_Page_Model);
-        BaseAop.aopMapAfter(name, null, DataConfig.db(mapDb(name)), AopEnum.Map_Page_Model, data);
-        return data;
-    }
-
-    @Override
-    public PageResult page(PageModel pModel, String name, Map<String, Object> param, String key) {
+    public PageResult pageMap(PageModel pModel, String name, Map<String, Object> param, String key) {
         PageResult data = new PageResult();
         if (CacheUtil.exists(name.toLowerCase())) {
             try (DataContext db = new DataContext(key)) {
@@ -379,25 +223,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public PageResult page(PageModel pModel, String name, Map<String, Object> param, String key, Boolean log) {
-        PageResult data = new PageResult();
-        if (CacheUtil.exists(name.toLowerCase())) {
-            try (DataContext db = new DataContext(key)) {
-                MapResult result = MapXml.getMapSql(name, param);
-                db.config.setOutSql(db.config.isOutSql() || mapLog(name) || log);
-                BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_List_Dic);
-                data = db.page(pModel, result, false);
-                BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_List_Dic, data);
-                return data;
-            }
-        }
-        BaseAop.aopMapBefore(name, null, DataConfig.db(key), AopEnum.Map_List_Dic);
-        BaseAop.aopMapAfter(name, null, DataConfig.db(key), AopEnum.Map_List_Dic, data);
-        return data;
-    }
-
-    @Override
-    public PageResult page(PageModel pModel, String name, Map<String, Object> param, DataContext db) {
+    public PageResult pageMap(PageModel pModel, String name, Map<String, Object> param, DataContext db) {
         PageResult data = new PageResult();
         if (CacheUtil.exists(name.toLowerCase())) {
             MapResult result = MapXml.getMapSql(name, param);
@@ -413,46 +239,12 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public PageResult page(PageModel pModel, String name, Map<String, Object> param, DataContext db, Boolean log) {
-        PageResult data = new PageResult();
-        if (CacheUtil.exists(name.toLowerCase())) {
-            MapResult result = MapXml.getMapSql(name, param);
-            db.config.setOutSql(db.config.isOutSql() || mapLog(name) || log);
-            BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_List_Dic);
-            data = db.page(pModel, result, false);
-            BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_List_Dic, data);
-            return data;
-        }
-        BaseAop.aopMapBefore(name, null, db.config, AopEnum.Map_List_Dic);
-        BaseAop.aopMapAfter(name, null, db.config, AopEnum.Map_List_Dic, data);
-        return data;
-    }
-
-    @Override
-    public PageResult page(PageModel pModel, String name, Map<String, Object> param) {
+    public PageResult pageMap(PageModel pModel, String name, Map<String, Object> param) {
         PageResult data = new PageResult();
         if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
             try (DataContext db = new DataContext(mapDb(name))) {
                 MapResult result = MapXml.getMapSql(name, param);
                 db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_List_Dic);
-                data = db.page(pModel, result, false);
-                BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_List_Dic, data);
-                return data;
-            }
-        }
-        BaseAop.aopMapBefore(name, null, DataConfig.db(mapDb(name)), AopEnum.Map_List_Dic);
-        BaseAop.aopMapAfter(name, null, DataConfig.db(mapDb(name)), AopEnum.Map_List_Dic, data);
-        return data;
-    }
-
-    @Override
-    public PageResult page(PageModel pModel, String name, Map<String, Object> param, Boolean log) {
-        PageResult data = new PageResult();
-        if (CacheUtil.exists(name.toLowerCase()) && mapDb(name) != null) {
-            try (DataContext db = new DataContext(mapDb(name))) {
-                MapResult result = MapXml.getMapSql(name, param);
-                db.config.setOutSql(db.config.isOutSql() || mapLog(name) || log);
                 BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_List_Dic);
                 data = db.page(pModel, result, false);
                 BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_List_Dic, data);
@@ -472,21 +264,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public WriteReturn add(Object model, String key, Boolean log) {
-        try (DataContext db = new DataContext(key)) {
-            db.config.setOutSql(db.config.isOutSql() || log);
-            return db.add(model).getWriteReturn();
-        }
-    }
-
-    @Override
     public WriteReturn add(Object model, DataContext db) {
-        return db.add(model).getWriteReturn();
-    }
-
-    @Override
-    public WriteReturn add(Object model, DataContext db, Boolean log) {
-        db.config.setOutSql(db.config.isOutSql() || log);
         return db.add(model).getWriteReturn();
     }
 
@@ -498,21 +276,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public WriteReturn updateKey(Object model, List<String> field, String key, Boolean log) {
-        try (DataContext db = new DataContext(key)) {
-            db.config.setOutSql(db.config.isOutSql() || log);
-            return db.update(model, field).getWriteReturn();
-        }
-    }
-
-    @Override
     public WriteReturn updateKey(Object model, List<String> field, DataContext db) {
-        return db.update(model, field).getWriteReturn();
-    }
-
-    @Override
-    public WriteReturn updateKey(Object model, List<String> field, DataContext db, Boolean log) {
-        db.config.setOutSql(db.config.isOutSql() || log);
         return db.update(model, field).getWriteReturn();
     }
 
@@ -524,21 +288,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public WriteReturn updateKey(Object model, String key, Boolean log) {
-        try (DataContext db = new DataContext(key)) {
-            db.config.setOutSql(db.config.isOutSql() || log);
-            return db.update(model).getWriteReturn();
-        }
-    }
-
-    @Override
     public WriteReturn updateKey(Object model, DataContext db) {
-        return db.update(model).getWriteReturn();
-    }
-
-    @Override
-    public WriteReturn updateKey(Object model, DataContext db, Boolean log) {
-        db.config.setOutSql(db.config.isOutSql() || log);
         return db.update(model).getWriteReturn();
     }
 
@@ -550,21 +300,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public WriteReturn deleteKey(Object model, String key, Boolean log) {
-        try (DataContext db = new DataContext(key)) {
-            db.config.setOutSql(db.config.isOutSql() || log);
-            return db.delete(model).getWriteReturn();
-        }
-    }
-
-    @Override
     public WriteReturn deleteKey(Object model, DataContext db) {
-        return db.delete(model).getWriteReturn();
-    }
-
-    @Override
-    public WriteReturn deleteKey(Object model, DataContext db, Boolean log) {
-        db.config.setOutSql(db.config.isOutSql() || log);
         return db.delete(model).getWriteReturn();
     }
 
@@ -576,21 +312,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public boolean existsKey(Object model, String key, Boolean log) {
-        try (DataContext db = new DataContext(key)) {
-            db.config.setOutSql(db.config.isOutSql() || log);
-            return db.exists(model).getCount() > 0;
-        }
-    }
-
-    @Override
     public boolean existsKey(Object model, DataContext db) {
-        return db.exists(model).getCount() > 0;
-    }
-
-    @Override
-    public boolean existsKey(Object model, DataContext db, Boolean log) {
-        db.config.setOutSql(db.config.isOutSql() || log);
         return db.exists(model).getCount() > 0;
     }
 
@@ -602,21 +324,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public Object queryKey(Object model, Class<?> type, String key, Boolean log) {
-        try (DataContext db = new DataContext(key)) {
-            db.config.setOutSql(db.config.isOutSql() || log);
-            return db.query(model, type).getItem();
-        }
-    }
-
-    @Override
     public Object queryKey(Object model, Class<?> type, DataContext db) {
-        return db.query(model, type).getItem();
-    }
-
-    @Override
-    public Object queryKey(Object model, Class<?> type, DataContext db, Boolean log) {
-        db.config.setOutSql(db.config.isOutSql() || log);
         return db.query(model, type).getItem();
     }
 
@@ -628,21 +336,7 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public FastMap<String, Object> queryKey(Object model, String key, Boolean log) {
-        try (DataContext db = new DataContext(key)) {
-            db.config.setOutSql(db.config.isOutSql() || log);
-            return db.query(model).getItem();
-        }
-    }
-
-    @Override
     public FastMap<String, Object> queryKey(Object model, DataContext db) {
-        return db.query(model).getItem();
-    }
-
-    @Override
-    public FastMap<String, Object> queryKey(Object model, DataContext db, Boolean log) {
-        db.config.setOutSql(db.config.isOutSql() || log);
         return db.query(model).getItem();
     }
 
@@ -671,30 +365,6 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public WriteReturn write(String name, Map<String, Object> param, String key, Boolean log) {
-        WriteReturn data = null;
-        if (CacheUtil.exists(name.toLowerCase())) {
-            MapResult result = MapXml.getMapSql(name, param);
-            data = checkParam(result, name);
-            BaseAop.aopMapBefore(name, result, DataConfig.db(key), AopEnum.Map_Write);
-            if (!data.getSuccess()) {
-                BaseAop.aopMapAfter(name, result, DataConfig.db(key), AopEnum.Map_Write, data);
-                return data;
-            }
-            try (DataContext db = new DataContext(key)) {
-                db.config.setOutSql(db.config.isOutSql() || mapLog(name) || log);
-                data = db.execute(result, false).getWriteReturn();
-                BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_Write, data);
-                return data;
-            }
-        }
-        BaseAop.aopMapBefore(name, null, DataConfig.db(key), AopEnum.Map_Write);
-        data = checkName(name);
-        BaseAop.aopMapAfter(name, null, DataConfig.db(key), AopEnum.Map_Write, data);
-        return data;
-    }
-
-    @Override
     public WriteReturn write(String name, Map<String, Object> param, DataContext db) {
         WriteReturn data = null;
         if (CacheUtil.exists(name.toLowerCase())) {
@@ -706,28 +376,6 @@ public class FastRepository implements IFastRepository {
                 return data;
             }
             db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-            data = db.execute(result, false).getWriteReturn();
-            BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_Write, data);
-            return data;
-        }
-        BaseAop.aopMapBefore(name, null, db.config, AopEnum.Map_Write);
-        data = checkName(name);
-        BaseAop.aopMapAfter(name, null, db.config, AopEnum.Map_Write, data);
-        return data;
-    }
-
-    @Override
-    public WriteReturn write(String name, Map<String, Object> param, DataContext db, Boolean log) {
-        WriteReturn data = null;
-        if (CacheUtil.exists(name.toLowerCase())) {
-            MapResult result = MapXml.getMapSql(name, param);
-            data = checkParam(result, name);
-            BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_Write);
-            if (!data.getSuccess()) {
-                BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_Write, data);
-                return data;
-            }
-            db.config.setOutSql(db.config.isOutSql() || mapLog(name) || log);
             data = db.execute(result, false).getWriteReturn();
             BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_Write, data);
             return data;
@@ -763,46 +411,8 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public WriteReturn write(String name, Map<String, Object> param, Boolean log) {
-        WriteReturn data = null;
-        if (CacheUtil.exists(name.toLowerCase())) {
-            MapResult result = MapXml.getMapSql(name, param);
-            data = checkParam(result, name);
-            BaseAop.aopMapBefore(name, result, DataConfig.db(mapDb(name)), AopEnum.Map_Write);
-            if (!data.getSuccess()) {
-                BaseAop.aopMapAfter(name, result, DataConfig.db(mapDb(name)), AopEnum.Map_Write, data);
-                return data;
-            }
-            try (DataContext db = new DataContext(mapDb(name))) {
-                db.config.setOutSql(db.config.isOutSql() || mapLog(name) || log);
-                data = db.execute(result, false).getWriteReturn();
-                BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_Write, data);
-                return data;
-            }
-        }
-        BaseAop.aopMapBefore(name, null, DataConfig.db(mapDb(name)), AopEnum.Map_Write);
-        data = checkName(name);
-        BaseAop.aopMapAfter(name, null, DataConfig.db(mapDb(name)), AopEnum.Map_Write, data);
-        return data;
-    }
-
-    @Override
-    public WriteReturn execute(MapResult map, DataContext db, Boolean log) {
-        db.config.setOutSql(db.config.isOutSql() || log);
-        return db.executeParam(map);
-    }
-
-    @Override
     public WriteReturn execute(MapResult map, DataContext db) {
         return db.executeParam(map);
-    }
-
-    @Override
-    public WriteReturn execute(MapResult map, String key, Boolean log) {
-        try (DataContext db = new DataContext(key)) {
-            db.config.setOutSql(db.config.isOutSql() || log);
-            return db.executeParam(map);
-        }
     }
 
     @Override
@@ -813,22 +423,8 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public int count(Map<String, Object> map, Class<?> type, DataContext db, Boolean log) {
-        db.config.setOutSql(db.config.isOutSql() || log);
-        return db.count(map, type);
-    }
-
-    @Override
     public int count(Map<String, Object> map, Class<?> type, DataContext db) {
         return db.count(map, type);
-    }
-
-    @Override
-    public int count(Map<String, Object> map, Class<?> type, String key, Boolean log) {
-        try (DataContext db = new DataContext(key)) {
-            db.config.setOutSql(db.config.isOutSql() || log);
-            return db.count(map, type);
-        }
     }
 
     @Override
@@ -839,22 +435,8 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public DataReturn delete(Map<String, Object> map, Class<?> type, DataContext db, Boolean log) {
-        db.config.setOutSql(db.config.isOutSql() || log);
-        return db.delete(map, type);
-    }
-
-    @Override
     public DataReturn delete(Map<String, Object> map, Class<?> type, DataContext db) {
         return db.delete(map, type);
-    }
-
-    @Override
-    public DataReturn delete(Map<String, Object> map, Class<?> type, String key, Boolean log) {
-        try (DataContext db = new DataContext(key)) {
-            db.config.setOutSql(db.config.isOutSql() || log);
-            return db.delete(map, type);
-        }
     }
 
     @Override
@@ -877,7 +459,6 @@ public class FastRepository implements IFastRepository {
         FastProxy fastProxy = new FastProxy(db);
         return fastProxy.instance(interfaces);
     }
-
 
     private String mapDb(String name) {
         return CacheUtil.get(String.format("%s.db", name.toLowerCase()));
