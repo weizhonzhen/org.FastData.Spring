@@ -278,10 +278,12 @@ in Controller
    var pageList1 = ifast.pageMap(pmodel, "TestTable.info", query, db);
    var pageList2 = ifast.pageMap(pmodel, "TestTable.info", query, TestTable.class, db);
 
-  var count = (new FastQuery<BASE_USER>(BASE_USER.class)).eq(BASE_USER::getKID,1224).orderBy(BASE_USER::getKID,true).toCount("db");
-  var item = (new FastQuery<BASE_USER>(BASE_USER.class)).eq(BASE_USER::getKID,1224).orderBy(BASE_USER::getKID,true).toItem("db");
-  var list = (new FastQuery<BASE_USER>(BASE_USER.class)).eq(BASE_USER::getKID,1224).orderBy(BASE_USER::getKID,true).toList("db");
-  var page = (new FastQuery<BASE_USER>(BASE_USER.class)).eq(BASE_USER::getKID,1224).orderBy(BASE_USER::getKID,true).toPage(pmodel,"db");   
+  var count = ifast.read(BASE_USER.class)).eq(BASE_USER::getORGID,1224).orderBy(BASE_USER::getORGID,true).toCount("db");
+  var item = ifast.read(BASE_USER.class)).eq(BASE_USER::getORGID,1224).orderBy(BASE_USER::getORGID,true).toItem("db");
+  var list = ifast.read(BASE_USER.class)).eq(BASE_USER::getORGID,1224).orderBy(BASE_USER::getORGID,true).toList("db");
+  var page = ifast.read(BASE_USER.class)).eq(BASE_USER::getORGID,1224).orderBy(BASE_USER::getORGID,true).toPage(pmodel,"db");   
+  var list = ifast.write(BASE_USER.class)).eq(BASE_USER::getORGID,1224).update(BASE_USER::getORGID,111).toUpdate("db");
+  var list = ifast.write(BASE_USER.class)).eq(BASE_USER::getORGID,1224).toDelete("db");
 
    var field = new ArrayList<String>();
    field.add("Value");
