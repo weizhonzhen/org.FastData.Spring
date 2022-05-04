@@ -2,7 +2,6 @@ package org.FastData.Spring.Repository;
 
 import org.FastData.Spring.Model.*;
 import org.FastData.Spring.Context.DataContext;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
@@ -211,66 +210,11 @@ public interface IFastRepository {
     */
     FastMap<String,Object> queryKey(Object model, DataContext db);
 
-    /*
-     update,delete sql
-     name: xml file -> sqlMap -> id
-     param: sql preparedStatement
-     key: database key
-   */
-    WriteReturn write(String name,Map<String, Object> param, String key);
-
-    /*
-     update,delete sql
-      name: xml file -> sqlMap -> id
-      param: sql preparedStatement
-      db: database context
-    */
-    WriteReturn write(String name,Map<String, Object> param, DataContext db);
-
-    /*
-      update,delete sql
-      name: xml file -> sqlMap -> id
-      param: sql preparedStatement
-      xml file -> sql have db key value (db="dbkey")
-    */
-    WriteReturn write(String name,Map<String, Object> param);
-
-    /*
-     exec sql
-     map:sql param
-     db: database context
-    */
-    WriteReturn execute(MapResult map, DataContext db);
-
-    /*
-     exec sql
-     key: database key
-   */
-    WriteReturn execute(MapResult map, String key);
-
-    /*
-     map:sql param
-     db: database context
-    */
-    int count(Map<String,Object> map,Class<?> type, DataContext db);
-
-    /*
-     key: database key
-   */
-    int count(Map<String,Object> map,Class<?> type,  String key);
-
-    /*
-     map:sql param
-     db: database context
-    */
-    DataReturn delete(Map<String,Object> map,Class<?> type, DataContext db);
-
-    /*
-     key: database key
-   */
-    DataReturn delete(Map<String,Object> map,Class<?> type,  String key);
-
     Object resolve(Class<?> interfaces,String key);
 
     Object resolve(Class<?> interfaces,DataContext db);
+
+    <T> Read<T> read(Class<T> type);
+
+    <T> Write<T> write(Class<T> type);
 }

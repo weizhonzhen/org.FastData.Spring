@@ -341,112 +341,6 @@ public class FastRepository implements IFastRepository {
     }
 
     @Override
-    public WriteReturn write(String name, Map<String, Object> param, String key) {
-        WriteReturn data = null;
-        if (CacheUtil.exists(name.toLowerCase())) {
-            MapResult result = MapXml.getMapSql(name, param);
-            data = checkParam(result, name);
-            BaseAop.aopMapBefore(name, result, DataConfig.db(key), AopEnum.Map_Write);
-            if (!data.getSuccess()) {
-                BaseAop.aopMapAfter(name, result, DataConfig.db(key), AopEnum.Map_Write, data);
-                return data;
-            }
-            try (DataContext db = new DataContext(key)) {
-                db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                data = db.execute(result, false).getWriteReturn();
-                BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_Write, data);
-                return data;
-            }
-        }
-        BaseAop.aopMapBefore(name, null, DataConfig.db(key), AopEnum.Map_Write);
-        data = checkName(name);
-        BaseAop.aopMapAfter(name, null, DataConfig.db(key), AopEnum.Map_Write, data);
-        return data;
-    }
-
-    @Override
-    public WriteReturn write(String name, Map<String, Object> param, DataContext db) {
-        WriteReturn data = null;
-        if (CacheUtil.exists(name.toLowerCase())) {
-            MapResult result = MapXml.getMapSql(name, param);
-            data = checkParam(result, name);
-            BaseAop.aopMapBefore(name, result, db.config, AopEnum.Map_Write);
-            if (!data.getSuccess()) {
-                BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_Write, data);
-                return data;
-            }
-            db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-            data = db.execute(result, false).getWriteReturn();
-            BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_Write, data);
-            return data;
-        }
-        BaseAop.aopMapBefore(name, null, db.config, AopEnum.Map_Write);
-        data = checkName(name);
-        BaseAop.aopMapAfter(name, null, db.config, AopEnum.Map_Write, data);
-        return data;
-    }
-
-    @Override
-    public WriteReturn write(String name, Map<String, Object> param) {
-        WriteReturn data = null;
-        if (CacheUtil.exists(name.toLowerCase())) {
-            MapResult result = MapXml.getMapSql(name, param);
-            data = checkParam(result, name);
-            BaseAop.aopMapBefore(name, result, DataConfig.db(mapDb(name)), AopEnum.Map_Write);
-            if (!data.getSuccess()) {
-                BaseAop.aopMapAfter(name, result, DataConfig.db(mapDb(name)), AopEnum.Map_Write, data);
-                return data;
-            }
-            try (DataContext db = new DataContext(mapDb(name))) {
-                db.config.setOutSql(db.config.isOutSql() || mapLog(name));
-                data = db.execute(result, false).getWriteReturn();
-                BaseAop.aopMapAfter(name, result, db.config, AopEnum.Map_Write, data);
-                return data;
-            }
-        }
-        BaseAop.aopMapBefore(name, null, DataConfig.db(mapDb(name)), AopEnum.Map_Write);
-        data = checkName(name);
-        BaseAop.aopMapAfter(name, null, DataConfig.db(mapDb(name)), AopEnum.Map_Write, data);
-        return data;
-    }
-
-    @Override
-    public WriteReturn execute(MapResult map, DataContext db) {
-        return db.executeParam(map);
-    }
-
-    @Override
-    public WriteReturn execute(MapResult map, String key) {
-        try (DataContext db = new DataContext(key)) {
-            return db.executeParam(map);
-        }
-    }
-
-    @Override
-    public int count(Map<String, Object> map, Class<?> type, DataContext db) {
-        return db.count(map, type);
-    }
-
-    @Override
-    public int count(Map<String, Object> map, Class<?> type, String key) {
-        try (DataContext db = new DataContext(key)) {
-            return db.count(map, type);
-        }
-    }
-
-    @Override
-    public DataReturn delete(Map<String, Object> map, Class<?> type, DataContext db) {
-        return db.delete(map, type);
-    }
-
-    @Override
-    public DataReturn delete(Map<String, Object> map, Class<?> type, String key) {
-        try (DataContext db = new DataContext(key)) {
-            return db.delete(map, type);
-        }
-    }
-
-    @Override
     public Object resolve(Class<?> interfaces, String key) {
         try (DataContext db = new DataContext(key)) {
             FastProxy fastProxy = new FastProxy(db);
@@ -458,6 +352,16 @@ public class FastRepository implements IFastRepository {
     public Object resolve(Class<?> interfaces, DataContext db) {
         FastProxy fastProxy = new FastProxy(db);
         return fastProxy.instance(interfaces);
+    }
+
+    @Override
+    public  <T> Read<T> read(Class<T> type) {
+        return new Read<T>(type);
+    }
+
+    @Override
+    public  <T> Write<T> write(Class<T> type) {
+        return new Write<T>(type);
     }
 
     private String mapDb(String name) {
