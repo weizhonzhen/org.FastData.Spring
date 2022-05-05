@@ -126,7 +126,7 @@ public class Write <T> implements IWrite<T> {
     }
 
     @Override
-    public IWrite<T> update(FastExpression<T, Object> expression,Object value) {
+    public IWrite<T> set(FastExpression<T, Object> expression,Object value) {
         try {
             Method method = expression.getClass().getDeclaredMethod("writeReplace");
             method.setAccessible(true);

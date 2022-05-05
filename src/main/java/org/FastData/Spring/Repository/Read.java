@@ -6,6 +6,7 @@ import org.FastData.Spring.Model.*;
 import org.FastData.Spring.Util.FastUtil;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ public class Read<T> implements IRead<T> {
     private Class<T> type;
     private String where;
     private  int i;
+    private List<String> field =new ArrayList<>();
     private LinkedHashMap<String, Object> param = new LinkedHashMap<>();
 
     public Read(Class<T> _type) {
@@ -28,6 +30,11 @@ public class Read<T> implements IRead<T> {
             String name = lambda.getImplMethodName().replace("get", "");
             String key = String.format("%s%s",name, i++);
             String flag = "?";
+
+            if(condtion.equals("select")) {
+                field.add(name);
+                return;
+            }
 
             if (condtion.equals("like"))
                 param.put(key, String.format("%s%%", value1));
@@ -146,19 +153,38 @@ public class Read<T> implements IRead<T> {
     }
 
     @Override
+    public IRead<T> select(List<FastExpression<T, Object>> expression) {
+        for (FastExpression<T, Object> item : expression)
+            sql(item, "select", null, null);
+        return this;
+    }
+
+    @Override
     public List<T> toList(String key) {
         try (DataContext db = new DataContext(key)) {
             MapResult result = new MapResult();
-            result.setSql(where);
+            if (field.size() > 0)
+                result.setSql(where.replace("*", String.join(",", field)));
+            else
+                result.setSql(where);
             result.setParam(param);
-            return  db.query(result, type, true).getList();
+            return db.query(result, type, true).getList();
         }
+    }
+
+    private MapResult setSql(MapResult map)
+    {
+        if (field.size() > 0)
+            map.setSql(where.replace("*", String.join(",", field)));
+        else
+            map.setSql(where);
+        return map;
     }
 
     @Override
     public List<T> toList(DataContext db) {
         MapResult result = new MapResult();
-        result.setSql(where);
+        setSql(result);
         result.setParam(param);
         return  db.query(result, type, true).getList();
     }
@@ -187,7 +213,7 @@ public class Read<T> implements IRead<T> {
     public List<FastMap<String, Object>> toMap(String key) {
         try (DataContext db = new DataContext(key)) {
             MapResult result = new MapResult();
-            result.setSql(where);
+            setSql(result);
             result.setParam(param);
             return db.query(result, true).getList();
         }
@@ -196,7 +222,7 @@ public class Read<T> implements IRead<T> {
     @Override
     public List<FastMap<String, Object>> toMap(DataContext db) {
         MapResult result = new MapResult();
-        result.setSql(where);
+        setSql(result);
         result.setParam(param);
         return  db.query(result, true).getList();
     }
@@ -205,7 +231,7 @@ public class Read<T> implements IRead<T> {
     public PageResultImpl<T> toPage(PageModel page, String key) {
         try (DataContext db = new DataContext(key)) {
             MapResult result = new MapResult();
-            result.setSql(where);
+            setSql(result);
             result.setParam(param);
             return db.page(page, result, type, true);
         }
@@ -214,7 +240,7 @@ public class Read<T> implements IRead<T> {
     @Override
     public PageResultImpl<T> toPage(PageModel page, DataContext db) {
         MapResult result = new MapResult();
-        result.setSql(where);
+        setSql(result);
         result.setParam(param);
         return db.page(page, result, type, true);
     }
@@ -223,7 +249,7 @@ public class Read<T> implements IRead<T> {
     public PageResult toPageMap(PageModel page, String key) {
         try (DataContext db = new DataContext(key)) {
             MapResult result = new MapResult();
-            result.setSql(where);
+            setSql(result);
             result.setParam(param);
             return db.page(page, result, true);
         }
@@ -232,7 +258,7 @@ public class Read<T> implements IRead<T> {
     @Override
     public PageResult toPageMap(PageModel page, DataContext db) {
         MapResult result = new MapResult();
-        result.setSql(where);
+        setSql(result);
         result.setParam(param);
         return db.page(page, result, true);
     }

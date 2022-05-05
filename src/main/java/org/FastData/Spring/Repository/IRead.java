@@ -35,6 +35,8 @@ public interface IRead<T>{
 
     IRead<T> orderBy(FastExpression<T, Object> expression, boolean isDesc);
 
+    IRead<T> select(List<FastExpression<T, Object>> expression);
+
     List<T> toList(String key);
 
     List<T> toList(DataContext db);

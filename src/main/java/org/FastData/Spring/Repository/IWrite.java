@@ -28,7 +28,7 @@ public interface IWrite<T> {
 
     IWrite<T> between(FastExpression<T, Object> expression, Object value1, Object value2);
 
-    IWrite<T> update(FastExpression<T, Object> expression,Object value);
+    IWrite<T> set(FastExpression<T, Object> expression,Object value);
 
     WriteReturn toUpdate(DataContext db);
 
