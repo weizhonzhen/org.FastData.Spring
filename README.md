@@ -282,7 +282,7 @@ in Controller
   var item = ifast.read(BASE_USER.class)).eq(BASE_USER::getORGID,1224).orderBy(BASE_USER::getORGID,true).toItem("db");
   var list = ifast.read(BASE_USER.class)).eq(BASE_USER::getORGID,1224).orderBy(BASE_USER::getORGID,true).toList("db");
   var page = ifast.read(BASE_USER.class)).eq(BASE_USER::getORGID,1224).orderBy(BASE_USER::getORGID,true).toPage(pmodel,"db");   
-  var update = ifast.write(BASE_USER.class)).eq(BASE_USER::getORGID,1224).update(BASE_USER::getORGID,111).toUpdate("db");
+  var update = ifast.write(BASE_USER.class)).eq(BASE_USER::getORGID,1224).set(BASE_USER::getORGID,111).toUpdate("db");
   var delete = ifast.write(BASE_USER.class)).eq(BASE_USER::getORGID,1224).toDelete("db");
 
    var field = new ArrayList<String>();
