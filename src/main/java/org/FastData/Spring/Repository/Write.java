@@ -1,6 +1,5 @@
 package org.FastData.Spring.Repository;
 
-import com.sun.corba.se.impl.ior.WireObjectKeyTemplate;
 import org.FastData.Spring.Context.DataContext;
 import org.FastData.Spring.Function.FastExpression;
 import org.FastData.Spring.Model.MapResult;
