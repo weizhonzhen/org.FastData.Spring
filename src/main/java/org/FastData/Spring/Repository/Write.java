@@ -1,5 +1,6 @@
 package org.FastData.Spring.Repository;
 
+import com.sun.corba.se.impl.ior.WireObjectKeyTemplate;
 import org.FastData.Spring.Context.DataContext;
 import org.FastData.Spring.Function.FastExpression;
 import org.FastData.Spring.Model.MapResult;
@@ -141,6 +142,12 @@ public class Write <T> implements IWrite<T> {
 
     @Override
     public WriteReturn toUpdate(DataContext db) {
+        if (FastUtil.isNullOrEmpty(where)) {
+            WriteReturn writeReturn = new WriteReturn();
+            writeReturn.setMessage("where 条件不能为空");
+            writeReturn.setSuccess(false);
+            return writeReturn;
+        }
         MapResult result = new MapResult();
         String sql = String.format("update %s set ", table);
         for (String k : field.keySet()) {
@@ -150,13 +157,19 @@ public class Write <T> implements IWrite<T> {
         for (String k : param.keySet()) {
             result.getParam().put(k, param.get(k));
         }
-        sql = String.format("%s %s", sql.substring(0,sql.length()-1), where);
+        sql = String.format("%s %s", sql.substring(0, sql.length() - 1), where);
         result.setSql(sql);
-        return db.execute(result,true).getWriteReturn();
+        return db.execute(result, true).getWriteReturn();
     }
 
     @Override
     public WriteReturn toUpdate(String key) {
+        if (FastUtil.isNullOrEmpty(where)) {
+            WriteReturn writeReturn = new WriteReturn();
+            writeReturn.setMessage("where 条件不能为空");
+            writeReturn.setSuccess(false);
+            return writeReturn;
+        }
         try (DataContext db = new DataContext(key)) {
             MapResult result = new MapResult();
             String sql = String.format("update %s set ", table);
@@ -176,6 +189,12 @@ public class Write <T> implements IWrite<T> {
 
     @Override
     public WriteReturn toDelete(DataContext db) {
+        if (FastUtil.isNullOrEmpty(where)) {
+            WriteReturn writeReturn = new WriteReturn();
+            writeReturn.setMessage("where 条件不能为空");
+            writeReturn.setSuccess(false);
+            return writeReturn;
+        }
         MapResult map = new MapResult();
         map.setParam(param);
         map.setSql(String.format("delete %s %s", table, where));
@@ -184,6 +203,12 @@ public class Write <T> implements IWrite<T> {
 
     @Override
     public WriteReturn toDelete(String key) {
+        if (FastUtil.isNullOrEmpty(where)) {
+            WriteReturn writeReturn = new WriteReturn();
+            writeReturn.setMessage("where 条件不能为空");
+            writeReturn.setSuccess(false);
+            return writeReturn;
+        }
         try (DataContext db = new DataContext(key)) {
             MapResult map = new MapResult();
             map.setParam(param);
