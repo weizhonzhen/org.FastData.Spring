@@ -13,6 +13,10 @@ import java.util.List;
 public interface IRead<T>{
     IRead<T> eq(FastExpression<T, Object> expression, Object value);
 
+    IRead<T> eqLower(FastExpression<T, Object> expression, Object value);
+
+    IRead<T> eqUpper(FastExpression<T, Object> expression, Object value);
+
     IRead<T> notEq(FastExpression<T, Object> expression, Object value);
 
     IRead<T> great(FastExpression<T, Object> expression, Object value);

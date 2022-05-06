@@ -64,6 +64,10 @@ public class Read<T> implements IRead<T> {
                 String tableName = lambda.getImplClass().substring(lambda.getImplClass().lastIndexOf("/") + 1);
                 if (condtion.equals("order by"))
                     where = String.format("select * from %s order by %s %s", tableName, name, flag);
+                else if(condtion.equals("eqLower"))
+                    where = String.format("select * from %s where lower(%s) = lower(%s)", tableName, name, flag);
+                else if(condtion.equals("eqUpper"))
+                    where = String.format("select * from %s where upper(%s) = upper(%s)", tableName, name, flag);
                 else
                     where = String.format("select * from %s where %s %s %s", tableName, name, condtion, flag);
             } else {
@@ -80,6 +84,18 @@ public class Read<T> implements IRead<T> {
     @Override
     public IRead<T> eq(FastExpression<T, Object> expression, Object value) {
         sql(expression, "=", value, null);
+        return this;
+    }
+
+    @Override
+    public IRead<T> eqLower(FastExpression<T, Object> expression, Object value) {
+        sql(expression, "eqLower", value, null);
+        return this;
+    }
+
+    @Override
+    public IRead<T> eqUpper(FastExpression<T, Object> expression, Object value) {
+        sql(expression, "eqUpper", value, null);
         return this;
     }
 

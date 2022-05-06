@@ -8,6 +8,10 @@ import java.util.Arrays;
 public interface IWrite<T> {
     IWrite<T> eq(FastExpression<T, Object> expression, Object value);
 
+    IWrite<T> eqLower(FastExpression<T, Object> expression, Object value);
+
+    IWrite<T> eqUpper(FastExpression<T, Object> expression, Object value);
+
     IWrite<T> notEq(FastExpression<T, Object> expression, Object value);
 
     IWrite<T> great(FastExpression<T, Object> expression, Object value);

@@ -52,7 +52,12 @@ public class Write <T> implements IWrite<T> {
             if (FastUtil.isNullOrEmpty(where)) {
                 table = lambda.getImplClass().substring(lambda.getImplClass().lastIndexOf("/") + 1);
                 where = String.format("where %s %s %s", name, condtion, flag);
-            } else
+            }
+            else if(condtion.equals("eqLower"))
+                where = String.format("where lower(%s) = lower(%s)", name, flag);
+            else if(condtion.equals("eqUpper"))
+                where = String.format("where upper(%s) = upper(%s)", name, flag);
+            else
                 where = String.format(" %s and %s %s %s", where, name, condtion, flag);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -62,6 +67,18 @@ public class Write <T> implements IWrite<T> {
     @Override
     public IWrite<T> eq(FastExpression<T, Object> expression, Object value) {
         sql(expression,"=",value,null);
+        return this;
+    }
+
+    @Override
+    public IWrite<T> eqLower(FastExpression<T, Object> expression, Object value) {
+        sql(expression,"eqUpper",value,null);
+        return this;
+    }
+
+    @Override
+    public IWrite<T> eqUpper(FastExpression<T, Object> expression, Object value) {
+        sql(expression,"eqUpper",value,null);
         return this;
     }
 
