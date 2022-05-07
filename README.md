@@ -254,25 +254,11 @@ in Controller
 
 //database write sql param must ?name,dtabase read sql param only ?
  try (var db = new DataContext("db")) {
-   LinkedHashMap<String, Object> paramWrite = new LinkedHashMap<>();
-   var mapWrite = new MapResult();
-   mapWrite.setSql("update TestTable set Value=?Value where Id=?Id");
-   paramWrite.put("Value", "1");
-   paramWrite.put("Id", "2");
-   var result = ifast.execute(mapWrite);
-   
-   LinkedHashMap<String, Object> paramRead = new LinkedHashMap<>();
-   var mapRead = new MapResult();
-   mapRead.setSql("select count(0) TestTable set Value=? where Id=?");
-   paramRead.put("Value", "1");
-   paramRead.put("Id", "2");
-   var result = ifast.count(mapRead);
-
    var query = new HashMap<String, Object>();
    query.put("Id", "00010162");
    query.put("Name", "中1国");
-   var data1 = ifast.query("TestTable.info", query, db);
-   var data2 = ifast.query("table.info", query, TestTable.class, db);
+   var data1 = ifast.queryMap("TestTable.info", query, db);
+   var data2 = ifast.queryMap("table.info", query, TestTable.class, db);
 
    var pmodel = new PageModel();
    var pageList1 = ifast.pageMap(pmodel, "TestTable.info", query, db);
