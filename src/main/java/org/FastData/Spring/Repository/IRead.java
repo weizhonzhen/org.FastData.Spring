@@ -6,7 +6,6 @@ import org.FastData.Spring.Model.FastMap;
 import org.FastData.Spring.Model.PageModel;
 import org.FastData.Spring.Model.PageResult;
 import org.FastData.Spring.Model.PageResultImpl;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,6 +15,8 @@ public interface IRead<T>{
     IRead<T> eqLower(FastExpression<T, Object> expression, Object value);
 
     IRead<T> eqUpper(FastExpression<T, Object> expression, Object value);
+
+    IRead<T> take(FastExpression<T,Object> expression,int value);
 
     IRead<T> notEq(FastExpression<T, Object> expression, Object value);
 

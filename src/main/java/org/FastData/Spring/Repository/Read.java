@@ -1,5 +1,6 @@
 package org.FastData.Spring.Repository;
 
+import org.FastData.Spring.Config.DataDbType;
 import org.FastData.Spring.Context.DataContext;
 import org.FastData.Spring.Function.FastExpression;
 import org.FastData.Spring.Model.*;
@@ -15,6 +16,7 @@ public class Read<T> implements IRead<T> {
     private Class<T> type;
     private String where;
     private  int i;
+    private int rownum=0;
     private List<String> field =new ArrayList<>();
     private LinkedHashMap<String, Object> param = new LinkedHashMap<>();
 
@@ -81,6 +83,19 @@ public class Read<T> implements IRead<T> {
         }
     }
 
+    private void take(DataContext db) {
+        if (db.config.getDbType().equals(DataDbType.Oracle) && rownum != 0)
+            where = String.format("%s and rownum <=%s", where, rownum);
+        else if (db.config.getDbType().equals(DataDbType.DB2) && rownum != 0)
+            where = String.format("%s and fetch first %s rows only", where, rownum);
+        else if (db.config.getDbType().equals(DataDbType.MySql) && rownum != 0)
+            where = String.format("%s and limit %s", where, rownum);
+        else if (db.config.getDbType().equals(DataDbType.PostgreSql) && rownum != 0)
+            where = String.format("%s and limit %s", where, rownum);
+        else if (db.config.getDbType().equals(DataDbType.SQLite) && rownum != 0)
+            where = String.format("%s and limit 0 offset %s", where, rownum);
+    }
+
     @Override
     public IRead<T> eq(FastExpression<T, Object> expression, Object value) {
         sql(expression, "=", value, null);
@@ -96,6 +111,12 @@ public class Read<T> implements IRead<T> {
     @Override
     public IRead<T> eqUpper(FastExpression<T, Object> expression, Object value) {
         sql(expression, "eqUpper", value, null);
+        return this;
+    }
+
+    @Override
+    public IRead<T> take(FastExpression<T, Object> expression, int value) {
+        rownum = value;
         return this;
     }
 
@@ -179,6 +200,7 @@ public class Read<T> implements IRead<T> {
     public List<T> toList(String key) {
         try (DataContext db = new DataContext(key)) {
             MapResult result = new MapResult();
+            take(db);
             if (field.size() > 0)
                 result.setSql(where.replace("*", String.join(",", field)));
             else
@@ -200,6 +222,7 @@ public class Read<T> implements IRead<T> {
     @Override
     public List<T> toList(DataContext db) {
         MapResult result = new MapResult();
+        take(db);
         setSql(result);
         result.setParam(param);
         return  db.query(result, type, true).getList();
@@ -229,6 +252,7 @@ public class Read<T> implements IRead<T> {
     public List<FastMap<String, Object>> toMap(String key) {
         try (DataContext db = new DataContext(key)) {
             MapResult result = new MapResult();
+            take(db);
             setSql(result);
             result.setParam(param);
             return db.query(result, true).getList();
@@ -238,6 +262,7 @@ public class Read<T> implements IRead<T> {
     @Override
     public List<FastMap<String, Object>> toMap(DataContext db) {
         MapResult result = new MapResult();
+        take(db);
         setSql(result);
         result.setParam(param);
         return  db.query(result, true).getList();
